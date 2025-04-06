@@ -3,6 +3,7 @@ import { useState } from "react";
 import React from 'react'
 import Header from './header'
 import HeroSection from './hero-section'
+import ProductsSection from "./products-section";
 
 const Landing = () => {
     const [cursorPosition] = useState({ x: 50, y: 50 });
@@ -13,6 +14,7 @@ const Landing = () => {
         }} >
             <Header />
             <HeroSection />
+            <ProductsSection />
         </div>
     )
 }
