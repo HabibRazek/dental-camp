@@ -1,11 +1,10 @@
-import Header from "./components/landing/header";
-import HeroSection from "./components/landing/hero-section";
+import Landing from "./components/landing/landing";
+
 
 export default function Home() {
   return (
     <div>
-        <Header />
-        <HeroSection />
+        <Landing />
     </div>
   );
 }

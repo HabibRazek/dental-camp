@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+// import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ import Image from "next/image";
 import dentalEquipmentImage from "@/public/dental-equipment.jpg";
 
 function HeroSection() {
-    const [cursorPosition] = useState({ x: 50, y: 50 });
+    // const [cursorPosition] = useState({ x: 50, y: 50 });
 
     const features = [
         {
@@ -32,11 +32,7 @@ function HeroSection() {
 
     return (
         <section
-            className="relative min-h-screen flex items-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden"
-            style={{
-                background: `radial-gradient(circle at ${cursorPosition.x}% ${cursorPosition.y}%, #f0f9ff, #e0f2fe, #bae6fd)`,
-            }}
-        >
+            className="relative min-h-screen flex items-center py-30 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
             <div className="absolute inset-0 bg-[url('/images/dental-pattern.svg')] opacity-10" />
             
             <div className="container mx-auto relative z-10">
