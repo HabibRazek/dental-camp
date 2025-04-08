@@ -1,16 +1,13 @@
 "use client";
-// import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, ShieldCheck, Star, Truck } from "lucide-react";
 import { TbDental, TbDentalOff } from "react-icons/tb";
 import Image from "next/image";
-import dentalEquipmentImage from "@/public/dental-equipment.jpg";
+import dentalEquipmentImage from "@/public/images/dental-equipment.jpg";
 
 function HeroSection() {
-    // const [cursorPosition] = useState({ x: 50, y: 50 });
-
     const features = [
         {
             icon: <ShieldCheck className="h-4 w-4 text-blue-600" />,
@@ -31,9 +28,12 @@ function HeroSection() {
     ];
 
     return (
-        <section
-            className="relative min-h-screen flex items-center py-30 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            <div className="absolute inset-0 bg-[url('/images/dental-pattern.svg')] opacity-10" />
+        <section className="relative min-h-screen flex items-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+            {/* Blue radial gradient background */}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-50 via-blue-100 to-white opacity-70"></div>
+            
+            {/* Decorative subtle grid pattern */}
+            <div className="absolute inset-0 bg-[url('/images/dental-pattern.svg')] opacity-10"></div>
             
             <div className="container mx-auto relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -46,7 +46,7 @@ function HeroSection() {
                         >
                             <Badge className="mb-4 bg-blue-100 text-blue-600 hover:bg-blue-200">
                                 <TbDental className="h-4 w-4 mr-2" />
-                                Dental Professionals&apos; Choice
+                                Dental Professionals&lsquo; Choice
                             </Badge>
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900">
                                 Premium Dental Supplies,

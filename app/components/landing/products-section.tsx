@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { ChevronRight, Heart, Star } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
-import dentalequipment from "@/public/dental-equipment.jpg";
+import dentalequipment from "@/public/images/dental-equipment.jpg";
 
 
 const products = [
