@@ -1,5 +1,4 @@
-import { PrismaClient } from '@prisma/client'
-
+import { PrismaClient } from '@prisma/client';
 type GlobalThisWithPrisma = typeof globalThis & {
     __prisma?: PrismaClient
 }
