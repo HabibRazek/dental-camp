@@ -1,5 +1,4 @@
 "use client";
-
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star } from "lucide-react";
@@ -13,35 +12,35 @@ const testimonials = [
         role: "Medical Specialist",
         feedback:
             "The quality of medical equipment from MediCare has exceeded my expectations. The diagnostic tools are precise, reliable, and have significantly improved our patient care capabilities.",
-        img: "/placeholder.svg?height=48&width=48&text=1",
+        img: "/images/dr-img.jpeg",
     },
     {
         name: "Dr. Alice",
         role: "Cardiologist",
         feedback:
             "MediCare has transformed the way we handle patient diagnostics. Reliable, fast, and top-notch support.",
-        img: "/placeholder.svg?height=48&width=48&text=2",
+        img: "/images/dr-img.jpeg",
     },
     {
         name: "Dr. Sam",
         role: "Pediatrician",
         feedback:
             "Fantastic tools for pediatric care. I highly recommend MediCare to every clinic out there!",
-        img: "/placeholder.svg?height=48&width=48&text=3",
+        img: "/images/dr-img.jpeg",
     },
     {
         name: "Dr. Lila",
         role: "Neurologist",
         feedback:
-            "MediCare’s equipment has brought immense value to our neurological diagnostics.",
-        img: "/placeholder.svg?height=48&width=48&text=4",
+            "MediCare's equipment has brought immense value to our neurological diagnostics.",
+        img: "/images/dr-img.jpeg",
     },
     {
         name: "Dr. Mike",
         role: "Surgeon",
         feedback:
             "From surgical instruments to patient monitors, everything is top tier!",
-        img: "/placeholder.svg?height=48&width=48&text=5",
+        img: "/images/dr-img.jpeg",
     },
 ];
 
@@ -49,7 +48,7 @@ function Testimonials() {
     const containerRef = useRef(null);
 
     return (
-        <section className=" mx-auto py-24 bg-white overflow-hidden">
+        <section className="mx-auto py-24 bg-white overflow-hidden">
             <div className="px-4 md:px-8">
                 <div className="text-center mb-16">
                     <Badge className="mb-4 text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-600">
@@ -88,6 +87,7 @@ function Testimonials() {
                                                 alt={item.name}
                                                 fill
                                                 className="object-cover rounded-full"
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             />
                                         </div>
                                         <div className="flex-1">
@@ -105,7 +105,7 @@ function Testimonials() {
                                             ))}
                                         </div>
                                     </div>
-                                    <p className="text-slate-600 leading-relaxed text-sm">{`“${item.feedback}”`}</p>
+                                    <p className="text-slate-600 leading-relaxed text-sm">{`"${item.feedback}"`}</p>
                                 </Card>
                             </div>
                         ))}

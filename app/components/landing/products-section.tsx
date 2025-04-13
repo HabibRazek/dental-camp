@@ -35,7 +35,7 @@ function ProductsSection() {
         : products.filter(product => product.category === activeCategory);
 
     return (
-        <section className="py-16 md:py-24 px-4 sm:px-6 lg:px-8 bg-white">
+        <section className="py-16 mt-[-100px]  px-4 sm:px-6 lg:px-8 bg-white">
             <div className="max-w-7xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -56,16 +56,7 @@ function ProductsSection() {
                         >
                             Professional Dental Equipment
                             {/* White accent underline */}
-                            <motion.div
-                                initial={{ scaleX: 0 }}
-                                animate={{ scaleX: 1 }}
-                                transition={{ duration: 0.8, delay: 0.3 }}
-                                className="absolute bottom-0 left-0 right-0 h-1 bg-white/90 origin-left"
-                                style={{
-                                    background: 'linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%)',
-                                    boxShadow: '0 2px 8px rgba(255,255,255,0.3)'
-                                }}
-                            />
+                            
                         </motion.h2>
 
                         

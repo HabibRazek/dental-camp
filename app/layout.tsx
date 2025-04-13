@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "Dental Camp",
     images: [
       {
-        url: "/images/og-image.jpg", // Path to your Open Graph image
+        url: "/images/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Dental Camp - Premium Dental Supplies",
@@ -64,11 +64,6 @@ export const metadata: Metadata = {
   verification: {
     google: '595a1oRrNvw2eqKTf-3VnfdFoXwfFysMtPLoEqOLe3s',
   },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
-  },
   manifest: '/site.webmanifest',
   authors: [
     {
@@ -84,6 +79,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: true,
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon-192x192.png', type: 'image/png', sizes: '192x192' },
+      { url: '/icon-512x512.png', type: 'image/png', sizes: '512x512' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
@@ -93,6 +96,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="theme-color" content="#3b82f6" />
+        <link rel="manifest" href="/site.webmanifest" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>

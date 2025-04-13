@@ -109,7 +109,6 @@ function Footer() {
             {/* Main Footer */}
             <footer className=" text-white py-16 relative overflow-hidden">
                 {/* Floating elements */}
-                <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full bg-blue-800 opacity-20 blur-3xl"></div>
                 <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-blue-800 opacity-20 blur-3xl"></div>
 
                 <div className="container mx-auto px-4 md:px-6 relative z-10">
@@ -173,7 +172,7 @@ function Footer() {
                                 transition={{ duration: 0.3, delay: index * 0.1 }}
                                 viewport={{ once: true }}
                             >
-                                <h3 className="font-bold text-lg mb-6 text-white relative inline-block">
+                                <h3 className="font-bold text-lg mb-6 text-blue-600 relative inline-block">
                                     {column.title}
                                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500"></span>
                                 </h3>
@@ -186,7 +185,7 @@ function Footer() {
                                         >
                                             <a
                                                 href="#"
-                                                className="text-blue-900 hover:text-white transition-colors flex items-center group"
+                                                className="text-blue-900 hover:text-blue-600 transition-colors flex items-center group"
                                             >
                                                 <ArrowRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-all" />
                                                 {link}
@@ -199,28 +198,6 @@ function Footer() {
                     </div>
 
                     {/* Trust badges - responsive grid */}
-                    <motion.div
-                        className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                        viewport={{ once: true }}
-                    >
-                        {[
-                            { text: "HIPAA Compliant", icon: <ShieldCheck /> },
-                            { text: "FDA Approved", icon: <Award /> },
-                            { text: "ISO Certified", icon: <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M..." /></svg> },
-                            { text: "5-Star Support", icon: <Headset /> }
-                        ].map((badge, index) => (
-                            <div key={index} className="bg-blue-800/50 hover:bg-blue-800 transition-colors rounded-xl p-4 flex items-center gap-3 border border-blue-700/50">
-                                <div className="p-2 bg-blue-600 rounded-lg">
-                                    {badge.icon}
-                                </div>
-                                <span className="font-medium">{badge.text}</span>
-                            </div>
-                        ))}
-                    </motion.div>
-
                     {/* Bottom bar */}
                     <div className="border-t border-blue-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
                         <p className="text-blue-900 text-sm mb-4 md:mb-0">
@@ -229,31 +206,31 @@ function Footer() {
                         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
                             <a
                                 href="#"
-                                className="text-blue-900 hover:text-white text-sm transition-colors"
+                                className="text-blue-900 hover:text-blue-600 text-sm transition-colors"
                             >
                                 Terms of Service
                             </a>
                             <a
                                 href="#"
-                                className="text-blue-900 hover:text-white text-sm transition-colors"
+                                className="text-blue-900 hover:text-blue-600 text-sm transition-colors"
                             >
                                 Privacy Policy
                             </a>
                             <a
                                 href="#"
-                                className="text-blue-900 hover:text-white text-sm transition-colors"
+                                className="text-blue-900 hover:text-blue-600 text-sm transition-colors"
                             >
                                 Cookie Policy
                             </a>
                             <a
                                 href="#"
-                                className="text-blue-900 hover:text-white text-sm transition-colors"
+                                className="text-blue-900 hover:text-blue-600 text-sm transition-colors"
                             >
                                 Accessibility
                             </a>
                             <a
                                 href="#"
-                                className="text-blue-900 hover:text-white text-sm transition-colors"
+                                className="text-blue-900 hover:text-blue-600 text-sm transition-colors"
                             >
                                 Sitemap
                             </a>
