@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "npm run clean && prisma generate && next dev --turbopack",
+    "build": "npm run clean && prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "rimraf .next node_modules/.prisma lib/generated"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
@@ -26,6 +27,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@prisma/engines": "^6.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -33,6 +35,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
     "prisma": "^6.6.0",
+    "rimraf": "^6.0.1",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
