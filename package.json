@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.8.0",
-    "@prisma/client": "^6.6.0",
     "@radix-ui/react-slot": "^1.1.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -21,7 +20,6 @@
     "lucide-react": "^0.487.0",
     "next": "15.2.4",
     "next-auth": "^5.0.0-beta.25",
-    "prisma": "^6.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
@@ -30,7 +28,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@prisma/engines": "^6.6.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
