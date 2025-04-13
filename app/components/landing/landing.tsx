@@ -1,22 +1,29 @@
 'use client'
-import { useState } from "react";
 import React from 'react'
 import Header from './header'
 import HeroSection from './hero-section'
 import ProductsSection from "./products-section";
 import Features from "./features";
+import Testimonials from "./testimonials";
+import Footer from './footer';
 
 const Landing = () => {
-    const [cursorPosition] = useState({ x: 50, y: 50 });
 
     return (
         <div style={{
-            background: `radial-gradient(circle at ${cursorPosition.x}% ${cursorPosition.y}%, #f0f9ff, #e0f2fe, #bae6fd)`,
-        }} >
+            background: `linear-gradient(to bottom, 
+                rgba(186, 230, 253, 1) 0%, 
+                rgba(224, 242, 254, 0.8) 50%, 
+                rgba(240, 249, 255, 0.6) 100%)`,
+            minHeight: '100vh',
+            width: '100%'
+        }}>
             <Header />
             <HeroSection />
             <ProductsSection />
             <Features />
+            <Testimonials />
+            <Footer />
         </div>
     )
 }

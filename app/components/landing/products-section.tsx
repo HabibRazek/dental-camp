@@ -68,14 +68,7 @@ function ProductsSection() {
                             />
                         </motion.h2>
 
-                        <motion.p
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.4 }}
-                            className="text-lg md:text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed mt-6 px-4 py-3 bg-blue-50 backdrop-blur-sm rounded-lg border border-white/20 shadow-sm"
-                        >
-                            High-quality instruments and technology for modern dental practices
-                        </motion.p>
+                        
 
                         
                     </div>

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, ShieldCheck, Star, Truck } from "lucide-react";
+import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import { TbDental, TbDentalOff } from "react-icons/tb";
 import Image from "next/image";
 import dentalEquipmentImage from "@/public/images/dental-equipment.jpg";
@@ -29,15 +29,12 @@ function HeroSection() {
 
     return (
         <section className="relative min-h-screen flex items-center py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-            {/* Blue radial gradient background */}
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-50 via-blue-100 to-white opacity-70"></div>
-            
-            {/* Decorative subtle grid pattern */}
-            <div className="absolute inset-0 bg-[url('/images/dental-pattern.svg')] opacity-10"></div>
-            
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 bg-[url('/images/dental-pattern.svg')] opacity-10" />
+
             <div className="container mx-auto relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                    {/* Content Section */}
+                    {/* Text Content */}
                     <div className="space-y-6 max-w-xl mx-auto lg:mx-0">
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
@@ -46,11 +43,12 @@ function HeroSection() {
                         >
                             <Badge className="mb-4 bg-blue-100 text-blue-600 hover:bg-blue-200">
                                 <TbDental className="h-4 w-4 mr-2" />
-                                Dental Professionals&lsquo; Choice
+                                Dental Professionals’ Choice
                             </Badge>
+
                             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight text-gray-900">
                                 Premium Dental Supplies,
-                                <motion.span 
+                                <motion.span
                                     className="block mt-2 bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -59,25 +57,26 @@ function HeroSection() {
                                     For Exceptional Practices
                                 </motion.span>
                             </h1>
-                            <motion.p 
+
+                            <motion.p
                                 className="mt-4 text-lg text-gray-600"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 transition={{ delay: 0.5, duration: 0.8 }}
                             >
-                                Equip your practice with industry-leading instruments, materials, 
-                                and technology trusted by dental professionals worldwide.
+                                Equip your practice with top-tier dental instruments and technology trusted by professionals worldwide.
                             </motion.p>
                         </motion.div>
 
+                        {/* Action Buttons */}
                         <motion.div
                             className="flex flex-wrap gap-4 mt-8"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.2 }}
                         >
-                            <Button 
-                                size="lg" 
+                            <Button
+                                size="lg"
                                 className="rounded-full gap-2 bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-blue-200 transition-all"
                             >
                                 Browse Catalog
@@ -91,40 +90,6 @@ function HeroSection() {
                                 <TbDentalOff className="h-4 w-4" />
                                 Practice Solutions
                             </Button>
-                        </motion.div>
-
-                        <motion.div
-                            className="flex flex-wrap items-center gap-6 mt-12"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
-                        >
-                            <div className="flex items-center gap-2">
-                                <div className="flex -space-x-3">
-                                    {[1, 2, 3, 4].map((i) => (
-                                        <motion.div
-                                            key={i}
-                                            className="w-10 h-10 rounded-full border-2 border-white bg-blue-100 flex items-center justify-center"
-                                            initial={{ x: -20 * i, opacity: 0 }}
-                                            animate={{ x: 0, opacity: 1 }}
-                                            transition={{ delay: 0.1 * i, duration: 0.5 }}
-                                        >
-                                            <TbDental className="h-5 w-5 text-blue-600" />
-                                        </motion.div>
-                                    ))}
-                                </div>
-                                <div>
-                                    <div className="flex items-center">
-                                        {[...Array(5)].map((_, i) => (
-                                            <Star
-                                                key={i}
-                                                className="h-4 w-4 fill-blue-400 text-blue-400"
-                                            />
-                                        ))}
-                                    </div>
-                                    <p className="text-sm text-blue-600">Trusted by 5,000+ Practices</p>
-                                </div>
-                            </div>
                         </motion.div>
                     </div>
 
@@ -148,7 +113,7 @@ function HeroSection() {
                             </div>
                         </div>
 
-                        {/* Floating features */}
+                        {/* Floating Feature Boxes */}
                         {features.map((feature, i) => (
                             <motion.div
                                 key={i}
@@ -172,22 +137,6 @@ function HeroSection() {
                     </motion.div>
                 </div>
             </div>
-
-            {/* Scroll indicator */}
-            <motion.div
-                className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
-                animate={{ y: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 1.5 }}
-            >
-                <p className="text-sm text-blue-600 mb-2">Explore Our Products</p>
-                <div className="w-6 h-10 rounded-full border-2 border-blue-200 flex items-center justify-center">
-                    <motion.div
-                        className="w-1.5 h-1.5 bg-blue-400 rounded-full"
-                        animate={{ y: [0, 4, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.5 }}
-                    />
-                </div>
-            </motion.div>
         </section>
     );
 }
