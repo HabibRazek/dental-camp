@@ -29,3 +29,21 @@ model Post {
   authorId  Int
   author    User    @relation(fields: [authorId], references: [id])
 }
+
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Decimal
+  discount    Decimal?
+  stock       Int
+  description String
+  technicalDetails String?
+  images      String[]
+  recommendedFor String[]
+  verifiedBy  String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  published   Boolean  @default(false)
+}
