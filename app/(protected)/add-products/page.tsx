@@ -1,12 +1,12 @@
-import ProductCreatorWorkspace from '@/app/components/Forms/ProductCreatorWorkspace'
-import React from 'react'
+import React from "react";
+import ProductCreatorWorkspace from "./_compoenets/ProdcutForm";
 
 const page = () => {
-    return (
-        <div>
-            <ProductCreatorWorkspace />
-        </div>
-    )
-}
+  return (
+    <div>
+      <ProductCreatorWorkspace />
+    </div>
+  );
+};
 
-export default page
+export default page;
