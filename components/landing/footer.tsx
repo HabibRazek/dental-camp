@@ -6,9 +6,6 @@ import { Input } from "@/components/ui/input";
 import {
     ArrowRight,
     ShieldCheck,
-    Truck,
-    Headset,
-    Award,
     Facebook,
     Twitter,
     Instagram,
@@ -22,7 +19,6 @@ import {
 } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import Link from "next/link";
-import Image from "next/image";
 
 
 function Footer() {

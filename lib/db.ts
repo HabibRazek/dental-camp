@@ -7,7 +7,7 @@ import { saltAndHashPassword } from "./password"
  * @param password - Plain text password
  * @returns User object if credentials are valid, null otherwise
  */
-export async function getUserFromDb(email: string, password: string) {
+export async function getUserFromDb(email: string, plainPassword: string) {
   try {
     const user = await prisma.user.findUnique({
       where: { email },
@@ -27,15 +27,20 @@ export async function getUserFromDb(email: string, password: string) {
 
     // Import bcrypt here to avoid issues with edge runtime
     const bcrypt = await import("bcryptjs")
-    const isValidPassword = await bcrypt.compare(password, user.password)
+    const isValidPassword = await bcrypt.compare(plainPassword, user.password)
 
     if (!isValidPassword) {
       return null
     }
 
     // Return user without password
-    const { password: _, ...userWithoutPassword } = user
-    return userWithoutPassword
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      image: user.image,
+      createdAt: user.createdAt,
+    }
   } catch (error) {
     console.error("Error getting user from database:", error)
     return null
@@ -52,7 +57,7 @@ export async function getUserFromDb(email: string, password: string) {
 export async function createUser(name: string, email: string, password: string) {
   try {
     const hashedPassword = await saltAndHashPassword(password)
-    
+
     const user = await prisma.user.create({
       data: {
         name,

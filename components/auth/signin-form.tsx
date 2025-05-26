@@ -43,7 +43,7 @@ export function SignInForm() {
         router.push("/dashboard") // Redirect to dashboard or home page
         router.refresh()
       }
-    } catch (error) {
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
@@ -120,7 +120,7 @@ export function SignInForm() {
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/auth/signup" className="text-blue-600 hover:text-blue-700 font-medium">
               Sign up
             </Link>

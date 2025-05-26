@@ -87,7 +87,6 @@ const products = [
 
 function ProductsSection() {
     const [activeCategory, setActiveCategory] = useState("all");
-    const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
     const sectionRef = useRef<HTMLDivElement>(null);
 
     const categories = [
@@ -223,8 +222,6 @@ function ProductsSection() {
                             viewport={{ once: true, margin: "-50px" }}
                             whileHover={{ y: -5 }}
                             className="group"
-                            onMouseEnter={() => setHoveredProduct(product.id)}
-                            onMouseLeave={() => setHoveredProduct(null)}
                         >
                             <Card className="h-full overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl bg-white">
                                 <div className="relative aspect-[4/3] overflow-hidden">
