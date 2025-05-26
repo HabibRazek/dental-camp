@@ -9,6 +9,6 @@
     }
   },
   "env": {
-    "NEXTAUTH_URL": "https://dental-camp.com"
+    "NEXTAUTH_URL": "https://www.dental-camp.com"
   }
 }
