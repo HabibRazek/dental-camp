@@ -19,8 +19,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true, // Required for Vercel deployment
   providers: [
     Google({
-      clientId: process.env.AUTH_GOOGLE_ID,
-      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      clientId: process.env.AUTH_GOOGLE_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET!,
     }),
     Credentials({
       credentials: {
@@ -56,6 +56,67 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ account, profile }) {
+      // Allow credentials sign in
+      if (account?.provider === "credentials") {
+        return true
+      }
+
+      // Handle Google OAuth sign in
+      if (account?.provider === "google" && profile?.email) {
+        try {
+          // Check if user already exists with this email
+          const existingUser = await prisma.user.findUnique({
+            where: { email: profile.email },
+            include: { accounts: true }
+          })
+
+          if (existingUser) {
+            // Check if this Google account is already linked
+            const existingAccount = existingUser.accounts.find(
+              acc => acc.provider === "google" && acc.providerAccountId === account.providerAccountId
+            )
+
+            if (!existingAccount) {
+              // Link the Google account to existing user
+              await prisma.account.create({
+                data: {
+                  userId: existingUser.id,
+                  type: account.type,
+                  provider: account.provider,
+                  providerAccountId: account.providerAccountId,
+                  access_token: account.access_token,
+                  expires_at: account.expires_at,
+                  id_token: account.id_token,
+                  refresh_token: account.refresh_token,
+                  scope: account.scope,
+                  session_state: account.session_state as string,
+                  token_type: account.token_type,
+                }
+              })
+            }
+
+            // Update user info with Google data if needed
+            if (!existingUser.image && profile.picture) {
+              await prisma.user.update({
+                where: { id: existingUser.id },
+                data: {
+                  image: profile.picture,
+                  name: existingUser.name || profile.name
+                }
+              })
+            }
+          }
+
+          return true
+        } catch (error) {
+          console.error("Error linking Google account:", error)
+          return false
+        }
+      }
+
+      return true
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
