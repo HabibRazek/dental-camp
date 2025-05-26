@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { signUpSchema, type SignUpInput } from "@/lib/zod"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { GoogleSignIn } from "./google-signin"
 
 export function SignUpForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -185,6 +186,21 @@ export function SignUpForm() {
             )}
           </Button>
         </form>
+
+        <div className="mt-6">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="bg-white px-2 text-gray-500">Ou continuer avec</span>
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <GoogleSignIn />
+          </div>
+        </div>
 
         <div className="mt-6 text-center">
           <p className="text-gray-600">

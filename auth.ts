@@ -1,6 +1,7 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
 import { ZodError } from "zod"
 import { prisma } from "./lib/prisma"
 import { signInSchema } from "./lib/zod"
@@ -17,6 +18,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   trustHost: true, // Required for Vercel deployment
   providers: [
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
     Credentials({
       credentials: {
         email: {

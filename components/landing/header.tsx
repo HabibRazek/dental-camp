@@ -6,6 +6,7 @@ import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import { GoogleSignInClient } from "../auth/google-signin-client";
 
 const navItems = ["Home", "About", "Our Products", "Contact", "FAQs"];
 
@@ -190,6 +191,12 @@ function Header() {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
+                                        <GoogleSignInClient
+                                            variant="outline"
+                                            className="w-full text-sm"
+                                        >
+                                            Se connecter avec Google
+                                        </GoogleSignInClient>
                                         <Link href="/auth/signin">
                                             <Button
                                                 variant="ghost"
