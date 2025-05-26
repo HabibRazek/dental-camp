@@ -3,6 +3,9 @@ import { createUserSchema } from "@/lib/zod"
 import { createUser, userExists } from "@/lib/db"
 import { ZodError } from "zod"
 
+// Force this API route to use Node.js runtime
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
