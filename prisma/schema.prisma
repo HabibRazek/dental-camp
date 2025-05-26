@@ -7,36 +7,3 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  posts Post[]
-}
-
-model Post {
-  id        Int     @id @default(autoincrement())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  Int
-  author    User    @relation(fields: [authorId], references: [id])
-}
-
-model Product {
-  id          Int      @id @default(autoincrement())
-  name        String
-  category    String
-  price       Decimal
-  discount    Decimal?
-  stock       Int
-  description String
-  technicalDetails String?
-  images      String[]
-  recommendedFor String[]
-  verifiedBy  String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  published   Boolean  @default(false)
-}
