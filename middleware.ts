@@ -1,31 +1,34 @@
-import { auth } from "@/auth"
-import { NextResponse } from "next/server"
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
 export default auth((req) => {
-  const { pathname } = req.nextUrl
+  const { pathname } = req.nextUrl;
 
   // Protected routes that require authentication
-  const protectedRoutes = ["/dashboard"]
+  const protectedRoutes = ["/dashboard"];
 
   // Check if the current path is a protected route
-  const isProtectedRoute = protectedRoutes.some(route =>
+  const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
-  )
+  );
 
   // If it's a protected route and user is not authenticated, redirect to sign in
   if (isProtectedRoute && !req.auth) {
-    const signInUrl = new URL("/auth/signin", req.url)
-    signInUrl.searchParams.set("callbackUrl", pathname)
-    return NextResponse.redirect(signInUrl)
+    const signInUrl = new URL("/auth/signin", req.url);
+    signInUrl.searchParams.set("callbackUrl", pathname);
+    return NextResponse.redirect(signInUrl);
   }
 
   // If user is authenticated and trying to access auth pages, redirect to dashboard
-  if (req.auth && (pathname.startsWith("/auth/signin") || pathname.startsWith("/auth/signup"))) {
-    return NextResponse.redirect(new URL("/dashboard", req.url))
+  if (
+    req.auth &&
+    (pathname.startsWith("/auth/signin") || pathname.startsWith("/auth/signup"))
+  ) {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
 
-  return NextResponse.next()
-})
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [
@@ -40,4 +43,4 @@ export const config = {
      */
     "/((?!api/auth|api/uploadthing|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.ico$|.*\\.webmanifest$).*)",
   ],
-}
+};
