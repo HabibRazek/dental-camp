@@ -1,14 +1,17 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, Menu, X } from "lucide-react";
+import { Heart, Search, Menu, X, User, LogOut } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession, signOut } from "next-auth/react";
+import Link from "next/link";
 
 const navItems = ["Home", "About", "Our Products", "Contact", "FAQs"];
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { data: session, status } = useSession();
 
     return (
         <>
@@ -56,10 +59,48 @@ function Header() {
                         </Button>
                     </div>
 
-                    {/* Sign In */}
-                    <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm sm:px-5 sm:text-base transition duration-200 ease-in-out">
-                        Sign In
-                    </Button>
+                    {/* Authentication */}
+                    {status === "loading" ? (
+                        <div className="w-20 h-9 bg-gray-200 rounded-full animate-pulse"></div>
+                    ) : session ? (
+                        <div className="flex items-center gap-2">
+                            <Link href="/dashboard">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                                    aria-label="Dashboard"
+                                >
+                                    <User className="h-5 w-5" />
+                                </Button>
+                            </Link>
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => signOut()}
+                                className="rounded-full hover:bg-red-100 hover:text-red-600 transition duration-200 ease-in-out"
+                                aria-label="Sign Out"
+                            >
+                                <LogOut className="h-5 w-5" />
+                            </Button>
+                        </div>
+                    ) : (
+                        <div className="flex items-center gap-2">
+                            <Link href="/auth/signin">
+                                <Button
+                                    variant="ghost"
+                                    className="rounded-full text-sm px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                                >
+                                    Sign In
+                                </Button>
+                            </Link>
+                            <Link href="/auth/signup">
+                                <Button className="rounded-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm sm:px-5 sm:text-base transition duration-200 ease-in-out">
+                                    Sign Up
+                                </Button>
+                            </Link>
+                        </div>
+                    )}
 
                     {/* Burger Menu - Mobile */}
                     <Button
@@ -120,6 +161,55 @@ function Header() {
                                     </Button>
                                 ))}
                             </nav>
+
+                            {/* Mobile Authentication */}
+                            <div className="mt-6 pt-4 border-t border-gray-200">
+                                {session ? (
+                                    <div className="space-y-2">
+                                        <Link href="/dashboard">
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                <User className="h-4 w-4 mr-2" />
+                                                Dashboard
+                                            </Button>
+                                        </Link>
+                                        <Button
+                                            variant="ghost"
+                                            className="w-full justify-start text-red-600 text-sm hover:bg-red-100"
+                                            onClick={() => {
+                                                signOut();
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            <LogOut className="h-4 w-4 mr-2" />
+                                            Sign Out
+                                        </Button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2">
+                                        <Link href="/auth/signin">
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                Sign In
+                                            </Button>
+                                        </Link>
+                                        <Link href="/auth/signup">
+                                            <Button
+                                                className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm"
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                Sign Up
+                                            </Button>
+                                        </Link>
+                                    </div>
+                                )}
+                            </div>
                         </motion.div>
                     </>
                 )}
