@@ -1,63 +1,39 @@
 import { auth } from "@/auth"
 import { redirect } from "next/navigation"
-import { signOut } from "@/auth"
-import { Button } from "@/components/ui/button"
+import { SessionProvider } from "next-auth/react"
+import { AppSidebar } from "@/components/app-sidebar"
+import { SiteHeader } from "@/components/site-header"
+import { SectionCards } from "@/components/section-cards"
+import { ChartAreaInteractive } from "@/components/chart-area-interactive"
+import { DataTable } from "@/components/data-table"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 
 export default async function DashboardPage() {
   const session = await auth()
-  
+
   if (!session?.user) {
     redirect("/auth/signin")
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-8">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-gray-600 mt-2">Welcome back, {session.user.name}!</p>
-            </div>
-            <form
-              action={async () => {
-                "use server"
-                await signOut({ redirectTo: "/" })
-              }}
-            >
-              <Button type="submit" variant="outline">
-                Sign Out
-              </Button>
-            </form>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-              <h3 className="text-lg font-semibold text-blue-900 mb-2">Profile</h3>
-              <p className="text-blue-700">Name: {session.user.name}</p>
-              <p className="text-blue-700">Email: {session.user.email}</p>
-              <p className="text-blue-700">ID: {session.user.id}</p>
-            </div>
-            
-            <div className="bg-green-50 p-6 rounded-lg border border-green-200">
-              <h3 className="text-lg font-semibold text-green-900 mb-2">Orders</h3>
-              <p className="text-green-700">View your recent orders and track shipments</p>
-            </div>
-            
-            <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
-              <h3 className="text-lg font-semibold text-purple-900 mb-2">Products</h3>
-              <p className="text-purple-700">Browse our dental equipment catalog</p>
+    <SessionProvider session={session}>
+      <SidebarProvider>
+        <AppSidebar variant="inset" />
+        <SidebarInset>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">
+            <div className="@container/main flex flex-1 flex-col gap-2">
+              <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+                <SectionCards />
+                <div className="px-4 lg:px-6">
+                  <ChartAreaInteractive />
+                </div>
+                <DataTable />
+              </div>
             </div>
           </div>
-          
-          <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Session Information</h3>
-            <pre className="bg-white p-4 rounded border text-sm overflow-auto">
-              {JSON.stringify(session, null, 2)}
-            </pre>
-          </div>
-        </div>
-      </div>
-    </div>
+        </SidebarInset>
+      </SidebarProvider>
+    </SessionProvider>
   )
 }
