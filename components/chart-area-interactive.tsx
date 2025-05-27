@@ -80,10 +80,10 @@ export function ChartAreaInteractive() {
   }
 
   return (
-    <Card className="@container/card">
-      <CardHeader className="relative">
-        <CardTitle>Sales Performance</CardTitle>
-        <CardDescription>
+    <Card className="@container/card border-0 shadow-lg bg-gradient-to-br from-blue-50 to-white">
+      <CardHeader className="relative bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
+        <CardTitle className="text-xl font-bold text-white">Sales Performance</CardTitle>
+        <CardDescription className="text-blue-100">
           <span className="@[540px]/card:block hidden">
             Track your e-commerce metrics and sales trends
           </span>
@@ -91,7 +91,7 @@ export function ChartAreaInteractive() {
         </CardDescription>
         <div className="absolute right-4 top-4 flex gap-2">
           <Select value={viewType} onValueChange={setViewType}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-32 bg-white/10 border-white/20 text-white backdrop-blur-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -102,7 +102,7 @@ export function ChartAreaInteractive() {
           </Select>
 
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-32">
+            <SelectTrigger className="w-32 bg-white/10 border-white/20 text-white backdrop-blur-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

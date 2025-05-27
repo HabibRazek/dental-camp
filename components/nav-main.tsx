@@ -26,14 +26,14 @@ export function NavMain({
           <SidebarMenuItem className="flex items-center gap-2">
             <SidebarMenuButton
               tooltip="New Order"
-              className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+              className="min-w-8 bg-gradient-to-r from-blue-500 to-blue-600 text-white duration-200 ease-linear hover:from-blue-600 hover:to-blue-700 shadow-lg"
             >
               <Plus />
               <span>New Order</span>
             </SidebarMenuButton>
             <Button
               size="icon"
-              className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
+              className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0 border-blue-200 text-blue-600 hover:bg-blue-50"
               variant="outline"
             >
               <Mail />
@@ -44,10 +44,10 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} asChild>
+              <SidebarMenuButton tooltip={item.title} asChild className="hover:bg-blue-50 hover:text-blue-700 transition-colors">
                 <a href={item.url}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
+                  {item.icon && <item.icon className="text-blue-600" />}
+                  <span className="font-medium">{item.title}</span>
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
