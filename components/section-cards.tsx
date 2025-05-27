@@ -107,11 +107,11 @@ export function SectionCards() {
               key={stat.title}
               className={`group relative overflow-hidden border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer ${
                 isPrimary
-                  ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-transparent shadow-xl hover:shadow-blue-500/25'
+                  ? 'bg-gradient-to-br from-purple-500 via-purple-600 to-pink-500 text-white border-transparent shadow-xl hover:shadow-purple-500/25'
                   : isSecondary
-                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-transparent shadow-lg hover:shadow-blue-500/25'
+                    ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white border-transparent shadow-lg hover:shadow-emerald-500/25'
                     : isTertiary
-                      ? 'bg-gradient-to-br from-blue-400 to-blue-500 text-white border-transparent shadow-lg hover:shadow-blue-400/25'
+                      ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white border-transparent shadow-lg hover:shadow-orange-500/25'
                       : 'bg-white border-blue-200 hover:border-blue-300 shadow-sm hover:bg-blue-50'
               }`}
             >

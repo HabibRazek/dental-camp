@@ -28,7 +28,7 @@ export default async function DashboardPage() {
                 <div className="px-4 lg:px-6">
                   <div className="mb-8 text-center">
                     <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">
-                      Welcome back, <span className="bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">Dr. Mourad Bayar</span>! 👋
+                      Welcome back, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Dr. Smith</span>! 👋
                     </h1>
                     <p className="text-lg text-gray-600 font-medium max-w-2xl mx-auto">
                       Your dental e-commerce platform is performing exceptionally well. Here&apos;s your latest business insights.
