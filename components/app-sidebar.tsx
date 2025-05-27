@@ -158,10 +158,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 rounded-xl group"
+              className="data-[slot=sidebar-menu-button]:!p-4 hover:bg-gradient-to-r hover:from-[#E8FFC2]/30 hover:to-[#00FFDD]/20 transition-all duration-300 rounded-xl group"
             >
               <a href="/dashboard" className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                <div className="p-2 bg-gradient-to-br from-[#0E185F] to-[#2FA4FF] rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
                   <Heart className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex flex-col">

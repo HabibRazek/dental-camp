@@ -94,7 +94,7 @@ export function DataTable() {
           <div className="flex items-center justify-between">
             <div className="flex flex-col space-y-2">
               <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full"></div>
+                <div className="w-2 h-8 bg-gradient-to-b from-[#0E185F] to-[#2FA4FF] rounded-full"></div>
                 Recent Orders
               </CardTitle>
               <CardDescription className="text-gray-600 font-medium">
@@ -105,11 +105,11 @@ export function DataTable() {
             {/* Quick stats */}
             <div className="hidden md:flex items-center gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{recentOrders.length}</div>
+                <div className="text-2xl font-bold text-[#2FA4FF]">{recentOrders.length}</div>
                 <div className="text-xs text-gray-500 font-medium">Total Orders</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-700">
+                <div className="text-2xl font-bold text-[#0E185F]">
                   {recentOrders.filter(o => o.status === 'Delivered').length}
                 </div>
                 <div className="text-xs text-gray-500 font-medium">Delivered</div>
@@ -158,9 +158,9 @@ export function DataTable() {
                   >
                     <TableCell className="font-medium py-6 px-6">
                       <div className="flex items-center space-x-4">
-                        <Avatar className="h-12 w-12 ring-2 ring-gray-200 group-hover:ring-blue-300 transition-all duration-300 shadow-sm">
+                        <Avatar className="h-12 w-12 ring-2 ring-[#2FA4FF]/30 group-hover:ring-[#00FFDD] transition-all duration-300 shadow-sm">
                           <AvatarImage src={order.avatar} alt={order.customerName} />
-                          <AvatarFallback className="bg-gradient-to-br from-blue-100 to-blue-200 text-blue-700 font-bold text-sm">
+                          <AvatarFallback className="bg-gradient-to-br from-[#E8FFC2] to-[#00FFDD] text-[#0E185F] font-bold text-sm">
                             {order.customerName.split(' ').map(n => n[0]).join('')}
                           </AvatarFallback>
                         </Avatar>
@@ -196,10 +196,10 @@ export function DataTable() {
                         variant={getStatusColor(order.status)}
                         className={`font-bold px-3 py-1.5 rounded-full transition-all duration-300 group-hover:scale-105 ${
                           order.status === 'Delivered'
-                            ? 'bg-blue-100 text-blue-800 border-blue-300 shadow-blue-100 shadow-sm'
+                            ? 'bg-[#E8FFC2]/80 text-[#0E185F] border-[#00FFDD]/50 shadow-[#00FFDD]/20 shadow-sm'
                             : order.status === 'Shipped'
-                              ? 'bg-blue-200 text-blue-900 border-blue-400 shadow-blue-100 shadow-sm'
-                              : 'bg-blue-50 text-blue-700 border-blue-200 shadow-blue-100 shadow-sm'
+                              ? 'bg-[#2FA4FF]/20 text-[#0E185F] border-[#2FA4FF]/40 shadow-[#2FA4FF]/20 shadow-sm'
+                              : 'bg-[#00FFDD]/30 text-[#0E185F] border-[#00FFDD]/50 shadow-[#00FFDD]/20 shadow-sm'
                         }`}
                       >
                         <div className="flex items-center gap-1">

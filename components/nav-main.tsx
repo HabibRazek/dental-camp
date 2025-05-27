@@ -29,7 +29,7 @@ export function NavMain({
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip="Create New Order"
-                className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 text-white duration-300 ease-out hover:from-blue-700 hover:via-blue-800 hover:to-blue-900 shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold"
+                className="w-full bg-gradient-to-r from-[#0E185F] via-[#2FA4FF] to-[#0E185F] text-white duration-300 ease-out hover:from-[#2FA4FF] hover:via-[#00FFDD] hover:to-[#2FA4FF] hover:text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold"
               >
                 <Plus className="h-5 w-5" />
                 <span>New Order</span>
@@ -48,7 +48,7 @@ export function NavMain({
             </Button>
             <Button
               size="sm"
-              className="flex-1 border-gray-200/50 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-lg"
+              className="flex-1 border-[#2FA4FF]/30 text-gray-600 hover:bg-gradient-to-r hover:from-[#E8FFC2]/30 hover:to-[#00FFDD]/20 hover:text-[#0E185F] transition-all duration-300 rounded-lg"
               variant="outline"
             >
               <Bell className="h-4 w-4" />
@@ -85,7 +85,7 @@ export function NavMain({
                       </span>
 
                       {/* Hover indicator */}
-                      <div className="absolute right-2 w-1 h-6 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0" />
+                      <div className="absolute right-2 w-1 h-6 bg-gradient-to-b from-[#2FA4FF] to-[#00FFDD] rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0" />
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
