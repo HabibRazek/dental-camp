@@ -21,7 +21,7 @@ export default async function DashboardPage() {
         <AppSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
-          <div className="flex flex-1 flex-col bg-gradient-to-br from-blue-50 via-white to-blue-50 min-h-screen">
+          <div className="flex flex-1 flex-col bg-gray-50/30 min-h-screen">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-6 py-6 md:gap-8 md:py-8">
                 <SectionCards />

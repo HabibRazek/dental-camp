@@ -93,54 +93,72 @@ export function SectionCards() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon
-          const isHighlight = index < 2 // First two cards get special styling
+          const isPrimary = index === 0 // Only first card gets special styling
+          const isSecondary = index === 1 // Second card gets different styling
+
           return (
             <Card
               key={stat.title}
-              className={`relative overflow-hidden border-0 shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105 ${
-                isHighlight
-                  ? 'bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-white'
-                  : 'bg-white hover:bg-blue-50'
+              className={`relative overflow-hidden border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+                isPrimary
+                  ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white border-slate-700 shadow-xl'
+                  : isSecondary
+                    ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-blue-500 shadow-lg'
+                    : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
               }`}
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                <CardTitle className={`text-sm font-semibold ${isHighlight ? 'text-blue-100' : 'text-gray-600'}`}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <CardTitle className={`text-sm font-medium tracking-wide ${
+                  isPrimary ? 'text-slate-300' : isSecondary ? 'text-blue-100' : 'text-gray-600'
+                }`}>
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2 rounded-lg ${
-                  isHighlight
-                    ? 'bg-white/20 backdrop-blur-sm'
-                    : 'bg-blue-100'
+                <div className={`p-2.5 rounded-xl ${
+                  isPrimary
+                    ? 'bg-white/10 backdrop-blur-sm'
+                    : isSecondary
+                      ? 'bg-white/15 backdrop-blur-sm'
+                      : 'bg-gray-50 border border-gray-100'
                 }`}>
-                  <Icon className={`h-5 w-5 ${isHighlight ? 'text-white' : 'text-blue-600'}`} />
+                  <Icon className={`h-5 w-5 ${
+                    isPrimary ? 'text-white' : isSecondary ? 'text-white' : 'text-gray-700'
+                  }`} />
                 </div>
               </CardHeader>
               <CardContent>
-                <div className={`text-3xl font-bold mb-2 ${isHighlight ? 'text-white' : 'text-gray-900'}`}>
+                <div className={`text-3xl font-bold mb-3 tracking-tight ${
+                  isPrimary ? 'text-white' : isSecondary ? 'text-white' : 'text-gray-900'
+                }`}>
                   {stat.value}
                 </div>
                 <div className="flex items-center space-x-2 text-sm">
                   <Badge
                     variant={stat.changeType === "positive" ? "default" : "destructive"}
-                    className={`text-xs font-medium ${
-                      isHighlight
-                        ? 'bg-white/20 text-white border-white/30'
-                        : stat.changeType === "positive"
-                          ? 'bg-green-100 text-green-700 border-green-200'
-                          : 'bg-red-100 text-red-700 border-red-200'
+                    className={`text-xs font-medium px-2 py-1 ${
+                      isPrimary
+                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
+                        : isSecondary
+                          ? 'bg-white/20 text-white border-white/30'
+                          : stat.changeType === "positive"
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : stat.changeType === "warning"
+                              ? 'bg-amber-50 text-amber-700 border-amber-200'
+                              : 'bg-red-50 text-red-700 border-red-200'
                     }`}
                   >
                     {stat.change}
                   </Badge>
-                  <span className={`${isHighlight ? 'text-blue-100' : 'text-gray-500'}`}>
+                  <span className={`text-xs ${
+                    isPrimary ? 'text-slate-400' : isSecondary ? 'text-blue-100' : 'text-gray-500'
+                  }`}>
                     {stat.description}
                   </span>
                 </div>
               </CardContent>
-              {/* Decorative gradient overlay */}
-              <div className={`absolute inset-0 bg-gradient-to-r from-transparent to-white/5 pointer-events-none ${
-                isHighlight ? 'opacity-100' : 'opacity-0'
-              }`} />
+              {/* Subtle decorative element */}
+              <div className={`absolute top-0 right-0 w-20 h-20 opacity-10 ${
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : 'bg-gray-900'
+              } rounded-full -translate-y-10 translate-x-10`} />
             </Card>
           )
         })}

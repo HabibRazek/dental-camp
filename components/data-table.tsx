@@ -89,41 +89,41 @@ const getStatusColor = (status: string) => {
 export function DataTable() {
   return (
     <div className="px-4 lg:px-6">
-      <Card className="border-0 shadow-lg bg-white">
-        <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-          <CardTitle className="text-xl font-bold text-white">Recent Orders</CardTitle>
-          <CardDescription className="text-blue-100">
+      <Card className="border border-gray-200 shadow-sm bg-white">
+        <CardHeader className="border-b border-gray-100 bg-white">
+          <CardTitle className="text-xl font-semibold text-gray-900 tracking-tight">Recent Orders</CardTitle>
+          <CardDescription className="text-gray-600">
             Latest orders from dental professionals
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="bg-blue-50 hover:bg-blue-50">
-                <TableHead className="font-semibold text-blue-900">Customer</TableHead>
-                <TableHead className="font-semibold text-blue-900">Product</TableHead>
-                <TableHead className="font-semibold text-blue-900">Order Date</TableHead>
-                <TableHead className="font-semibold text-blue-900">Status</TableHead>
-                <TableHead className="text-right font-semibold text-blue-900">Amount</TableHead>
+              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50 border-b border-gray-100">
+                <TableHead className="font-semibold text-gray-700 py-4">Customer</TableHead>
+                <TableHead className="font-semibold text-gray-700">Product</TableHead>
+                <TableHead className="font-semibold text-gray-700">Order Date</TableHead>
+                <TableHead className="font-semibold text-gray-700">Status</TableHead>
+                <TableHead className="text-right font-semibold text-gray-700">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {recentOrders.map((order, index) => (
                 <TableRow
                   key={order.id}
-                  className="hover:bg-blue-50/50 transition-colors duration-200 border-b border-blue-100"
+                  className="hover:bg-gray-50/50 transition-colors duration-200 border-b border-gray-100/50"
                 >
                   <TableCell className="font-medium py-4">
                     <div className="flex items-center space-x-3">
-                      <Avatar className="h-10 w-10 ring-2 ring-blue-100">
+                      <Avatar className="h-10 w-10 ring-2 ring-gray-100">
                         <AvatarImage src={order.avatar} alt={order.customerName} />
-                        <AvatarFallback className="bg-blue-100 text-blue-700 font-semibold">
+                        <AvatarFallback className="bg-gray-100 text-gray-700 font-semibold text-sm">
                           {order.customerName.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-semibold text-gray-900">{order.customerName}</div>
-                        <div className="text-sm text-blue-600">
+                        <div className="text-sm text-gray-500">
                           {order.email}
                         </div>
                       </div>
@@ -138,16 +138,16 @@ export function DataTable() {
                       variant={getStatusColor(order.status)}
                       className={`font-medium ${
                         order.status === 'Delivered'
-                          ? 'bg-green-100 text-green-700 border-green-200'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : order.status === 'Shipped'
-                            ? 'bg-blue-100 text-blue-700 border-blue-200'
-                            : 'bg-orange-100 text-orange-700 border-orange-200'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
                       }`}
                     >
                       {order.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-blue-700 text-lg">
+                  <TableCell className="text-right font-bold text-gray-900 text-lg">
                     {order.amount}
                   </TableCell>
                 </TableRow>

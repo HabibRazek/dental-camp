@@ -152,17 +152,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } : data.user
 
   return (
-    <Sidebar collapsible="offcanvas" {...props} className="border-r border-blue-100">
-      <SidebarHeader className="bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+    <Sidebar collapsible="offcanvas" {...props} className="border-r border-gray-200">
+      <SidebarHeader className="bg-white border-b border-gray-100">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-white/10 text-white"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-gray-50"
             >
               <a href="/dashboard">
-                <Heart className="h-5 w-5 text-white" />
-                <span className="text-base font-bold text-white">Dental Camp</span>
+                <Heart className="h-5 w-5 text-gray-700" />
+                <span className="text-base font-bold text-gray-900">Dental Camp</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

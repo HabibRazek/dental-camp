@@ -18,20 +18,20 @@ import {
 
 export function SiteHeader() {
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-white border-b border-blue-100 shadow-sm">
+    <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 bg-white border-b border-gray-200">
       <div className="flex items-center gap-2 px-4">
-        <SidebarTrigger className="-ml-1 text-blue-600 hover:bg-blue-50" />
-        <Separator orientation="vertical" className="mr-2 h-4 bg-blue-200" />
+        <SidebarTrigger className="-ml-1 text-gray-600 hover:bg-gray-50" />
+        <Separator orientation="vertical" className="mr-2 h-4 bg-gray-200" />
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="/dashboard" className="text-blue-600 hover:text-blue-700">
+              <BreadcrumbLink href="/dashboard" className="text-gray-600 hover:text-gray-900">
                 Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block text-blue-400" />
+            <BreadcrumbSeparator className="hidden md:block text-gray-400" />
             <BreadcrumbItem>
-              <BreadcrumbPage className="text-blue-800 font-semibold">Overview</BreadcrumbPage>
+              <BreadcrumbPage className="text-gray-900 font-semibold">Overview</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -39,20 +39,20 @@ export function SiteHeader() {
 
       <div className="ml-auto flex items-center gap-2 px-4">
         <div className="relative hidden md:block">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-blue-400" />
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
           <Input
             type="search"
             placeholder="Search products, orders, customers..."
-            className="w-[300px] pl-8 border-blue-200 focus:border-blue-400 focus:ring-blue-400"
+            className="w-[300px] pl-8 border-gray-200 focus:border-gray-400 focus:ring-gray-400/20"
           />
         </div>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-50">
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:bg-gray-50">
           <MessageSquare className="h-4 w-4" />
           <span className="sr-only">Messages</span>
         </Button>
 
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:bg-blue-50">
+        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-600 hover:bg-gray-50">
           <Bell className="h-4 w-4" />
           <span className="sr-only">Notifications</span>
         </Button>
