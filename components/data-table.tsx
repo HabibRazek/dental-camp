@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { formatDate } from "@/lib/utils"
 
 // Sample patient data
 const recentPatients = [
@@ -127,7 +128,7 @@ export function DataTable() {
                   </TableCell>
                   <TableCell>{patient.treatment}</TableCell>
                   <TableCell>
-                    {new Date(patient.lastVisit).toLocaleDateString()}
+                    {formatDate(patient.lastVisit)}
                   </TableCell>
                   <TableCell>
                     <Badge variant={getStatusColor(patient.status)}>

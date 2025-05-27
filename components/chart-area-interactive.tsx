@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { formatDate } from "@/lib/utils"
 
 // Sample dental clinic data
 const chartData = [
@@ -100,7 +101,7 @@ export function ChartAreaInteractive() {
                   <div
                     className="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t-sm transition-all duration-300 hover:from-blue-600 hover:to-blue-400"
                     style={{ height: `${height}px` }}
-                    title={`${new Date(item.date).toLocaleDateString()}: ${value}`}
+                    title={`${formatDate(item.date)}: ${value}`}
                   />
                   <span className="text-xs text-muted-foreground">
                     {new Date(item.date).getDate()}
