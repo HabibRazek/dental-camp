@@ -66,13 +66,24 @@ export function ChartAreaInteractive() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
-          <p className="font-medium">{formatDate(label)}</p>
-          {payload.map((entry: any, index: number) => (
-            <p key={index} style={{ color: entry.color }} className="text-sm">
-              {entry.name}: {entry.name === 'Revenue' ? formatCurrency(entry.value) : entry.value}
-            </p>
-          ))}
+        <div className="bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-2xl p-4 shadow-2xl ring-1 ring-black/5">
+          <p className="font-bold text-gray-900 mb-3 text-sm">{formatDate(label)}</p>
+          <div className="space-y-2">
+            {payload.map((entry: any, index: number) => (
+              <div key={index} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-3 h-3 rounded-full shadow-sm"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-sm font-medium text-gray-700">{entry.name}</span>
+                </div>
+                <span className="font-bold text-gray-900 text-sm">
+                  {entry.name === 'Revenue' ? formatCurrency(entry.value) : entry.value.toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       )
     }
@@ -80,35 +91,41 @@ export function ChartAreaInteractive() {
   }
 
   return (
-    <Card className="@container/card border border-gray-200 shadow-sm bg-white">
-      <CardHeader className="relative border-b border-gray-100 bg-white">
-        <CardTitle className="text-xl font-semibold text-gray-900 tracking-tight">Sales Performance</CardTitle>
-        <CardDescription className="text-gray-600">
-          <span className="@[540px]/card:block hidden">
-            Track your e-commerce metrics and sales trends over time
-          </span>
-          <span className="@[540px]/card:hidden">Sales metrics</span>
-        </CardDescription>
+    <Card className="@container/card border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
+      <CardHeader className="relative border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
+        <div className="flex flex-col space-y-2">
+          <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+            <div className="w-2 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full"></div>
+            Sales Performance
+          </CardTitle>
+          <CardDescription className="text-gray-600 font-medium">
+            <span className="@[540px]/card:block hidden">
+              Real-time analytics and performance insights for your dental e-commerce platform
+            </span>
+            <span className="@[540px]/card:hidden">Sales analytics dashboard</span>
+          </CardDescription>
+        </div>
+
         <div className="absolute right-6 top-6 flex gap-3">
           <Select value={viewType} onValueChange={setViewType}>
-            <SelectTrigger className="w-32 border-gray-200 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-blue-500/20">
+            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="overview">Overview</SelectItem>
-              <SelectItem value="revenue">Revenue</SelectItem>
-              <SelectItem value="orders">Orders</SelectItem>
+            <SelectContent className="border-gray-200/50 bg-white/95 backdrop-blur-md">
+              <SelectItem value="overview" className="hover:bg-indigo-50">📊 Overview</SelectItem>
+              <SelectItem value="revenue" className="hover:bg-green-50">💰 Revenue</SelectItem>
+              <SelectItem value="orders" className="hover:bg-blue-50">📦 Orders</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-32 border-gray-200 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-blue-500/20">
+            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="15d">Last 15 days</SelectItem>
-              <SelectItem value="7d">Last 7 days</SelectItem>
-              <SelectItem value="30d">Last 30 days</SelectItem>
+            <SelectContent className="border-gray-200/50 bg-white/95 backdrop-blur-md">
+              <SelectItem value="15d" className="hover:bg-gray-50">📅 Last 15 days</SelectItem>
+              <SelectItem value="7d" className="hover:bg-gray-50">🗓️ Last 7 days</SelectItem>
+              <SelectItem value="30d" className="hover:bg-gray-50">📆 Last 30 days</SelectItem>
             </SelectContent>
           </Select>
         </div>

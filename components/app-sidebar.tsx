@@ -152,17 +152,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   } : data.user
 
   return (
-    <Sidebar collapsible="offcanvas" {...props} className="border-r border-gray-200">
-      <SidebarHeader className="bg-white border-b border-gray-100">
+    <Sidebar collapsible="offcanvas" {...props} className="border-r border-gray-200/50 bg-gradient-to-b from-white to-gray-50/30">
+      <SidebarHeader className="bg-gradient-to-r from-white to-gray-50/50 border-b border-gray-100/50 p-6">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5 hover:bg-gray-50"
+              className="data-[slot=sidebar-menu-button]:!p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 rounded-xl group"
             >
-              <a href="/dashboard">
-                <Heart className="h-5 w-5 text-gray-700" />
-                <span className="text-base font-bold text-gray-900">Dental Camp</span>
+              <a href="/dashboard" className="flex items-center gap-3">
+                <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110">
+                  <Heart className="h-6 w-6 text-white" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xl font-black text-gray-900 tracking-tight">Dental Camp</span>
+                  <span className="text-xs text-gray-500 font-medium">E-commerce Platform</span>
+                </div>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

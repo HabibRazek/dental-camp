@@ -1,10 +1,11 @@
 "use client"
 
-import { Plus, Mail, type LucideIcon } from "lucide-react"
+import { Plus, Mail, Bell, type LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -20,39 +21,78 @@ export function NavMain({
   }[]
 }) {
   return (
-    <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-        <SidebarMenu>
-          <SidebarMenuItem className="flex items-center gap-2">
-            <SidebarMenuButton
-              tooltip="New Order"
-              className="min-w-8 bg-gradient-to-r from-slate-800 to-slate-900 text-white duration-200 ease-linear hover:from-slate-900 hover:to-black shadow-lg"
-            >
-              <Plus />
-              <span>New Order</span>
-            </SidebarMenuButton>
-            <Button
-              size="icon"
-              className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0 border-gray-200 text-gray-600 hover:bg-gray-50"
-              variant="outline"
-            >
-              <Mail />
-              <span className="sr-only">Messages</span>
-            </Button>
-          </SidebarMenuItem>
-        </SidebarMenu>
-        <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title} asChild className="hover:bg-gray-50 hover:text-gray-900 transition-colors">
-                <a href={item.url}>
-                  {item.icon && <item.icon className="text-gray-600" />}
-                  <span className="font-medium">{item.title}</span>
-                </a>
+    <SidebarGroup className="px-4">
+      <SidebarGroupContent className="flex flex-col gap-4">
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip="Create New Order"
+                className="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-700 text-white duration-300 ease-out hover:from-indigo-700 hover:via-purple-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold"
+              >
+                <Plus className="h-5 w-5" />
+                <span>New Order</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+          </SidebarMenu>
+
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="flex-1 border-gray-200/50 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 rounded-lg"
+              variant="outline"
+            >
+              <Mail className="h-4 w-4" />
+              <span className="hidden sm:inline">Messages</span>
+            </Button>
+            <Button
+              size="sm"
+              className="flex-1 border-gray-200/50 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:text-emerald-700 transition-all duration-300 rounded-lg"
+              variant="outline"
+            >
+              <Bell className="h-4 w-4" />
+              <span className="hidden sm:inline">Alerts</span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Navigation Menu */}
+        <div className="space-y-2">
+          <SidebarGroupLabel className="text-xs font-bold text-gray-500 uppercase tracking-wider px-2">
+            Navigation
+          </SidebarGroupLabel>
+          <SidebarMenu className="space-y-1">
+            {items.map((item, index) => {
+              const isActive = false // You can implement active state logic here
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    asChild
+                    className={`group relative overflow-hidden rounded-xl transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-md ${
+                      isActive ? 'bg-gradient-to-r from-blue-100 to-indigo-100 shadow-sm' : ''
+                    }`}
+                  >
+                    <a href={item.url} className="flex items-center gap-3 p-3">
+                      {item.icon && (
+                        <div className="p-1.5 rounded-lg bg-gray-100 group-hover:bg-white transition-all duration-300 group-hover:shadow-sm">
+                          <item.icon className="h-4 w-4 text-gray-600 group-hover:text-blue-600 transition-colors duration-300" />
+                        </div>
+                      )}
+                      <span className="font-semibold text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                        {item.title}
+                      </span>
+
+                      {/* Hover indicator */}
+                      <div className="absolute right-2 w-1 h-6 bg-gradient-to-b from-blue-500 to-indigo-600 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0" />
+                    </a>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
+          </SidebarMenu>
+        </div>
       </SidebarGroupContent>
     </SidebarGroup>
   )

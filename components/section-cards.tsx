@@ -90,75 +90,102 @@ const stats = [
 export function SectionCards() {
   return (
     <div className="px-4 lg:px-6">
+      {/* Header Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Performance Overview</h2>
+        <p className="text-gray-600">Real-time insights into your dental e-commerce platform</p>
+      </div>
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat, index) => {
           const Icon = stat.icon
-          const isPrimary = index === 0 // Only first card gets special styling
-          const isSecondary = index === 1 // Second card gets different styling
+          const isPrimary = index === 0
+          const isSecondary = index === 1
+          const isTertiary = index === 2
 
           return (
             <Card
               key={stat.title}
-              className={`relative overflow-hidden border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+              className={`group relative overflow-hidden border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer ${
                 isPrimary
-                  ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white border-slate-700 shadow-xl'
+                  ? 'bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-white border-transparent shadow-xl hover:shadow-indigo-500/25'
                   : isSecondary
-                    ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-blue-500 shadow-lg'
-                    : 'bg-white border-gray-200 hover:border-gray-300 shadow-sm'
+                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-transparent shadow-lg hover:shadow-emerald-500/25'
+                    : isTertiary
+                      ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white border-transparent shadow-lg hover:shadow-orange-500/25'
+                      : 'bg-white/80 backdrop-blur-sm border-gray-200/50 hover:border-gray-300 shadow-sm hover:bg-white'
               }`}
             >
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                <CardTitle className={`text-sm font-medium tracking-wide ${
-                  isPrimary ? 'text-slate-300' : isSecondary ? 'text-blue-100' : 'text-gray-600'
+              {/* Animated background pattern */}
+              <div className={`absolute inset-0 opacity-10 ${
+                isPrimary ? 'bg-gradient-to-r from-white/20 to-transparent' :
+                isSecondary ? 'bg-gradient-to-r from-white/20 to-transparent' :
+                isTertiary ? 'bg-gradient-to-r from-white/20 to-transparent' :
+                'bg-gradient-to-r from-gray-50 to-transparent'
+              } group-hover:opacity-20 transition-opacity duration-500`} />
+
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 relative z-10">
+                <CardTitle className={`text-sm font-semibold tracking-wide uppercase ${
+                  isPrimary || isSecondary || isTertiary ? 'text-white/90' : 'text-gray-600'
                 }`}>
                   {stat.title}
                 </CardTitle>
-                <div className={`p-2.5 rounded-xl ${
+                <div className={`p-3 rounded-2xl transition-all duration-300 group-hover:scale-110 ${
                   isPrimary
-                    ? 'bg-white/10 backdrop-blur-sm'
-                    : isSecondary
-                      ? 'bg-white/15 backdrop-blur-sm'
-                      : 'bg-gray-50 border border-gray-100'
+                    ? 'bg-white/20 backdrop-blur-sm shadow-lg'
+                    : isSecondary || isTertiary
+                      ? 'bg-white/20 backdrop-blur-sm shadow-lg'
+                      : 'bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm'
                 }`}>
-                  <Icon className={`h-5 w-5 ${
-                    isPrimary ? 'text-white' : isSecondary ? 'text-white' : 'text-gray-700'
+                  <Icon className={`h-6 w-6 transition-all duration-300 ${
+                    isPrimary || isSecondary || isTertiary ? 'text-white drop-shadow-sm' : 'text-gray-700'
                   }`} />
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className={`text-3xl font-bold mb-3 tracking-tight ${
-                  isPrimary ? 'text-white' : isSecondary ? 'text-white' : 'text-gray-900'
+
+              <CardContent className="relative z-10">
+                <div className={`text-4xl font-black mb-4 tracking-tight transition-all duration-300 group-hover:scale-105 ${
+                  isPrimary || isSecondary || isTertiary ? 'text-white drop-shadow-sm' : 'text-gray-900'
                 }`}>
                   {stat.value}
                 </div>
-                <div className="flex items-center space-x-2 text-sm">
+
+                <div className="flex items-center justify-between">
                   <Badge
                     variant={stat.changeType === "positive" ? "default" : "destructive"}
-                    className={`text-xs font-medium px-2 py-1 ${
+                    className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all duration-300 group-hover:scale-105 ${
                       isPrimary
-                        ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/30'
-                        : isSecondary
-                          ? 'bg-white/20 text-white border-white/30'
+                        ? 'bg-white/25 text-white border-white/30 shadow-lg backdrop-blur-sm'
+                        : isSecondary || isTertiary
+                          ? 'bg-white/25 text-white border-white/30 shadow-lg backdrop-blur-sm'
                           : stat.changeType === "positive"
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-200 shadow-sm'
                             : stat.changeType === "warning"
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-red-50 text-red-700 border-red-200'
+                              ? 'bg-amber-100 text-amber-800 border-amber-200 shadow-sm'
+                              : 'bg-red-100 text-red-800 border-red-200 shadow-sm'
                     }`}
                   >
                     {stat.change}
                   </Badge>
-                  <span className={`text-xs ${
-                    isPrimary ? 'text-slate-400' : isSecondary ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {stat.description}
-                  </span>
                 </div>
+
+                <p className={`text-xs mt-3 font-medium ${
+                  isPrimary || isSecondary || isTertiary ? 'text-white/80' : 'text-gray-500'
+                }`}>
+                  {stat.description}
+                </p>
               </CardContent>
-              {/* Subtle decorative element */}
-              <div className={`absolute top-0 right-0 w-20 h-20 opacity-10 ${
-                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : 'bg-gray-900'
-              } rounded-full -translate-y-10 translate-x-10`} />
+
+              {/* Animated shine effect */}
+              <div className="absolute inset-0 -top-2 -bottom-2 bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+
+              {/* Floating particles effect */}
+              <div className={`absolute top-4 right-4 w-2 h-2 rounded-full opacity-60 ${
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-gray-400'
+              } animate-pulse`} />
+              <div className={`absolute top-8 right-8 w-1 h-1 rounded-full opacity-40 ${
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-gray-400'
+              } animate-pulse delay-300`} />
             </Card>
           )
         })}
