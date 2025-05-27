@@ -108,12 +108,12 @@ export function SectionCards() {
               key={stat.title}
               className={`group relative overflow-hidden border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer ${
                 isPrimary
-                  ? 'bg-gradient-to-br from-[#0E185F] via-[#2FA4FF] to-[#0E185F] text-white border-transparent shadow-xl hover:shadow-[#2FA4FF]/25'
+                  ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white border-transparent shadow-xl hover:shadow-blue-500/25'
                   : isSecondary
-                    ? 'bg-gradient-to-br from-[#2FA4FF] to-[#00FFDD] text-white border-transparent shadow-lg hover:shadow-[#00FFDD]/25'
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-transparent shadow-lg hover:shadow-blue-500/25'
                     : isTertiary
-                      ? 'bg-gradient-to-br from-[#00FFDD] to-[#E8FFC2] text-[#0E185F] border-transparent shadow-lg hover:shadow-[#00FFDD]/25'
-                      : 'bg-white/80 backdrop-blur-sm border-[#2FA4FF]/20 hover:border-[#2FA4FF]/40 shadow-sm hover:bg-[#E8FFC2]/20'
+                      ? 'bg-gradient-to-br from-blue-400 to-blue-500 text-white border-transparent shadow-lg hover:shadow-blue-400/25'
+                      : 'bg-white border-blue-200 hover:border-blue-300 shadow-sm hover:bg-blue-50'
               }`}
             >
               {/* Animated background pattern */}
@@ -126,7 +126,7 @@ export function SectionCards() {
 
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 relative z-10">
                 <CardTitle className={`text-sm font-semibold tracking-wide uppercase ${
-                  isPrimary || isSecondary || isTertiary ? 'text-white/90' : 'text-gray-600'
+                  isPrimary || isSecondary || isTertiary ? 'text-white/90' : 'text-blue-700'
                 }`}>
                   {stat.title}
                 </CardTitle>
@@ -135,10 +135,10 @@ export function SectionCards() {
                     ? 'bg-white/20 backdrop-blur-sm shadow-lg'
                     : isSecondary || isTertiary
                       ? 'bg-white/20 backdrop-blur-sm shadow-lg'
-                      : 'bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 shadow-sm'
+                      : 'bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 shadow-sm'
                 }`}>
                   <Icon className={`h-6 w-6 transition-all duration-300 ${
-                    isPrimary || isSecondary || isTertiary ? 'text-white drop-shadow-sm' : 'text-gray-700'
+                    isPrimary || isSecondary || isTertiary ? 'text-white drop-shadow-sm' : 'text-blue-600'
                   }`} />
                 </div>
               </CardHeader>
@@ -159,10 +159,10 @@ export function SectionCards() {
                         : isSecondary || isTertiary
                           ? 'bg-white/25 text-white border-white/30 shadow-lg backdrop-blur-sm'
                           : stat.changeType === "positive"
-                            ? 'bg-[#E8FFC2]/80 text-[#0E185F] border-[#00FFDD]/30 shadow-sm'
+                            ? 'bg-blue-100 text-blue-800 border-blue-200 shadow-sm'
                             : stat.changeType === "warning"
-                              ? 'bg-[#2FA4FF]/20 text-[#0E185F] border-[#2FA4FF]/30 shadow-sm'
-                              : 'bg-[#E8FFC2]/80 text-[#0E185F] border-[#00FFDD]/30 shadow-sm'
+                              ? 'bg-blue-50 text-blue-700 border-blue-200 shadow-sm'
+                              : 'bg-blue-100 text-blue-800 border-blue-200 shadow-sm'
                     }`}
                   >
                     {stat.change}
@@ -170,7 +170,7 @@ export function SectionCards() {
                 </div>
 
                 <p className={`text-xs mt-3 font-medium ${
-                  isPrimary || isSecondary || isTertiary ? 'text-white/80' : 'text-gray-500'
+                  isPrimary || isSecondary || isTertiary ? 'text-white/80' : 'text-blue-600'
                 }`}>
                   {stat.description}
                 </p>
@@ -181,10 +181,10 @@ export function SectionCards() {
 
               {/* Floating particles effect */}
               <div className={`absolute top-4 right-4 w-2 h-2 rounded-full opacity-60 ${
-                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-[#0E185F]' : 'bg-[#2FA4FF]'
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-blue-400'
               } animate-pulse`} />
               <div className={`absolute top-8 right-8 w-1 h-1 rounded-full opacity-40 ${
-                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-[#0E185F]' : 'bg-[#2FA4FF]'
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-blue-400'
               } animate-pulse delay-300`} />
             </Card>
           )
