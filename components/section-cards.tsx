@@ -14,7 +14,6 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -89,7 +88,7 @@ const stats = [
 
 export function SectionCards() {
   return (
-    <div className="px-4 lg:px-6">
+    <div className="px-4 mt-[-30px] lg:px-6">
       {/* Header Section */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Performance Overview</h2>
