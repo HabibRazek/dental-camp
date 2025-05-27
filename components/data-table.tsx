@@ -19,67 +19,67 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { formatDate } from "@/lib/utils"
 
-// Sample patient data
-const recentPatients = [
+// Sample order data
+const recentOrders = [
   {
-    id: "1",
-    name: "Alice Johnson",
-    email: "alice.johnson@email.com",
+    id: "ORD-001",
+    customerName: "Dr. Alice Johnson",
+    email: "alice.johnson@dentalclinic.com",
     avatar: "",
-    lastVisit: "2024-01-15",
-    treatment: "Dental Cleaning",
-    status: "Completed",
-    amount: "$120",
+    orderDate: "2024-01-15",
+    product: "Digital X-Ray Sensor",
+    status: "Delivered",
+    amount: "$3,200",
   },
   {
-    id: "2",
-    name: "Bob Smith",
-    email: "bob.smith@email.com",
+    id: "ORD-002",
+    customerName: "Dr. Bob Smith",
+    email: "bob.smith@oralcare.com",
     avatar: "",
-    lastVisit: "2024-01-14",
-    treatment: "Root Canal",
-    status: "In Progress",
-    amount: "$850",
+    orderDate: "2024-01-14",
+    product: "Dental Handpiece Set",
+    status: "Shipped",
+    amount: "$1,850",
   },
   {
-    id: "3",
-    name: "Carol Davis",
-    email: "carol.davis@email.com",
+    id: "ORD-003",
+    customerName: "Dr. Carol Davis",
+    email: "carol.davis@familydental.com",
     avatar: "",
-    lastVisit: "2024-01-13",
-    treatment: "Teeth Whitening",
-    status: "Scheduled",
-    amount: "$300",
+    orderDate: "2024-01-13",
+    product: "LED Curing Light",
+    status: "Pending",
+    amount: "$680",
   },
   {
-    id: "4",
-    name: "David Wilson",
-    email: "david.wilson@email.com",
+    id: "ORD-004",
+    customerName: "Dr. David Wilson",
+    email: "david.wilson@orthodontics.com",
     avatar: "",
-    lastVisit: "2024-01-12",
-    treatment: "Dental Implant",
-    status: "Completed",
-    amount: "$2,500",
+    orderDate: "2024-01-12",
+    product: "Dental Chair Unit",
+    status: "Delivered",
+    amount: "$12,500",
   },
   {
-    id: "5",
-    name: "Eva Brown",
-    email: "eva.brown@email.com",
+    id: "ORD-005",
+    customerName: "Dr. Eva Brown",
+    email: "eva.brown@pediatricdental.com",
     avatar: "",
-    lastVisit: "2024-01-11",
-    treatment: "Orthodontic Consultation",
-    status: "Scheduled",
-    amount: "$150",
+    orderDate: "2024-01-11",
+    product: "Sterilization Equipment",
+    status: "Shipped",
+    amount: "$2,150",
   },
 ]
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "Completed":
+    case "Delivered":
       return "default"
-    case "In Progress":
+    case "Shipped":
       return "secondary"
-    case "Scheduled":
+    case "Pending":
       return "outline"
     default:
       return "outline"
@@ -91,52 +91,52 @@ export function DataTable() {
     <div className="px-4 lg:px-6">
       <Card>
         <CardHeader>
-          <CardTitle>Recent Patients</CardTitle>
+          <CardTitle>Recent Orders</CardTitle>
           <CardDescription>
-            Latest patient visits and treatment information
+            Latest orders from dental professionals
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Patient</TableHead>
-                <TableHead>Treatment</TableHead>
-                <TableHead>Last Visit</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Product</TableHead>
+                <TableHead>Order Date</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recentPatients.map((patient) => (
-                <TableRow key={patient.id}>
+              {recentOrders.map((order) => (
+                <TableRow key={order.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-3">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={patient.avatar} alt={patient.name} />
+                        <AvatarImage src={order.avatar} alt={order.customerName} />
                         <AvatarFallback>
-                          {patient.name.split(' ').map(n => n[0]).join('')}
+                          {order.customerName.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <div className="font-medium">{patient.name}</div>
+                        <div className="font-medium">{order.customerName}</div>
                         <div className="text-sm text-muted-foreground">
-                          {patient.email}
+                          {order.email}
                         </div>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{patient.treatment}</TableCell>
+                  <TableCell>{order.product}</TableCell>
                   <TableCell>
-                    {formatDate(patient.lastVisit)}
+                    {formatDate(order.orderDate)}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusColor(patient.status)}>
-                      {patient.status}
+                    <Badge variant={getStatusColor(order.status)}>
+                      {order.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right font-medium">
-                    {patient.amount}
+                    {order.amount}
                   </TableCell>
                 </TableRow>
               ))}

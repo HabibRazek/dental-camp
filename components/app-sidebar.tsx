@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSession } from "next-auth/react"
 import {
-  Calendar,
+  ShoppingCart,
   BarChart3,
   ClipboardList,
   Settings,
@@ -12,7 +12,9 @@ import {
   Shield,
   UserCheck,
   Users,
-  Wrench,
+  Package,
+  Store,
+  Boxes,
   type LucideIcon,
 } from "lucide-react"
 
@@ -43,19 +45,19 @@ const data = {
       icon: Home,
     },
     {
-      title: "Patients",
-      url: "/patients",
+      title: "Customers",
+      url: "/customers",
       icon: Users,
     },
     {
-      title: "Appointments",
-      url: "/appointments",
-      icon: Calendar,
+      title: "Orders",
+      url: "/orders",
+      icon: ShoppingCart,
     },
     {
-      title: "Treatments",
-      url: "/treatments",
-      icon: Heart,
+      title: "Products",
+      url: "/products",
+      icon: Package,
     },
     {
       title: "Analytics",
@@ -70,41 +72,41 @@ const data = {
   ],
   navClouds: [
     {
-      title: "Equipment",
-      icon: Wrench,
+      title: "Product Catalog",
+      icon: Store,
       isActive: true,
-      url: "/equipment",
+      url: "/catalog",
       items: [
         {
-          title: "Dental Chairs",
-          url: "/equipment/chairs",
+          title: "Dental Equipment",
+          url: "/catalog/equipment",
         },
         {
-          title: "X-Ray Machines",
-          url: "/equipment/xray",
+          title: "Instruments",
+          url: "/catalog/instruments",
         },
         {
-          title: "Sterilizers",
-          url: "/equipment/sterilizers",
+          title: "Consumables",
+          url: "/catalog/consumables",
         },
       ],
     },
     {
-      title: "Inventory",
-      icon: ClipboardList,
+      title: "Inventory Management",
+      icon: Boxes,
       url: "/inventory",
       items: [
         {
-          title: "Supplies",
-          url: "/inventory/supplies",
+          title: "Stock Levels",
+          url: "/inventory/stock",
         },
         {
-          title: "Medications",
-          url: "/inventory/medications",
+          title: "Suppliers",
+          url: "/inventory/suppliers",
         },
         {
-          title: "Tools",
-          url: "/inventory/tools",
+          title: "Procurement",
+          url: "/inventory/procurement",
         },
       ],
     },
@@ -123,18 +125,18 @@ const data = {
   ],
   documents: [
     {
-      name: "Patient Records",
-      url: "/records",
+      name: "Order Reports",
+      url: "/reports/orders",
       icon: ClipboardList,
     },
     {
-      name: "Treatment Plans",
-      url: "/plans",
-      icon: Heart,
+      name: "Product Catalogs",
+      url: "/catalogs",
+      icon: Package,
     },
     {
-      name: "Reports",
-      url: "/reports",
+      name: "Sales Analytics",
+      url: "/reports/sales",
       icon: BarChart3,
     },
   ],

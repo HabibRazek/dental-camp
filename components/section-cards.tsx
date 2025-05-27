@@ -1,14 +1,14 @@
 "use client"
 
-import { 
-  Users, 
-  Calendar, 
-  DollarSign, 
+import {
+  Users,
+  ShoppingCart,
+  DollarSign,
   TrendingUp,
-  Heart,
-  Clock,
-  UserCheck,
-  AlertTriangle
+  Package,
+  Star,
+  Boxes,
+  RotateCcw
 } from "lucide-react"
 
 import {
@@ -22,68 +22,68 @@ import { Badge } from "@/components/ui/badge"
 
 const stats = [
   {
-    title: "Total Patients",
-    value: "2,847",
-    change: "+12.5%",
+    title: "Total Products Sold",
+    value: "12,847",
+    change: "+18.5%",
     changeType: "positive" as const,
-    icon: Users,
-    description: "Active patients this month",
+    icon: Package,
+    description: "Products sold this month",
   },
   {
-    title: "Today's Appointments",
-    value: "24",
-    change: "+3",
+    title: "Active Orders",
+    value: "156",
+    change: "+23",
     changeType: "positive" as const,
-    icon: Calendar,
-    description: "Scheduled for today",
+    icon: ShoppingCart,
+    description: "Orders being processed",
   },
   {
     title: "Monthly Revenue",
-    value: "$45,231",
-    change: "+8.2%",
+    value: "$284,231",
+    change: "+12.8%",
     changeType: "positive" as const,
     icon: DollarSign,
     description: "Revenue this month",
   },
   {
-    title: "Treatment Success Rate",
-    value: "94.2%",
-    change: "+2.1%",
+    title: "Customer Satisfaction",
+    value: "4.8/5",
+    change: "+0.2",
     changeType: "positive" as const,
-    icon: Heart,
-    description: "Patient satisfaction",
+    icon: Star,
+    description: "Average customer rating",
   },
   {
-    title: "Average Wait Time",
-    value: "12 min",
-    change: "-3 min",
-    changeType: "positive" as const,
-    icon: Clock,
-    description: "Reduced from last month",
-  },
-  {
-    title: "Staff Utilization",
-    value: "87%",
-    change: "+5%",
-    changeType: "positive" as const,
-    icon: UserCheck,
-    description: "Staff efficiency rate",
-  },
-  {
-    title: "Equipment Status",
-    value: "98%",
-    change: "2 alerts",
-    changeType: "warning" as const,
-    icon: AlertTriangle,
-    description: "Equipment operational",
-  },
-  {
-    title: "Growth Rate",
-    value: "+15.3%",
-    change: "vs last quarter",
+    title: "Average Order Value",
+    value: "$1,847",
+    change: "+$127",
     changeType: "positive" as const,
     icon: TrendingUp,
-    description: "Patient acquisition",
+    description: "Increased from last month",
+  },
+  {
+    title: "Total Customers",
+    value: "3,247",
+    change: "+8.3%",
+    changeType: "positive" as const,
+    icon: Users,
+    description: "Registered doctors",
+  },
+  {
+    title: "Inventory Status",
+    value: "94%",
+    change: "12 low stock",
+    changeType: "warning" as const,
+    icon: Boxes,
+    description: "Stock availability",
+  },
+  {
+    title: "Return Rate",
+    value: "2.1%",
+    change: "-0.3%",
+    changeType: "positive" as const,
+    icon: RotateCcw,
+    description: "Product returns",
   },
 ]
 
@@ -104,7 +104,7 @@ export function SectionCards() {
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
                 <div className="flex items-center space-x-2 text-xs text-muted-foreground">
-                  <Badge 
+                  <Badge
                     variant={stat.changeType === "positive" ? "default" : "destructive"}
                     className="text-xs"
                   >

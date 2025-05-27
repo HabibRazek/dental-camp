@@ -36,22 +36,22 @@ export function SiteHeader() {
           </BreadcrumbList>
         </Breadcrumb>
       </div>
-      
+
       <div className="ml-auto flex items-center gap-2 px-4">
         <div className="relative hidden md:block">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
-            placeholder="Search patients, appointments..."
+            placeholder="Search products, orders, customers..."
             className="w-[300px] pl-8"
           />
         </div>
-        
+
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <MessageSquare className="h-4 w-4" />
           <span className="sr-only">Messages</span>
         </Button>
-        
+
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Bell className="h-4 w-4" />
           <span className="sr-only">Notifications</span>

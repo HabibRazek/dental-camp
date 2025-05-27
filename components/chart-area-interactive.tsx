@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import {
   Card,
   CardContent,
@@ -17,28 +18,28 @@ import {
 } from "@/components/ui/select"
 import { formatDate } from "@/lib/utils"
 
-// Sample dental clinic data
+// Sample e-commerce data
 const chartData = [
-  { date: "2024-01-01", appointments: 45, revenue: 4500, patients: 38 },
-  { date: "2024-01-02", appointments: 52, revenue: 5200, patients: 42 },
-  { date: "2024-01-03", appointments: 48, revenue: 4800, patients: 40 },
-  { date: "2024-01-04", appointments: 61, revenue: 6100, patients: 51 },
-  { date: "2024-01-05", appointments: 55, revenue: 5500, patients: 47 },
-  { date: "2024-01-06", appointments: 67, revenue: 6700, patients: 58 },
-  { date: "2024-01-07", appointments: 43, revenue: 4300, patients: 36 },
-  { date: "2024-01-08", appointments: 58, revenue: 5800, patients: 49 },
-  { date: "2024-01-09", appointments: 64, revenue: 6400, patients: 55 },
-  { date: "2024-01-10", appointments: 59, revenue: 5900, patients: 51 },
-  { date: "2024-01-11", appointments: 72, revenue: 7200, patients: 63 },
-  { date: "2024-01-12", appointments: 68, revenue: 6800, patients: 59 },
-  { date: "2024-01-13", appointments: 71, revenue: 7100, patients: 62 },
-  { date: "2024-01-14", appointments: 65, revenue: 6500, patients: 56 },
-  { date: "2024-01-15", appointments: 78, revenue: 7800, patients: 68 },
+  { date: "2024-01-01", orders: 45, revenue: 18500, customers: 38, products: 127 },
+  { date: "2024-01-02", orders: 52, revenue: 21200, customers: 42, products: 145 },
+  { date: "2024-01-03", orders: 48, revenue: 19800, customers: 40, products: 132 },
+  { date: "2024-01-04", orders: 61, revenue: 25100, customers: 51, products: 168 },
+  { date: "2024-01-05", orders: 55, revenue: 22500, customers: 47, products: 151 },
+  { date: "2024-01-06", orders: 67, revenue: 27700, customers: 58, products: 184 },
+  { date: "2024-01-07", orders: 43, revenue: 17300, customers: 36, products: 118 },
+  { date: "2024-01-08", orders: 58, revenue: 23800, customers: 49, products: 159 },
+  { date: "2024-01-09", orders: 64, revenue: 26400, customers: 55, products: 176 },
+  { date: "2024-01-10", orders: 59, revenue: 24900, customers: 51, products: 162 },
+  { date: "2024-01-11", orders: 72, revenue: 29200, customers: 63, products: 198 },
+  { date: "2024-01-12", orders: 68, revenue: 28800, customers: 59, products: 187 },
+  { date: "2024-01-13", orders: 71, revenue: 31100, customers: 62, products: 195 },
+  { date: "2024-01-14", orders: 65, revenue: 26500, customers: 56, products: 179 },
+  { date: "2024-01-15", orders: 78, revenue: 32800, customers: 68, products: 214 },
 ]
 
 export function ChartAreaInteractive() {
   const [timeRange, setTimeRange] = React.useState("15d")
-  const [metric, setMetric] = React.useState("appointments")
+  const [viewType, setViewType] = React.useState("overview")
 
   const filteredData = chartData.filter((item) => {
     const date = new Date(item.date)
@@ -54,27 +55,49 @@ export function ChartAreaInteractive() {
     return date >= startDate
   })
 
-  const maxValue = Math.max(...filteredData.map(item => item[metric as keyof typeof item] as number))
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+    }).format(value)
+  }
+
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
+          <p className="font-medium">{formatDate(label)}</p>
+          {payload.map((entry: any, index: number) => (
+            <p key={index} style={{ color: entry.color }} className="text-sm">
+              {entry.name}: {entry.name === 'Revenue' ? formatCurrency(entry.value) : entry.value}
+            </p>
+          ))}
+        </div>
+      )
+    }
+    return null
+  }
 
   return (
     <Card className="@container/card">
       <CardHeader className="relative">
-        <CardTitle>Clinic Performance</CardTitle>
+        <CardTitle>Sales Performance</CardTitle>
         <CardDescription>
           <span className="@[540px]/card:block hidden">
-            Track your clinic's key metrics over time
+            Track your e-commerce metrics and sales trends
           </span>
-          <span className="@[540px]/card:hidden">Clinic metrics</span>
+          <span className="@[540px]/card:hidden">Sales metrics</span>
         </CardDescription>
         <div className="absolute right-4 top-4 flex gap-2">
-          <Select value={metric} onValueChange={setMetric}>
+          <Select value={viewType} onValueChange={setViewType}>
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="appointments">Appointments</SelectItem>
+              <SelectItem value="overview">Overview</SelectItem>
               <SelectItem value="revenue">Revenue</SelectItem>
-              <SelectItem value="patients">Patients</SelectItem>
+              <SelectItem value="orders">Orders</SelectItem>
             </SelectContent>
           </Select>
 
@@ -91,28 +114,83 @@ export function ChartAreaInteractive() {
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
-        <div className="h-[250px] w-full">
-          <div className="flex h-full items-end justify-between gap-1 px-4">
-            {filteredData.map((item, index) => {
-              const value = item[metric as keyof typeof item] as number
-              const height = (value / maxValue) * 200
-              return (
-                <div key={index} className="flex flex-col items-center gap-2">
-                  <div
-                    className="w-8 bg-gradient-to-t from-blue-500 to-blue-300 rounded-t-sm transition-all duration-300 hover:from-blue-600 hover:to-blue-400"
-                    style={{ height: `${height}px` }}
-                    title={`${formatDate(item.date)}: ${value}`}
+        <div className="h-[350px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={filteredData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
+                </linearGradient>
+                <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
+                </linearGradient>
+                <linearGradient id="colorCustomers" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0.1}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <XAxis
+                dataKey="date"
+                tickFormatter={(value) => new Date(value).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+                className="text-muted-foreground"
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Legend />
+
+              {viewType === "overview" && (
+                <>
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stackId="1"
+                    stroke="#3b82f6"
+                    fill="url(#colorRevenue)"
+                    name="Revenue"
                   />
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(item.date).getDate()}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            {metric.charAt(0).toUpperCase() + metric.slice(1)} over {timeRange}
-          </div>
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    stackId="2"
+                    stroke="#10b981"
+                    fill="url(#colorOrders)"
+                    name="Orders"
+                  />
+                </>
+              )}
+
+              {viewType === "revenue" && (
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#3b82f6"
+                  fill="url(#colorRevenue)"
+                  name="Revenue"
+                />
+              )}
+
+              {viewType === "orders" && (
+                <>
+                  <Area
+                    type="monotone"
+                    dataKey="orders"
+                    stroke="#10b981"
+                    fill="url(#colorOrders)"
+                    name="Orders"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="customers"
+                    stroke="#f59e0b"
+                    fill="url(#colorCustomers)"
+                    name="Customers"
+                  />
+                </>
+              )}
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </CardContent>
     </Card>
