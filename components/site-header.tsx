@@ -81,12 +81,12 @@ export function SiteHeader() {
           {/* User Profile */}
           <Button
             variant="ghost"
-            className="h-10 px-3 text-gray-600 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:text-purple-700 transition-all duration-300 rounded-xl font-medium"
+            className="h-10 px-3 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl font-medium"
           >
-            <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
-              DS
+            <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-blue-700 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
+              MB
             </div>
-            <span className="hidden sm:inline">Dr. Smith</span>
+            <span className="hidden sm:inline">Dr. Mourad Bayar</span>
           </Button>
         </div>
       </div>

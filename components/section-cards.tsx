@@ -108,12 +108,12 @@ export function SectionCards() {
               key={stat.title}
               className={`group relative overflow-hidden border transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 cursor-pointer ${
                 isPrimary
-                  ? 'bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 text-white border-transparent shadow-xl hover:shadow-indigo-500/25'
+                  ? 'bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white border-transparent shadow-xl hover:shadow-blue-500/25'
                   : isSecondary
-                    ? 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white border-transparent shadow-lg hover:shadow-emerald-500/25'
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white border-transparent shadow-lg hover:shadow-blue-500/25'
                     : isTertiary
-                      ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white border-transparent shadow-lg hover:shadow-orange-500/25'
-                      : 'bg-white/80 backdrop-blur-sm border-gray-200/50 hover:border-gray-300 shadow-sm hover:bg-white'
+                      ? 'bg-gradient-to-br from-blue-400 to-blue-500 text-white border-transparent shadow-lg hover:shadow-blue-400/25'
+                      : 'bg-white/80 backdrop-blur-sm border-blue-200/50 hover:border-blue-300 shadow-sm hover:bg-blue-50/50'
               }`}
             >
               {/* Animated background pattern */}
@@ -159,10 +159,10 @@ export function SectionCards() {
                         : isSecondary || isTertiary
                           ? 'bg-white/25 text-white border-white/30 shadow-lg backdrop-blur-sm'
                           : stat.changeType === "positive"
-                            ? 'bg-emerald-100 text-emerald-800 border-emerald-200 shadow-sm'
+                            ? 'bg-blue-100 text-blue-800 border-blue-200 shadow-sm'
                             : stat.changeType === "warning"
-                              ? 'bg-amber-100 text-amber-800 border-amber-200 shadow-sm'
-                              : 'bg-red-100 text-red-800 border-red-200 shadow-sm'
+                              ? 'bg-blue-100 text-blue-700 border-blue-200 shadow-sm'
+                              : 'bg-blue-100 text-blue-800 border-blue-200 shadow-sm'
                     }`}
                   >
                     {stat.change}
@@ -181,10 +181,10 @@ export function SectionCards() {
 
               {/* Floating particles effect */}
               <div className={`absolute top-4 right-4 w-2 h-2 rounded-full opacity-60 ${
-                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-gray-400'
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-blue-400'
               } animate-pulse`} />
               <div className={`absolute top-8 right-8 w-1 h-1 rounded-full opacity-40 ${
-                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-gray-400'
+                isPrimary ? 'bg-white' : isSecondary ? 'bg-white' : isTertiary ? 'bg-white' : 'bg-blue-400'
               } animate-pulse delay-300`} />
             </Card>
           )

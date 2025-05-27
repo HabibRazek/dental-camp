@@ -21,14 +21,14 @@ export default async function DashboardPage() {
         <AppSidebar variant="inset" />
         <SidebarInset>
           <SiteHeader />
-          <div className="flex flex-1 flex-col bg-gradient-to-br from-gray-50/50 via-white to-blue-50/30 min-h-screen">
+          <div className="flex flex-1 flex-col bg-gradient-to-br from-blue-50/30 via-white to-blue-100/20 min-h-screen">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-8 py-8 md:gap-10 md:py-10">
                 {/* Welcome Section */}
                 <div className="px-4 lg:px-6">
                   <div className="mb-8 text-center">
                     <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">
-                      Welcome back, <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Dr. Smith</span>! 👋
+                      Welcome back, <span className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">Dr. Mourad Bayar</span>! 👋
                     </h1>
                     <p className="text-lg text-gray-600 font-medium max-w-2xl mx-auto">
                       Your dental e-commerce platform is performing exceptionally well. Here&apos;s your latest business insights.

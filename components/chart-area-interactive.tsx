@@ -95,7 +95,7 @@ export function ChartAreaInteractive() {
       <CardHeader className="relative border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
         <div className="flex flex-col space-y-2">
           <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <div className="w-2 h-8 bg-gradient-to-b from-indigo-500 to-purple-600 rounded-full"></div>
+            <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-blue-700 rounded-full"></div>
             Sales Performance
           </CardTitle>
           <CardDescription className="text-gray-600 font-medium">
@@ -108,18 +108,18 @@ export function ChartAreaInteractive() {
 
         <div className="absolute right-6 top-6 flex gap-3">
           <Select value={viewType} onValueChange={setViewType}>
-            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
+            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 shadow-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="border-gray-200/50 bg-white/95 backdrop-blur-md">
-              <SelectItem value="overview" className="hover:bg-indigo-50">📊 Overview</SelectItem>
-              <SelectItem value="revenue" className="hover:bg-green-50">💰 Revenue</SelectItem>
+              <SelectItem value="overview" className="hover:bg-blue-50">📊 Overview</SelectItem>
+              <SelectItem value="revenue" className="hover:bg-blue-50">💰 Revenue</SelectItem>
               <SelectItem value="orders" className="hover:bg-blue-50">📦 Orders</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 shadow-sm">
+            <SelectTrigger className="w-36 border-gray-200/50 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 shadow-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="border-gray-200/50 bg-white/95 backdrop-blur-md">
@@ -136,16 +136,16 @@ export function ChartAreaInteractive() {
             <AreaChart data={filteredData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1e293b" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#1e293b" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#1d4ed8" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#1d4ed8" stopOpacity={0.1}/>
                 </linearGradient>
                 <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8}/>
                   <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.1}/>
                 </linearGradient>
                 <linearGradient id="colorCustomers" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#6b7280" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#6b7280" stopOpacity={0.1}/>
+                  <stop offset="5%" stopColor="#60a5fa" stopOpacity={0.8}/>
+                  <stop offset="95%" stopColor="#60a5fa" stopOpacity={0.1}/>
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -163,7 +163,7 @@ export function ChartAreaInteractive() {
                     type="monotone"
                     dataKey="revenue"
                     stackId="1"
-                    stroke="#1e293b"
+                    stroke="#1d4ed8"
                     fill="url(#colorRevenue)"
                     name="Revenue"
                   />
@@ -182,7 +182,7 @@ export function ChartAreaInteractive() {
                 <Area
                   type="monotone"
                   dataKey="revenue"
-                  stroke="#1e293b"
+                  stroke="#1d4ed8"
                   fill="url(#colorRevenue)"
                   name="Revenue"
                 />
@@ -200,7 +200,7 @@ export function ChartAreaInteractive() {
                   <Area
                     type="monotone"
                     dataKey="customers"
-                    stroke="#6b7280"
+                    stroke="#60a5fa"
                     fill="url(#colorCustomers)"
                     name="Customers"
                   />
