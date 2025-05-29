@@ -77,3 +77,78 @@ model Authenticator {
 
   @@id([userId, credentialID])
 }
+
+// Product Management Models
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  description String?
+  slug        String    @unique
+  image       String?
+  isActive    Boolean   @default(true)
+  products    Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  sku         String   @unique
+  slug        String   @unique
+
+  // Pricing
+  price       Decimal  @db.Decimal(10, 2)
+  costPrice   Decimal? @db.Decimal(10, 2)
+  comparePrice Decimal? @db.Decimal(10, 2)
+
+  // Inventory
+  stockQuantity Int     @default(0)
+  lowStockThreshold Int @default(10)
+  trackQuantity Boolean @default(true)
+
+  // Physical properties
+  weight      Decimal? @db.Decimal(8, 3)
+  dimensions  String?  // JSON string: {"length": 10, "width": 5, "height": 3}
+
+  // Media
+  images      String[] // Array of image URLs
+  thumbnail   String?  // Main product image
+
+  // SEO & Organization
+  tags        String[] // Array of tags
+  metaTitle   String?
+  metaDescription String?
+
+  // Status
+  status      ProductStatus @default(DRAFT)
+  isActive    Boolean       @default(true)
+  isFeatured  Boolean       @default(false)
+
+  // Relationships
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+
+  @@index([sku])
+  @@index([slug])
+  @@index([status])
+  @@index([isActive])
+  @@index([categoryId])
+  @@index([createdAt])
+}
+
+enum ProductStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}

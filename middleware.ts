@@ -5,7 +5,7 @@ export default auth((req) => {
   const { pathname } = req.nextUrl;
 
   // Protected routes that require authentication
-  const protectedRoutes = ["/dashboard"];
+  const protectedRoutes = ["/dashboard", "/products"];
 
   // Check if the current path is a protected route
   const isProtectedRoute = protectedRoutes.some((route) =>
