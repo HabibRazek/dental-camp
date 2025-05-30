@@ -4,6 +4,14 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  serverExternalPackages: ['@prisma/client'],
+  webpack: (config, { isServer }) => {
+    // Fix for Prisma source map issues
+    if (isServer) {
+      config.externals.push('@prisma/client')
+    }
+    return config
+  },
   images: {
     remotePatterns: [
       {

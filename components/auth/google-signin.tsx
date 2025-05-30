@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button"
 import { signInWithGoogle } from "@/lib/auth-actions"
+import { useSearchParams } from "next/navigation"
 
 export function GoogleSignIn() {
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+
+  const handleGoogleSignIn = async () => {
+    await signInWithGoogle(callbackUrl)
+  }
+
   return (
-    <form action={signInWithGoogle}>
+    <form action={handleGoogleSignIn}>
       <Button
         type="submit"
         variant="outline"

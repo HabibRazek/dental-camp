@@ -13,9 +13,9 @@ export const ourFileRouter = {
     prodcutsImage: f({ image: { maxFileSize: "4MB", maxFileCount: 8 } })
         .middleware(() => handelAuth())
         .onUploadComplete(({ metadata }) => {
-            console.log("Upload Complete", metadata)
+            // Upload completed successfully
         }),
-    
+
 
 } satisfies FileRouter;
 

@@ -14,13 +14,30 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?         // For credentials authentication
+  isActive      Boolean         @default(true) // Enable/disable user
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
+  verificationCodes VerificationCode[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model VerificationCode {
+  id        String   @id @default(cuid())
+  code      String
+  email     String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   @default("email_verification") // email_verification, password_reset, etc.
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([code])
 }
 
 model Account {
@@ -103,9 +120,9 @@ model Product {
   slug        String   @unique
 
   // Pricing
-  price       Decimal  @db.Decimal(10, 2)
-  costPrice   Decimal? @db.Decimal(10, 2)
-  comparePrice Decimal? @db.Decimal(10, 2)
+  price       Decimal
+  costPrice   Decimal?
+  comparePrice Decimal?
 
   // Inventory
   stockQuantity Int     @default(0)
@@ -113,7 +130,7 @@ model Product {
   trackQuantity Boolean @default(true)
 
   // Physical properties
-  weight      Decimal? @db.Decimal(8, 3)
+  weight      Decimal?
   dimensions  String?  // JSON string: {"length": 10, "width": 5, "height": 3}
 
   // Media

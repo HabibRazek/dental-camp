@@ -57,18 +57,12 @@ async function main() {
       await prisma.category.create({
         data: category
       })
-      console.log(`Created category: ${category.name}`)
-    } else {
-      console.log(`Category already exists: ${category.name}`)
     }
   }
-
-  console.log('Categories seeding completed!')
 }
 
 main()
   .catch((e) => {
-    console.error(e)
     process.exit(1)
   })
   .finally(async () => {

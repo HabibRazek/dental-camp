@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -18,6 +18,8 @@ export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   const {
     register,
@@ -32,6 +34,7 @@ export function SignInForm() {
     setError(null)
 
     try {
+      // Proceed with authentication - system will auto-create user if needed
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -39,12 +42,19 @@ export function SignInForm() {
       })
 
       if (result?.error) {
-        setError("Invalid email or password")
-      } else {
-        router.push("/dashboard") // Redirect to dashboard or home page
+        if (result.error === "CredentialsSignin") {
+          setError("Invalid email or password")
+        } else {
+          setError("Unable to sign in. Please try again.")
+        }
+      } else if (result?.ok) {
+        // Successful login - redirect to callback URL or dashboard
+        console.log("Login successful, redirecting to:", callbackUrl)
+        router.push(callbackUrl)
         router.refresh()
       }
-    } catch {
+    } catch (error) {
+      console.error("Sign in error:", error)
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)

@@ -127,7 +127,6 @@ export default function AddProductPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Product creation error:', errorData)
 
         if (errorData.details && Array.isArray(errorData.details)) {
           const errorMessages = errorData.details.map((detail: any) =>
@@ -142,7 +141,6 @@ export default function AddProductPage() {
       toast.success('Product created successfully!')
       router.push('/products')
     } catch (error) {
-      console.error('Error creating product:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to create product')
     } finally {
       setIsSubmitting(false)

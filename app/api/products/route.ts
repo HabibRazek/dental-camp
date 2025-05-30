@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const queryParams = Object.fromEntries(searchParams.entries())
-    
+
     // Convert string params to appropriate types
     const parsedParams = {
       ...queryParams,
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause
     const where: any = {}
-    
+
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
@@ -55,23 +55,23 @@ export async function GET(request: NextRequest) {
         { tags: { has: search } },
       ]
     }
-    
+
     if (category) {
       where.category = { slug: category }
     }
-    
+
     if (status) {
       where.status = status
     }
-    
+
     if (typeof isActive === 'boolean') {
       where.isActive = isActive
     }
-    
+
     if (typeof isFeatured === 'boolean') {
       where.isFeatured = isFeatured
     }
-    
+
     if (minPrice || maxPrice) {
       where.price = {}
       if (minPrice) where.price.gte = minPrice
@@ -118,8 +118,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error("Products GET error:", error)
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid query parameters", details: error.errors },
@@ -164,7 +162,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert dimensions to JSON string if provided
-    const dimensions = productData.dimensions 
+    const dimensions = productData.dimensions
       ? JSON.stringify(productData.dimensions)
       : null
 
@@ -196,8 +194,6 @@ export async function POST(request: NextRequest) {
     )
 
   } catch (error) {
-    console.error("Product creation error:", error)
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid product data", details: error.errors },

@@ -45,17 +45,32 @@ export function SignUpForm() {
         }),
       })
 
+      // Check if response is JSON
+      const contentType = response.headers.get("content-type")
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server error: Invalid response format")
+      }
+
       const result = await response.json()
 
       if (!response.ok) {
         throw new Error(result.error || "Something went wrong")
       }
 
-      setSuccess(true)
-      setTimeout(() => {
-        router.push("/auth/signin?message=Account created successfully")
-      }, 2000)
+      // If verification is required, redirect to verification page
+      if (result.requiresVerification) {
+        setSuccess(true)
+        setTimeout(() => {
+          router.push(`/verify-email?email=${encodeURIComponent(data.email)}`)
+        }, 2000)
+      } else {
+        setSuccess(true)
+        setTimeout(() => {
+          router.push("/auth/signin?message=Account created successfully")
+        }, 2000)
+      }
     } catch (error) {
+      console.error("Signup error:", error)
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {
       setIsLoading(false)
@@ -74,7 +89,7 @@ export function SignUpForm() {
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h1>
             <p className="text-gray-600">
-              Your account has been created successfully. Redirecting to sign in...
+              Your account has been created successfully. Please check your email for verification code...
             </p>
           </div>
         </div>

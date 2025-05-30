@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createUserSchema } from "@/lib/zod"
-import { createUser, userExists } from "@/lib/db"
+import { createUser, userExists, generateVerificationCode } from "@/lib/db"
+import { sendVerificationEmail } from "@/lib/email"
 import { ZodError } from "zod"
 
 // Force this API route to use Node.js runtime
@@ -25,20 +26,27 @@ export async function POST(request: NextRequest) {
     // Create the user
     const user = await createUser(name, email, password)
 
+    // Generate and send verification code
+    try {
+      const { code } = await generateVerificationCode(email, user.id)
+      await sendVerificationEmail(email, code, name)
+    } catch (emailError) {
+      // Don't fail the signup if email sending fails
+    }
+
     return NextResponse.json(
       {
-        message: "User created successfully",
+        message: "User created successfully. Please check your email for verification code.",
         user: {
           id: user.id,
           name: user.name,
           email: user.email,
-        }
+        },
+        requiresVerification: true
       },
       { status: 201 }
     )
   } catch (error) {
-    console.error("Signup error:", error)
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid input data", details: error.errors },
