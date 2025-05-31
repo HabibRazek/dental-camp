@@ -34,42 +34,63 @@ export function ImageUpload({
 }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
-  const [uploadThingConfigured, setUploadThingConfigured] = useState(true)
+  const [uploadThingConfigured, setUploadThingConfigured] = useState(false)
 
   // Check if UploadThing is properly configured
   useEffect(() => {
     const checkUploadThingConfig = () => {
-      const token = process.env.NEXT_PUBLIC_UPLOADTHING_TOKEN ||
-                   (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'dev' : null)
-      setUploadThingConfigured(!!token && token !== 'your_uploadthing_token_here')
+      try {
+        const token = process.env.NEXT_PUBLIC_UPLOADTHING_TOKEN ||
+                     (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'dev' : null)
+        setUploadThingConfigured(!!token && token !== 'your_uploadthing_token_here')
+      } catch (error) {
+        console.warn("UploadThing configuration check failed:", error)
+        setUploadThingConfigured(false)
+      }
     }
     checkUploadThingConfig()
   }, [])
 
-  const { startUpload, isUploading } = useUploadThing("prodcutsImage", {
-    onClientUploadComplete: (res) => {
-      if (res) {
-        const newUrls = res.map(file => file.url)
-        onImagesChange([...images, ...newUrls])
-        toast.success(`${newUrls.length} image(s) uploaded successfully!`)
-      }
-      setUploading(false)
-      setUploadProgress(0)
-    },
-    onUploadError: (error) => {
-      console.error("Upload error:", error)
-      toast.error(`Upload failed: ${error.message}`)
-      setUploading(false)
-      setUploadProgress(0)
-    },
-    onUploadProgress: (progress) => {
-      setUploadProgress(progress)
-    },
-  })
+  // Safely initialize UploadThing hook with error handling
+  let startUpload: ((files: File[]) => Promise<any>) | null = null
+  let isUploading = false
+
+  try {
+    const uploadThingHook = useUploadThing("prodcutsImage", {
+      onClientUploadComplete: (res) => {
+        if (res) {
+          const newUrls = res.map(file => file.url)
+          onImagesChange([...images, ...newUrls])
+          toast.success(`${newUrls.length} image(s) uploaded successfully!`)
+        }
+        setUploading(false)
+        setUploadProgress(0)
+      },
+      onUploadError: (error) => {
+        console.error("Upload error:", error)
+        toast.error(`Upload failed: ${error.message}`)
+        setUploading(false)
+        setUploadProgress(0)
+        // Fall back to demo mode on error
+        setUploadThingConfigured(false)
+      },
+      onUploadProgress: (progress) => {
+        setUploadProgress(progress)
+      },
+    })
+
+    if (uploadThingConfigured) {
+      startUpload = uploadThingHook.startUpload
+      isUploading = uploadThingHook.isUploading
+    }
+  } catch (error) {
+    console.warn("UploadThing hook initialization failed:", error)
+    setUploadThingConfigured(false)
+  }
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (disabled) return
-    
+
     const remainingSlots = maxImages - images.length
     if (remainingSlots <= 0) {
       toast.error(`Maximum ${maxImages} images allowed`)
@@ -81,9 +102,21 @@ export function ImageUpload({
       toast.warning(`Only uploading ${filesToUpload.length} images due to limit`)
     }
 
-    setUploading(true)
-    await startUpload(filesToUpload)
-  }, [images.length, maxImages, disabled, startUpload])
+    if (startUpload && uploadThingConfigured) {
+      setUploading(true)
+      try {
+        await startUpload(filesToUpload)
+      } catch (error) {
+        console.error("Upload failed:", error)
+        toast.error("Upload failed. Switching to demo mode.")
+        setUploadThingConfigured(false)
+        setUploading(false)
+      }
+    } else {
+      // Fallback to demo mode if UploadThing is not available
+      setUploadThingConfigured(false)
+    }
+  }, [images.length, maxImages, disabled, startUpload, uploadThingConfigured])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

@@ -113,7 +113,7 @@ export default function ProductViewPage() {
       >
         <div className="max-w-4xl mx-auto">
           <div className="mb-6">
-            <Link href="/products">
+            <Link href="/admin/products">
               <Button variant="ghost" className="mb-4 hover:bg-blue-50 transition-colors">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Products
@@ -153,15 +153,15 @@ export default function ProductViewPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <Link href="/products">
+          <Link href="/admin/products">
             <Button variant="ghost" className="hover:bg-blue-50 transition-colors">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Products
             </Button>
           </Link>
-          
+
           <div className="flex space-x-3">
-            <Link href={`/products/${productId}/edit`}>
+            <Link href={`/admin/products/${productId}/edit`}>
               <Button className="bg-blue-600 hover:bg-blue-700">
                 <Edit className="mr-2 h-4 w-4" />
                 Edit Product

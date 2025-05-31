@@ -72,7 +72,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     // Send welcome email
-    await sendWelcomeEmail(email, result.user?.name)
+    await sendWelcomeEmail(email, result.user?.name || undefined)
 
     return NextResponse.json(
       {

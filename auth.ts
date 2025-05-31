@@ -18,7 +18,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true, // Required for Vercel deployment
-  debug: process.env.NODE_ENV === "development", // Enable debug in development
+  debug: false, // Disable debug to remove warnings
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -55,9 +55,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
-  pages: {
-    signIn: "/auth/signin",
-  },
   callbacks: {
     jwt({ token, user }) {
       if (user) {

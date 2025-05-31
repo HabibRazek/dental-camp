@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { useState } from "react"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,7 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus, Search, Filter, ImageIcon } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus, Search, Eye, Edit, Trash2 } from "lucide-react"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -36,68 +36,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Image from "next/image"
-import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
 
-// Product Image Component with Error Handling
-function ProductImage({ src, alt, className }: { src: string | null, alt: string, className?: string }) {
-  const [imageError, setImageError] = useState(false)
-
-  if (!src || imageError) {
-    return (
-      <div className={`flex items-center justify-center bg-gray-100 text-gray-400 ${className}`}>
-        <ImageIcon className="h-6 w-6" />
-      </div>
-    )
-  }
-
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      fill
-      className="object-cover"
-      onError={() => setImageError(true)}
-      sizes="48px"
-    />
-  )
-}
-
-// Product type definition
-export type Product = {
+// Category type definition
+export type Category = {
   id: string
   name: string
-  sku: string
-  price: number
-  stockQuantity: number
-  status: "DRAFT" | "PUBLISHED" | "ARCHIVED"
+  slug: string
+  description?: string | null
   isActive: boolean
-  thumbnail?: string
-  category?: {
-    id: string
-    name: string
-    slug: string
+  _count?: {
+    products: number
   }
   createdAt: string
   updatedAt: string
 }
 
-interface ProductsTableProps {
-  data: Product[]
-  onEdit: (product: Product) => void
-  onDelete: (productId: string) => void
-  onStatusChange: (productId: string, status: string) => void
+interface CategoriesTableProps {
+  data: Category[]
+  onEdit: (category: Category) => void
+  onDelete: (categoryId: string) => void
+  onStatusChange: (categoryId: string, isActive: boolean) => void
 }
 
-export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: ProductsTableProps) {
+export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: CategoriesTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const columns: ColumnDef<Product>[] = [
+  const columns: ColumnDef<Category>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -120,24 +89,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
       enableSorting: false,
       enableHiding: false,
     },
-    {
-      accessorKey: "thumbnail",
-      header: "Image",
-      cell: ({ row }) => {
-        const thumbnail = row.getValue("thumbnail") as string
-        const productName = row.getValue("name") as string
-        return (
-          <div className="w-12 h-12 relative rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
-            <ProductImage
-              src={thumbnail}
-              alt={productName}
-              className="w-full h-full rounded-lg"
-            />
-          </div>
-        )
-      },
-      enableSorting: false,
-    },
+
     {
       accessorKey: "name",
       header: ({ column }) => {
@@ -145,104 +97,101 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
           <Button
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
+            className="hover:bg-blue-50 transition-colors"
           >
-            Product Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("name")}</div>
-      ),
-    },
-    {
-      accessorKey: "sku",
-      header: "SKU",
-      cell: ({ row }) => (
-        <div className="font-mono text-sm">{row.getValue("sku")}</div>
-      ),
-    },
-    {
-      accessorKey: "category",
-      header: "Category",
-      cell: ({ row }) => {
-        const category = row.getValue("category") as Product["category"]
-        return category ? (
-          <Badge variant="secondary">{category.name}</Badge>
-        ) : (
-          <span className="text-gray-400">No category</span>
-        )
-      },
-    },
-    {
-      accessorKey: "price",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Price
+            Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
       },
       cell: ({ row }) => {
-        const price = parseFloat(row.getValue("price"))
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(price)
-        return <div className="font-medium">{formatted}</div>
-      },
-    },
-    {
-      accessorKey: "stockQuantity",
-      header: ({ column }) => {
+        const category = row.original
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Stock
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const stock = row.getValue("stockQuantity") as number
-        return (
-          <div className={`font-medium ${stock <= 10 ? 'text-red-600' : stock <= 50 ? 'text-yellow-600' : 'text-green-600'}`}>
-            {stock}
+          <div className="space-y-1">
+            <div className="font-semibold text-gray-900">{category.name}</div>
+            <div className="text-sm text-gray-500">/{category.slug}</div>
           </div>
         )
       },
     },
     {
-      accessorKey: "status",
-      header: "Status",
+      accessorKey: "description",
+      header: "Description",
       cell: ({ row }) => {
-        const status = row.getValue("status") as string
-        const statusColors = {
-          DRAFT: "bg-gray-100 text-gray-800",
-          PUBLISHED: "bg-green-100 text-green-800",
-          ARCHIVED: "bg-red-100 text-red-800",
-        }
+        const description = row.getValue("description") as string
         return (
-          <Badge className={statusColors[status as keyof typeof statusColors]}>
-            {status}
+          <div className="max-w-[300px]">
+            {description ? (
+              <p className="text-sm text-gray-600 line-clamp-2">{description}</p>
+            ) : (
+              <span className="text-sm text-gray-400 italic">No description</span>
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      accessorKey: "_count.products",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-blue-50 transition-colors"
+          >
+            Products
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const count = row.original._count?.products || 0
+        return (
+          <Badge variant="secondary" className="bg-blue-50 text-blue-700">
+            {count} {count === 1 ? 'product' : 'products'}
           </Badge>
         )
+      },
+    },
+    {
+      accessorKey: "isActive",
+      header: "Status",
+      cell: ({ row }) => {
+        const isActive = row.getValue("isActive") as boolean
+        return (
+          <Badge 
+            variant={isActive ? "default" : "secondary"}
+            className={isActive ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}
+          >
+            {isActive ? "Active" : "Inactive"}
+          </Badge>
+        )
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="hover:bg-blue-50 transition-colors"
+          >
+            Created
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const date = new Date(row.getValue("createdAt"))
+        return <div className="text-sm text-gray-600">{date.toLocaleDateString()}</div>
       },
     },
     {
       id: "actions",
       enableHiding: false,
       cell: ({ row }) => {
-        const product = row.original
+        const category = row.original
 
         return (
           <DropdownMenu>
@@ -254,25 +203,32 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.id)}>
-                Copy product ID
+              <DropdownMenuItem onClick={() => navigator.clipboard.writeText(category.id)}>
+                Copy category ID
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href={`/admin/products/${product.id}/edit`}>
-                  Edit product
+                <Link href={`/admin/categories/${category.id}/edit`}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit category
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem 
-                onClick={() => onStatusChange(product.id, product.status === 'PUBLISHED' ? 'DRAFT' : 'PUBLISHED')}
+                onClick={() => onStatusChange(category.id, !category.isActive)}
               >
-                {product.status === 'PUBLISHED' ? 'Unpublish' : 'Publish'}
+                {category.isActive ? 'Deactivate' : 'Activate'}
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem 
-                onClick={() => onDelete(product.id)}
+                onClick={() => onDelete(category.id)}
                 className="text-red-600"
+                disabled={category._count && category._count.products > 0}
               >
-                Delete product
+                <Trash2 className="mr-2 h-4 w-4" />
+                {category._count && category._count.products > 0 
+                  ? `Cannot delete (${category._count.products} products)` 
+                  : 'Delete category'
+                }
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -305,15 +261,15 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-2xl font-bold">Products</CardTitle>
+            <CardTitle className="text-2xl font-bold">Categories</CardTitle>
             <CardDescription>
-              Manage your dental products inventory
+              Manage your product categories
             </CardDescription>
           </div>
-          <Link href="/admin/products/add">
+          <Link href="/admin/categories/add">
             <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
               <Plus className="mr-2 h-4 w-4" />
-              Add Product
+              Add Category
             </Button>
           </Link>
         </div>
@@ -323,7 +279,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
-              placeholder="Search products..."
+              placeholder="Search categories..."
               value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -334,7 +290,6 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
-                <Filter className="mr-2 h-4 w-4" />
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -402,7 +357,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
                     colSpan={columns.length}
                     className="h-24 text-center"
                   >
-                    No products found.
+                    No categories found.
                   </TableCell>
                 </TableRow>
               )}

@@ -15,6 +15,7 @@ import {
   Package,
   Store,
   Boxes,
+  Tag,
   type LucideIcon,
 } from "lucide-react"
 
@@ -56,8 +57,13 @@ const data = {
     },
     {
       title: "Products",
-      url: "/products",
+      url: "/admin/products",
       icon: Package,
+    },
+    {
+      title: "Categories",
+      url: "/admin/categories",
+      icon: Tag,
     },
     {
       title: "Analytics",
@@ -71,26 +77,6 @@ const data = {
     },
   ],
   navClouds: [
-    {
-      title: "Product Catalog",
-      icon: Store,
-      isActive: true,
-      url: "/catalog",
-      items: [
-        {
-          title: "Dental Equipment",
-          url: "/catalog/equipment",
-        },
-        {
-          title: "Instruments",
-          url: "/catalog/instruments",
-        },
-        {
-          title: "Consumables",
-          url: "/catalog/consumables",
-        },
-      ],
-    },
     {
       title: "Inventory Management",
       icon: Boxes,

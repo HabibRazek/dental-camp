@@ -34,7 +34,7 @@ export default function ProductsPage() {
   // Handle product edit
   const handleEdit = (product: Product) => {
     // Navigate to edit page
-    window.location.href = `/products/edit/${product.id}`
+    window.location.href = `/admin/products/${product.id}/edit`
   }
 
   // Handle product delete

@@ -19,9 +19,34 @@ import {
 } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import Link from "next/link";
+import { useState, useEffect } from "react";
 
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+}
 
 function Footer() {
+    const [categories, setCategories] = useState<Category[]>([]);
+
+    // Fetch categories for footer navigation
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('/api/categories?isActive=true');
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data.categories?.slice(0, 6) || []); // Limit to 6 categories
+                }
+            } catch (error) {
+                console.error('Failed to fetch categories:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
     return (
         <div className="overflow-hidden">
             {/* CTA Section */}
@@ -239,12 +264,11 @@ function Footer() {
                                     {
                                         title: "Products",
                                         links: [
-                                            { name: "Dental Chairs", href: "/products/chairs" },
-                                            { name: "Imaging Systems", href: "/products/imaging" },
-                                            { name: "Sterilization", href: "/products/sterilization" },
-                                            { name: "Instruments", href: "/products/instruments" },
-                                            { name: "Consumables", href: "/products/consumables" },
-                                            { name: "View All Products", href: "/products" }
+                                            ...categories.map(category => ({
+                                                name: category.name,
+                                                href: `/catalog?category=${category.slug}`
+                                            })),
+                                            { name: "View All Products", href: "/catalog" }
                                         ],
                                     },
                                     {

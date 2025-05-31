@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server"
-import { PrismaClient } from "@prisma/client"
-import { CreateCategorySchema } from "@/lib/validations/product"
+import { prisma } from "@/lib/prisma"
 import { ZodError } from "zod"
+import { z } from "zod"
 
-const prisma = new PrismaClient()
+// Category validation schema
+const CreateCategorySchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
+  description: z.string().optional(),
+  slug: z.string().min(1, "Slug is required").max(100, "Slug must be less than 100 characters"),
+  isActive: z.boolean().default(true),
+})
 
 // Helper function to generate slug from name
 function generateSlug(name: string): string {

@@ -1,14 +1,20 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, Menu, X, User, LogOut } from "lucide-react";
+import { Heart, Search, Menu, X, User, LogOut, ShoppingCart } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { GoogleSignInClient } from "../auth/google-signin-client";
 
-const navItems = ["Home", "About", "Our Products", "Contact", "FAQs"];
+const navItems = [
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Our Products", href: "/catalog" },
+  { name: "Contact", href: "/contact" },
+  { name: "FAQs", href: "/faqs" }
+];
 
 function Header() {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -18,23 +24,24 @@ function Header() {
         <>
             <header className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-white/80 backdrop-blur-md rounded-full shadow-lg px-4 sm:px-6 py-3 flex items-center justify-between w-[90%] max-w-5xl transition-all duration-300">
                 {/* Logo Section */}
-                <div className="flex items-center gap-2 sm:gap-3">
-                    <TbDental className="h-6 w-6 text-primary" />
+                <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
+                    <TbDental className="h-6 w-6 text-blue-600" />
                     <span className="font-bold text-base sm:text-lg tracking-wide text-gray-800">
                         Dental Camp
                     </span>
-                </div>
+                </Link>
 
                 {/* Navigation - Desktop */}
                 <nav className="hidden md:flex items-center space-x-2">
                     {navItems.map((item) => (
-                        <Button
-                            key={item}
-                            variant="ghost"
-                            className="rounded-full text-sm px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
-                        >
-                            {item}
-                        </Button>
+                        <Link key={item.name} href={item.href}>
+                            <Button
+                                variant="ghost"
+                                className="rounded-full text-sm px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                            >
+                                {item.name}
+                            </Button>
+                        </Link>
                     ))}
                 </nav>
 
@@ -53,10 +60,21 @@ function Header() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                            className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
                             aria-label="Favorites"
                         >
                             <Heart className="h-5 w-5" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
+                            aria-label="Shopping Cart"
+                        >
+                            <ShoppingCart className="h-5 w-5" />
+                            <span className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                0
+                            </span>
                         </Button>
                     </div>
 
@@ -152,14 +170,15 @@ function Header() {
                             {/* Nav Items */}
                             <nav className="flex flex-col space-y-2 mt-4">
                                 {navItems.map((item) => (
-                                    <Button
-                                        key={item}
-                                        variant="ghost"
-                                        className="justify-start text-gray-800 text-sm hover:bg-blue-100"
-                                        onClick={() => setMenuOpen(false)}
-                                    >
-                                        {item}
-                                    </Button>
+                                    <Link key={item.name} href={item.href}>
+                                        <Button
+                                            variant="ghost"
+                                            className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
+                                            onClick={() => setMenuOpen(false)}
+                                        >
+                                            {item.name}
+                                        </Button>
+                                    </Link>
                                 ))}
                             </nav>
 

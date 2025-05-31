@@ -194,6 +194,8 @@ function HeroSection() {
                             <Image
                                 src={dentalEquipmentImage}
                                 alt="Professional dental equipment and supplies"
+                                width={800}
+                                height={450}
                                 className="w-full h-full object-cover"
                                 priority
                             />

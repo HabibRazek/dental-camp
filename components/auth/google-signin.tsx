@@ -1,8 +1,11 @@
+"use client"
+
+import { Suspense } from "react"
 import { Button } from "@/components/ui/button"
 import { signInWithGoogle } from "@/lib/auth-actions"
 import { useSearchParams } from "next/navigation"
 
-export function GoogleSignIn() {
+function GoogleSignInContent() {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
@@ -38,5 +41,26 @@ export function GoogleSignIn() {
         Se connecter avec Google
       </Button>
     </form>
+  )
+}
+
+function GoogleSignInFallback() {
+  return (
+    <Button
+      variant="outline"
+      className="w-full flex items-center justify-center gap-3 border-gray-300"
+      disabled
+    >
+      <div className="w-5 h-5 animate-pulse bg-gray-300 rounded"></div>
+      Loading...
+    </Button>
+  )
+}
+
+export function GoogleSignIn() {
+  return (
+    <Suspense fallback={<GoogleSignInFallback />}>
+      <GoogleSignInContent />
+    </Suspense>
   )
 }

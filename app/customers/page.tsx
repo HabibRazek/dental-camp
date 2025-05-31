@@ -20,7 +20,17 @@ export default async function CustomersPage() {
   // Fetch initial users data
   let initialData
   try {
-    initialData = await getAllUsers(1, 10)
+    const rawData = await getAllUsers(1, 10)
+    // Convert Date objects to strings for client components
+    initialData = {
+      users: rawData.users.map(user => ({
+        ...user,
+        createdAt: user.createdAt.toISOString(),
+        updatedAt: user.updatedAt.toISOString(),
+        emailVerified: user.emailVerified?.toISOString() || null,
+      })),
+      pagination: rawData.pagination,
+    }
   } catch (error) {
     console.error("Error fetching users:", error)
     initialData = {
