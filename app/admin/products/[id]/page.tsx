@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { ArrowLeft, Edit, Loader2, AlertCircle, Package, DollarSign, Archive, Eye } from "lucide-react"
+import { formatCurrencyAdmin } from "@/lib/utils"
 import Link from "next/link"
 import Image from "next/image"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -278,13 +279,13 @@ export default function ProductViewPage() {
               <CardContent className="space-y-3">
                 <div>
                   <Label className="text-sm font-medium text-gray-700">Price</Label>
-                  <p className="text-2xl font-bold text-green-600">${parseFloat(product.price).toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-green-600">{formatCurrencyAdmin(parseFloat(product.price))}</p>
                 </div>
-                
+
                 {product.costPrice && (
                   <div>
                     <Label className="text-sm font-medium text-gray-700">Cost Price</Label>
-                    <p className="text-lg font-semibold">${parseFloat(product.costPrice).toFixed(2)}</p>
+                    <p className="text-lg font-semibold">{formatCurrencyAdmin(parseFloat(product.costPrice))}</p>
                   </div>
                 )}
                 

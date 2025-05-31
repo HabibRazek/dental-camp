@@ -34,7 +34,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result, { status: 200 })
   } catch (error) {
-    console.error("Error fetching customers:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

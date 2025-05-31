@@ -49,7 +49,6 @@ export async function GET(
     return NextResponse.json({ product: productWithParsedDimensions })
 
   } catch (error) {
-    console.error("Product GET error:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -150,8 +149,6 @@ export async function PUT(
     })
 
   } catch (error) {
-    console.error("Product update error:", error)
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid product data", details: error.errors },
@@ -195,7 +192,6 @@ export async function DELETE(
     })
 
   } catch (error) {
-    console.error("Product deletion error:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

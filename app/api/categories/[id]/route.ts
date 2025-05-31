@@ -47,7 +47,6 @@ export async function GET(
     return NextResponse.json({ category })
 
   } catch (error) {
-    console.error("Error fetching category:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -124,8 +123,6 @@ export async function PUT(
     })
 
   } catch (error) {
-    console.error("Category update error:", error)
-
     if (error instanceof ZodError) {
       return NextResponse.json(
         { error: "Invalid category data", details: error.errors },

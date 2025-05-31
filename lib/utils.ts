@@ -39,3 +39,13 @@ export function formatDateTime(date: string | Date): string {
     minute: '2-digit'
   })
 }
+
+// Format currency in Tunisian Dinars with TTC
+export function formatCurrency(amount: number): string {
+  return `${amount.toLocaleString()} TND TTC`
+}
+
+// Format currency for admin/internal use (without TTC)
+export function formatCurrencyAdmin(amount: number): string {
+  return `${amount.toLocaleString()} TND`
+}

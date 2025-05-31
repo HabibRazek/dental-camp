@@ -29,11 +29,7 @@ export async function verifyEmailConfig() {
 // Send verification email
 export async function sendVerificationEmail(email: string, code: string, name?: string) {
   try {
-    console.log('🔧 Creating email transporter...')
     const transporter = createTransporter()
-
-    console.log('📧 Preparing to send verification email to:', email)
-    console.log('🔢 Verification code:', code)
 
     const mailOptions = {
       from: process.env.SMTP_FROM,
@@ -120,13 +116,8 @@ export async function sendVerificationEmail(email: string, code: string, name?: 
 
     const result = await transporter.sendMail(mailOptions)
 
-    console.log(`✅ Verification email sent to ${email}`)
-    console.log(`📧 Message ID: ${result.messageId}`)
-    console.log(`🔢 Verification Code: ${code}`)
-
     return { success: true, messageId: result.messageId }
   } catch (error) {
-    console.error('❌ Error sending verification email:', error)
     return { success: false, error: (error as Error).message }
   }
 }
@@ -230,12 +221,8 @@ export async function sendWelcomeEmail(email: string, name?: string) {
 
     const result = await transporter.sendMail(mailOptions)
 
-    console.log(`✅ Welcome email sent to ${email}`)
-    console.log(`📧 Message ID: ${result.messageId}`)
-
     return { success: true, messageId: result.messageId }
   } catch (error) {
-    console.error('❌ Error sending welcome email:', error)
     return { success: false, error: (error as Error).message }
   }
 }

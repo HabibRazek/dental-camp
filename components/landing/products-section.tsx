@@ -3,30 +3,32 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Heart, Star, ShoppingCart, TrendingUp, Award, Zap, Tag } from "lucide-react";
+import { ChevronRight, ShoppingCart, TrendingUp, Award, Zap, Tag, Eye } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import dentalequipment from "@/public/images/dental-equipment.jpg";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface Product {
-  id: string;
-  name: string;
-  description: string | null;
-  slug: string;
-  price: number;
-  thumbnail: string | null;
-  images: string[];
-  isFeatured: boolean;
-  isActive: boolean;
-  status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
-  category?: {
     id: string;
     name: string;
+    description: string | null;
     slug: string;
-  } | null;
-  createdAt: string;
-  updatedAt: string;
+    price: number;
+    comparePrice?: number | null;
+    thumbnail: string | null;
+    images: string[];
+    isFeatured: boolean;
+    isActive: boolean;
+    status: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+    category?: {
+        id: string;
+        name: string;
+        slug: string;
+    } | null;
+    createdAt: string;
+    updatedAt: string;
 }
 
 
@@ -112,7 +114,6 @@ function ProductsSection() {
     const displayProducts = products.map(product => ({
         ...product,
         // Add fallback properties for compatibility with existing UI
-        rating: 4.5 + Math.random() * 0.5, // Random rating between 4.5-5.0
         isNew: new Date(product.createdAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // New if created in last 30 days
         isBestseller: product.isFeatured,
         image: product.thumbnail || product.images?.[0] || dentalequipment,
@@ -124,6 +125,13 @@ function ProductsSection() {
     const filteredProducts = activeCategory === "all"
         ? displayProducts
         : displayProducts.filter(product => product.categorySlug === activeCategory);
+
+    // Handle add to cart
+    const handleAddToCart = (productId: string) => {
+        toast.success("Product added to cart!");
+        // Here you would typically add the product to cart state/context
+        console.log("Adding product to cart:", productId);
+    };
 
     return (
         <section ref={sectionRef} className="py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-white relative">
@@ -185,7 +193,7 @@ function ProductsSection() {
                             <div className="flex items-center gap-6">
                                 <div>
                                     <p className="text-blue-100 text-sm">Starting at</p>
-                                    <p className="text-3xl font-bold">$12,499.99</p>
+                                    <p className="text-3xl font-bold">25,000 TND TTC</p>
                                 </div>
                                 <Button
                                     className="bg-white text-blue-600 hover:bg-blue-50 rounded-full shadow-md"
@@ -249,106 +257,99 @@ function ProductsSection() {
                         ))}
                     </div>
                 ) : filteredProducts.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredProducts.map((product, index) => (
-                        <motion.div
-                            key={product.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: index * 0.1 }}
-                            viewport={{ once: true, margin: "-50px" }}
-                            whileHover={{ y: -5 }}
-                            className="group"
-                        >
-                            <Card className="h-full overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl bg-white">
-                                <div className="relative aspect-[4/3] overflow-hidden">
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        width={400}
-                                        height={300}
-                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                                        priority={index < 3}
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                            <motion.div
+                                key={product.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: index * 0.1 }}
+                                viewport={{ once: true, margin: "-50px" }}
+                                className="group"
+                            >
+                                <Card className="h-full overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl">
+                                    <div className="relative aspect-square overflow-hidden">
+                                        <Image
+                                            src={product.image}
+                                            alt={product.name}
+                                            width={300}
+                                            height={300}
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                            priority={index < 4}
+                                        />
 
-                                    <div className="absolute bottom-0 left-0 w-full p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                        <p className="text-white text-sm mb-3 line-clamp-2">{product.description}</p>
-                                        <Button
-                                            className="shadow-md w-full text-xs py-1.5"
-                                            size="sm"
-                                            variant="default"
-                                            asChild
-                                        >
-                                            <Link href={`/products/${product.slug}`}>
-                                                View Details
-                                                <ChevronRight className="ml-1 h-3 w-3" />
-                                            </Link>
-                                        </Button>
+                                        {/* Subtle overlay on hover */}
+                                        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                                        {/* Product badges */}
+                                        <div className="absolute top-3 left-3 flex flex-col gap-2">
+                                            {product.isNew && (
+                                                <Badge className="bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1">
+                                                    New
+                                                </Badge>
+                                            )}
+                                            {product.isBestseller && (
+                                                <Badge className="bg-orange-500 hover:bg-orange-600 text-white text-xs px-2 py-1">
+                                                    Bestseller
+                                                </Badge>
+                                            )}
+                                        </div>
+
+                                        {/* Quick action buttons */}
+                                        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <Button
+                                                size="sm"
+                                                variant="secondary"
+                                                className="w-10 h-10 p-0 rounded-full bg-white/90 hover:bg-white shadow-md"
+                                                asChild
+                                            >
+                                                <Link href={`/products/${product.slug}`}>
+                                                    <Eye className="h-4 w-4 text-gray-700" />
+                                                </Link>
+                                            </Button>
+                                        </div>
                                     </div>
 
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="absolute top-4 right-4 bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-9 w-9 rounded-full shadow-sm hover:bg-white"
-                                    >
-                                        <Heart className="h-4 w-4 text-blue-600" />
-                                    </Button>
-
-                                    {/* Badges */}
-                                    <div className="absolute top-4 left-4 flex flex-col gap-2">
-                                        {product.isNew && (
-                                            <Badge className="bg-blue-600 hover:bg-blue-700">
-                                                New
-                                            </Badge>
-                                        )}
-                                        {product.isBestseller && (
-                                            <Badge className="bg-amber-500 hover:bg-amber-600">
-                                                <Star className="h-3 w-3 mr-1 fill-white" />
-                                                Bestseller
-                                            </Badge>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="p-5">
-                                    <div className="flex justify-between items-start gap-3 mb-3">
-                                        <div>
-                                            <h3 className="font-bold text-lg text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-300">
+                                    <div className="p-4">
+                                        <div className="mb-3">
+                                            <h3 className="font-semibold text-gray-900 text-sm mb-1 line-clamp-2 group-hover:text-blue-600 transition-colors">
                                                 {product.name}
                                             </h3>
-                                            <p className="text-sm text-blue-600 font-medium capitalize">
-                                                {product.categoryName}
-                                            </p>
+                                            {product.categoryName && (
+                                                <p className="text-xs text-blue-600 font-medium">
+                                                    {product.categoryName}
+                                                </p>
+                                            )}
                                         </div>
-                                    </div>
 
-                                    {/* Features */}
-                                    <div className="mb-4">
-                                        <div className="flex flex-wrap gap-2">
-                                            {product.features.map((feature, idx) => (
-                                                <span key={idx} className="inline-block text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                                                    {feature}
-                                                </span>
-                                            ))}
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="font-bold text-lg text-gray-900">
+                                                {product.price.toLocaleString('fr-TN', {
+                                                    minimumFractionDigits: 0,
+                                                    maximumFractionDigits: 0
+                                                })} TND TTC
+                                            </div>
+                                            {product.comparePrice && (
+                                                <div className="text-sm text-gray-500 line-through">
+                                                    {product.comparePrice.toLocaleString('fr-TN', {
+                                                        minimumFractionDigits: 0,
+                                                        maximumFractionDigits: 0
+                                                    })} TND
+                                                </div>
+                                            )}
                                         </div>
-                                    </div>
 
-                                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">
-                                        <div className="font-bold text-lg text-gray-900">
-                                            ${product.price.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                                        </div>
-                                        <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
-                                            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                            <span className="text-sm font-medium text-gray-700">
-                                                {product.rating}
-                                            </span>
-                                        </div>
+                                        <Button
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 hover:shadow-md"
+                                            onClick={() => handleAddToCart(product.id)}
+                                        >
+                                            <ShoppingCart className="h-4 w-4 mr-2" />
+                                            Add to Cart
+                                        </Button>
                                     </div>
-                                </div>
-                            </Card>
-                        </motion.div>
-                    ))}
+                                </Card>
+                            </motion.div>
+                        ))}
                     </div>
                 ) : (
                     <div className="text-center py-16">

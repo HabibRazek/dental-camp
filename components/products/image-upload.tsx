@@ -44,7 +44,6 @@ export function ImageUpload({
                      (typeof window !== 'undefined' && window.location.hostname === 'localhost' ? 'dev' : null)
         setUploadThingConfigured(!!token && token !== 'your_uploadthing_token_here')
       } catch (error) {
-        console.warn("UploadThing configuration check failed:", error)
         setUploadThingConfigured(false)
       }
     }
@@ -84,7 +83,6 @@ export function ImageUpload({
       isUploading = uploadThingHook.isUploading
     }
   } catch (error) {
-    console.warn("UploadThing hook initialization failed:", error)
     setUploadThingConfigured(false)
   }
 

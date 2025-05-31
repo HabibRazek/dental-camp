@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -235,17 +236,17 @@ export function ProductCard({
                 <div className="space-y-1">
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-gray-900">
-                      ${product.price.toLocaleString()}
+                      {formatCurrency(product.price)}
                     </span>
                     {product.comparePrice && (
                       <span className="text-sm text-gray-500 line-through">
-                        ${product.comparePrice.toLocaleString()}
+                        {formatCurrency(product.comparePrice)}
                       </span>
                     )}
                   </div>
                   {discount > 0 && (
                     <p className="text-sm text-green-600 font-medium">
-                      Save ${(product.comparePrice! - product.price).toLocaleString()}
+                      Save {formatCurrency(product.comparePrice! - product.price)}
                     </p>
                   )}
                 </div>
@@ -371,17 +372,17 @@ export function ProductCard({
               <div className="space-y-1">
                 <div className="flex items-baseline gap-2">
                   <span className="text-xl font-bold text-gray-900">
-                    ${product.price.toLocaleString()}
+                    {formatCurrency(product.price)}
                   </span>
                   {product.comparePrice && (
                     <span className="text-sm text-gray-500 line-through">
-                      ${product.comparePrice.toLocaleString()}
+                      {formatCurrency(product.comparePrice)}
                     </span>
                   )}
                 </div>
                 {discount > 0 && (
                   <p className="text-xs text-green-600 font-medium">
-                    Save ${(product.comparePrice! - product.price).toLocaleString()}
+                    Save {formatCurrency(product.comparePrice! - product.price)}
                   </p>
                 )}
               </div>

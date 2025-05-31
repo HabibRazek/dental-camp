@@ -23,8 +23,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { PublicHeader } from "@/components/layouts/public-header";
+import Header from "@/components/landing/header";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 interface Product {
   id: string;
@@ -133,14 +134,14 @@ export default function ProductPage() {
   const discount = product.comparePrice ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <PublicHeader />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30">
+      <Header />
 
       {/* Breadcrumb */}
-      <div className="bg-white border-b">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/catalog">
-            <Button variant="ghost" className="hover:bg-blue-50">
+            <Button variant="ghost" className="hover:bg-blue-50 text-blue-600">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Catalog
             </Button>
@@ -247,17 +248,17 @@ export default function ProductPage() {
             <div className="space-y-2">
               <div className="flex items-baseline gap-3">
                 <span className="text-3xl font-bold text-gray-900">
-                  ${product.price.toLocaleString()}
+                  {formatCurrency(product.price)}
                 </span>
                 {product.comparePrice && (
                   <span className="text-xl text-gray-500 line-through">
-                    ${product.comparePrice.toLocaleString()}
+                    {formatCurrency(product.comparePrice)}
                   </span>
                 )}
               </div>
               {discount > 0 && (
                 <p className="text-green-600 font-medium">
-                  You save ${(product.comparePrice! - product.price).toLocaleString()} ({discount}% off)
+                  You save {formatCurrency(product.comparePrice! - product.price)} ({discount}% off)
                 </p>
               )}
             </div>

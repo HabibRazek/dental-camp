@@ -40,6 +40,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import Link from "next/link"
+import { formatCurrencyAdmin } from "@/lib/utils"
 
 // Product Image Component with Error Handling
 function ProductImage({ src, alt, className }: { src: string | null, alt: string, className?: string }) {
@@ -191,11 +192,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
       },
       cell: ({ row }) => {
         const price = parseFloat(row.getValue("price"))
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(price)
-        return <div className="font-medium">{formatted}</div>
+        return <div className="font-medium">{formatCurrencyAdmin(price)}</div>
       },
     },
     {

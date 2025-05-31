@@ -24,8 +24,6 @@ export async function getUserFromDb(email: string, plainPassword: string) {
 
     // If user doesn't exist, create a new one automatically
     if (!user) {
-      console.log(`👤 Creating new user for email: ${email}`)
-
       // Import bcrypt here to avoid issues with edge runtime
       const bcrypt = await import("bcryptjs")
       const hashedPassword = await bcrypt.hash(plainPassword, 12)

@@ -91,7 +91,6 @@ export default function AddCategoryPage() {
       // Redirect to categories list
       router.push('/admin/categories')
     } catch (error) {
-      console.error('Error creating category:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to create category')
     } finally {
       setIsSubmitting(false)

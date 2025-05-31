@@ -80,7 +80,6 @@ export const CategorySchema = z.object({
   name: z.string().min(1, "Category name is required").max(100),
   description: z.string().optional(),
   slug: z.string().min(1, "Slug is required").max(100),
-  image: z.string().url().optional(),
   isActive: z.boolean().default(true),
 })
 

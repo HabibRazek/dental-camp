@@ -56,11 +56,7 @@ export function ChartAreaInteractive() {
   })
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(value)
+    return `${value.toLocaleString()} TND`
   }
 
   const CustomTooltip = ({ active, payload, label }: any) => {

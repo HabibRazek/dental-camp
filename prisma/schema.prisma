@@ -101,7 +101,6 @@ model Category {
   name        String    @unique
   description String?
   slug        String    @unique
-  image       String?
   isActive    Boolean   @default(true)
   products    Product[]
 

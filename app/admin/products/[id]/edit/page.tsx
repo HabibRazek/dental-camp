@@ -192,7 +192,6 @@ export default function EditProductPage() {
 
       if (!response.ok) {
         const errorData = await response.json()
-        console.error('Product update error:', errorData)
 
         if (errorData.details && Array.isArray(errorData.details)) {
           const errorMessages = errorData.details.map((detail: any) =>

@@ -88,7 +88,10 @@ export async function GET(request: NextRequest) {
     const hasNextPage = page < totalPages;
     const hasPrevPage = page > 1;
 
+    console.log(`Found ${products.length} products out of ${totalCount} total`);
+
     return NextResponse.json({
+      success: true,
       products,
       pagination: {
         page,
