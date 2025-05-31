@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { ProductStatus } from "@prisma/client";
 
 export async function POST() {
   try {
@@ -46,7 +47,7 @@ export async function POST() {
         price: 15000,
         comparePrice: 18000,
         sku: "DC-X1-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: true,
         stockQuantity: 5,
@@ -62,7 +63,7 @@ export async function POST() {
         price: 25000,
         comparePrice: 30000,
         sku: "XR-PRO-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: true,
         stockQuantity: 3,
@@ -78,7 +79,7 @@ export async function POST() {
         price: 3500,
         comparePrice: 4200,
         sku: "HP-PREM-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: false,
         stockQuantity: 12,
@@ -93,7 +94,7 @@ export async function POST() {
         description: "Ultra-bright LED dental light with adjustable intensity and color temperature. Shadow-free illumination.",
         price: 2800,
         sku: "LED-UB-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: false,
         stockQuantity: 8,
@@ -109,7 +110,7 @@ export async function POST() {
         price: 4500,
         comparePrice: 5500,
         sku: "ST-AUTO-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: true,
         stockQuantity: 6,
@@ -124,7 +125,7 @@ export async function POST() {
         description: "Complete kit of dental impression materials including alginate, silicone, and accessories.",
         price: 450,
         sku: "IM-KIT-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: false,
         stockQuantity: 25,
@@ -139,7 +140,7 @@ export async function POST() {
         description: "Silent dental air compressor with oil-free operation. Reliable and quiet performance for dental offices.",
         price: 3200,
         sku: "COMP-SP-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: false,
         stockQuantity: 4,
@@ -155,7 +156,7 @@ export async function POST() {
         price: 1200,
         comparePrice: 1500,
         sku: "SI-SET-001",
-        status: "PUBLISHED",
+        status: ProductStatus.PUBLISHED,
         isActive: true,
         isFeatured: false,
         stockQuantity: 15,
