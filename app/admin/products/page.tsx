@@ -66,7 +66,7 @@ export default function ProductsPage() {
       }
 
       toast.success('Product deleted successfully')
-      fetchProducts() // Refresh the list
+      fetchProducts(currentPage) // Refresh the current page
     } catch (err) {
       toast.error('Failed to delete product')
     }
@@ -88,7 +88,7 @@ export default function ProductsPage() {
       }
 
       toast.success(`Product ${newStatus.toLowerCase()} successfully`)
-      fetchProducts() // Refresh the list
+      fetchProducts(currentPage) // Refresh the current page
     } catch (err) {
       toast.error('Failed to update product status')
     }
@@ -136,7 +136,7 @@ export default function ProductsPage() {
           <div className="text-center">
             <p className="text-red-600 mb-4">Error: {error}</p>
             <button
-              onClick={fetchProducts}
+              onClick={() => fetchProducts(1)}
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
             >
               Try Again
