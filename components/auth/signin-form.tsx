@@ -49,18 +49,27 @@ export function SignInForm() {
           setError("Unable to sign in. Please try again.")
         }
       } else if (result?.ok) {
-        // Get fresh session and redirect directly
+        // Get fresh session and redirect based on role and callback URL
         setTimeout(async () => {
           try {
             const sessionResponse = await fetch('/api/auth/session')
             const sessionData = await sessionResponse.json()
 
+            // Determine redirect URL based on role and callback
+            let redirectUrl = callbackUrl
+
             if (sessionData?.user?.role === "ADMIN") {
-              window.location.href = "/dashboard"
+              // Admin users go to dashboard unless callback is specified
+              redirectUrl = callbackUrl === '/dashboard' ? '/dashboard' : callbackUrl
             } else {
-              window.location.href = "/user-space"
+              // Regular users go to user-space unless callback is specified
+              redirectUrl = callbackUrl === '/dashboard' ? '/user-space' : callbackUrl
             }
+
+            console.log("Redirecting to:", redirectUrl)
+            window.location.href = redirectUrl
           } catch (error) {
+            console.error("Session fetch error:", error)
             // Fallback to success page
             window.location.href = "/auth/success"
           }

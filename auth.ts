@@ -13,9 +13,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   pages: {
     signIn: "/auth/signin",
+    error: "/auth/signin",
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true,
+  debug: process.env.NODE_ENV === "development",
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -113,8 +115,39 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async redirect({ url, baseUrl }) {
       // Handle post-signin redirects
-      if (url.startsWith("/")) return `${baseUrl}${url}`
-      if (new URL(url).origin === baseUrl) return url
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Redirect callback:", { url, baseUrl })
+      }
+
+      // If URL is relative, make it absolute
+      if (url.startsWith("/")) {
+        const redirectUrl = `${baseUrl}${url}`
+        if (process.env.NODE_ENV === 'development') {
+          console.log("Relative URL redirect:", redirectUrl)
+        }
+        return redirectUrl
+      }
+
+      // If URL is from the same origin, allow it
+      try {
+        const urlObj = new URL(url)
+        const baseUrlObj = new URL(baseUrl)
+        if (urlObj.origin === baseUrlObj.origin) {
+          if (process.env.NODE_ENV === 'development') {
+            console.log("Same origin redirect:", url)
+          }
+          return url
+        }
+      } catch (error) {
+        if (process.env.NODE_ENV === 'development') {
+          console.log("URL parsing error:", error)
+        }
+      }
+
+      // Default to base URL
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Default redirect to baseUrl:", baseUrl)
+      }
       return baseUrl
     },
   },

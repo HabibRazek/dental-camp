@@ -2,6 +2,9 @@
 
 import { signIn } from "@/auth"
 
-export async function signInWithGoogle() {
-  await signIn("google", { redirectTo: "/auth/success" })
+export async function signInWithGoogle(callbackUrl?: string) {
+  await signIn("google", {
+    redirectTo: callbackUrl || "/auth/success",
+    redirect: true
+  })
 }
