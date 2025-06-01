@@ -11,12 +11,21 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+  const itemsPerPage = 10
 
-  // Fetch products
-  const fetchProducts = async () => {
+  // Fetch products with pagination
+  const fetchProducts = async (page: number = 1) => {
     try {
       setLoading(true)
-      const response = await fetch('/api/products')
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: itemsPerPage.toString(),
+      })
+
+      const response = await fetch(`/api/products?${params}`)
 
       if (!response.ok) {
         throw new Error('Failed to fetch products')
@@ -24,6 +33,9 @@ export default function ProductsPage() {
 
       const data = await response.json()
       setProducts(data.products || [])
+      setTotalPages(data.pagination?.totalPages || 1)
+      setTotalCount(data.pagination?.totalCount || 0)
+      setCurrentPage(page)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')
       toast.error('Failed to load products')
@@ -82,8 +94,25 @@ export default function ProductsPage() {
     }
   }
 
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    fetchProducts(page)
+  }
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      fetchProducts(currentPage - 1)
+    }
+  }
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      fetchProducts(currentPage + 1)
+    }
+  }
+
   useEffect(() => {
-    fetchProducts()
+    fetchProducts(1)
   }, [])
 
   if (loading) {
@@ -128,6 +157,15 @@ export default function ProductsPage() {
         onEdit={handleEdit}
         onDelete={handleDelete}
         onStatusChange={handleStatusChange}
+        pagination={{
+          currentPage,
+          totalPages,
+          totalCount,
+          itemsPerPage,
+          onPageChange: handlePageChange,
+          onPreviousPage: handlePreviousPage,
+          onNextPage: handleNextPage,
+        }}
       />
     </DashboardLayout>
   )

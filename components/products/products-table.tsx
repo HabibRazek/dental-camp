@@ -85,14 +85,25 @@ export type Product = {
   updatedAt: string
 }
 
+interface PaginationProps {
+  currentPage: number
+  totalPages: number
+  totalCount: number
+  itemsPerPage: number
+  onPageChange: (page: number) => void
+  onPreviousPage: () => void
+  onNextPage: () => void
+}
+
 interface ProductsTableProps {
   data: Product[]
   onEdit: (product: Product) => void
   onDelete: (productId: string) => void
   onStatusChange: (productId: string, status: string) => void
+  pagination?: PaginationProps
 }
 
-export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: ProductsTableProps) {
+export function ProductsTable({ data, onEdit, onDelete, onStatusChange, pagination }: ProductsTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -284,11 +295,12 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: pagination ? undefined : getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    manualPagination: !!pagination,
     state: {
       sorting,
       columnFilters,
@@ -406,29 +418,106 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange }: Produc
             </TableBody>
           </Table>
         </div>
-        <div className="flex items-center justify-end space-x-2 py-4">
+        {/* Pagination */}
+        <div className="flex items-center justify-between space-x-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {pagination ? (
+              <>
+                Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1} to{" "}
+                {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalCount)} of{" "}
+                {pagination.totalCount} products
+              </>
+            ) : (
+              <>
+                {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                {table.getFilteredRowModel().rows.length} row(s) selected.
+              </>
+            )}
           </div>
-          <div className="space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-            >
-              Next
-            </Button>
-          </div>
+
+          {pagination ? (
+            <div className="flex items-center space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={pagination.onPreviousPage}
+                disabled={pagination.currentPage <= 1}
+              >
+                Previous
+              </Button>
+
+              {/* Page numbers */}
+              <div className="flex items-center space-x-1">
+                {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                  const pageNumber = i + 1;
+                  if (pagination.totalPages <= 5) {
+                    return (
+                      <Button
+                        key={pageNumber}
+                        variant={pagination.currentPage === pageNumber ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => pagination.onPageChange(pageNumber)}
+                        className="w-8 h-8 p-0"
+                      >
+                        {pageNumber}
+                      </Button>
+                    );
+                  }
+
+                  // Show pages around current page for larger pagination
+                  const startPage = Math.max(1, pagination.currentPage - 2);
+                  const endPage = Math.min(pagination.totalPages, startPage + 4);
+                  const adjustedStartPage = Math.max(1, endPage - 4);
+
+                  if (pageNumber >= adjustedStartPage && pageNumber <= endPage) {
+                    const actualPage = adjustedStartPage + i;
+                    if (actualPage <= pagination.totalPages) {
+                      return (
+                        <Button
+                          key={actualPage}
+                          variant={pagination.currentPage === actualPage ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => pagination.onPageChange(actualPage)}
+                          className="w-8 h-8 p-0"
+                        >
+                          {actualPage}
+                        </Button>
+                      );
+                    }
+                  }
+                  return null;
+                })}
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={pagination.onNextPage}
+                disabled={pagination.currentPage >= pagination.totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          ) : (
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                Next
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
