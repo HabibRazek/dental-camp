@@ -41,7 +41,9 @@ export async function middleware(request: NextRequest) {
   try {
     const token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET
+      secret: process.env.AUTH_SECRET,
+      // Add production-specific configuration
+      secureCookie: process.env.NODE_ENV === "production",
     })
 
     if (!token) {
@@ -61,7 +63,12 @@ export async function middleware(request: NextRequest) {
     // Allow access
     return NextResponse.next()
 
-  } catch {
+  } catch (error) {
+    // Log error in development for debugging
+    if (process.env.NODE_ENV === "development") {
+      console.error("Middleware auth error:", error)
+    }
+
     // On error, redirect to signin
     const signInUrl = new URL('/auth/signin', request.url)
     signInUrl.searchParams.set('callbackUrl', pathname)

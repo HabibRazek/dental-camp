@@ -21,7 +21,7 @@ export function SignInForm() {
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const callbackUrl = searchParams.get('callbackUrl') || '/auth/success'
 
   const {
     register,
@@ -49,31 +49,8 @@ export function SignInForm() {
           setError("Unable to sign in. Please try again.")
         }
       } else if (result?.ok) {
-        // Get fresh session and redirect based on role and callback URL
-        setTimeout(async () => {
-          try {
-            const sessionResponse = await fetch('/api/auth/session')
-            const sessionData = await sessionResponse.json()
-
-            // Determine redirect URL based on role and callback
-            let redirectUrl = callbackUrl
-
-            if (sessionData?.user?.role === "ADMIN") {
-              // Admin users go to dashboard unless callback is specified
-              redirectUrl = callbackUrl === '/dashboard' ? '/dashboard' : callbackUrl
-            } else {
-              // Regular users go to user-space unless callback is specified
-              redirectUrl = callbackUrl === '/dashboard' ? '/user-space' : callbackUrl
-            }
-
-            console.log("Redirecting to:", redirectUrl)
-            window.location.href = redirectUrl
-          } catch (error) {
-            console.error("Session fetch error:", error)
-            // Fallback to success page
-            window.location.href = "/auth/success"
-          }
-        }, 500)
+        // Redirect to success page for consistent role-based routing
+        window.location.href = "/auth/success"
       }
     } catch {
       setError("An error occurred. Please try again.")

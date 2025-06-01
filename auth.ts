@@ -18,6 +18,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET,
   trustHost: true,
   debug: process.env.NODE_ENV === "development",
+  // Production URL configuration
+  basePath: "/api/auth",
+  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
