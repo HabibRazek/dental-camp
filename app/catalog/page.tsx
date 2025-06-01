@@ -8,7 +8,6 @@ import {
   Search,
   Grid3X3,
   List,
-  Star,
   Heart,
   ShoppingCart,
   Tag,
@@ -22,7 +21,6 @@ import {
   LayoutGrid,
   Filter,
   SlidersHorizontal,
-  Microscope,
   Target,
   Package
 } from "lucide-react";
@@ -37,6 +35,7 @@ import { toast } from "sonner";
 import Header from "@/components/landing/header";
 import Footer from "@/components/footer";
 import { formatCurrency } from "@/lib/utils";
+import { SectionLoader } from "@/components/ui/loader";
 
 // Types
 interface Product {
@@ -56,8 +55,6 @@ interface Product {
   status: string;
   slug: string;
   featured?: boolean;
-  rating?: number;
-  reviews?: number;
 }
 
 interface Category {
@@ -88,9 +85,9 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className="overflow-hidden border-0 shadow-xl hover:shadow-2xl transition-all duration-700 bg-white/90 backdrop-blur-sm ring-1 ring-gray-200/50 hover:ring-blue-300/50">
+      <Card className="h-[450px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl flex flex-col">
         {/* Image Container with Floating Elements */}
-        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-blue-50 to-gray-100">
+        <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-50 to-gray-100 p-2 flex items-center justify-center">
           {/* Floating Badges */}
           <AnimatePresence>
             {product.featured && (
@@ -98,9 +95,9 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
                 initial={{ scale: 0, rotate: -180 }}
                 animate={{ scale: 1, rotate: 0 }}
                 exit={{ scale: 0, rotate: 180 }}
-                className="absolute top-4 left-4 z-10"
+                className="absolute top-2 left-2 z-10"
               >
-                <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg px-3 py-1 rounded-full">
+                <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg px-2 py-1 rounded-full text-xs">
                   <Award className="w-3 h-3 mr-1" />
                   Featured
                 </Badge>
@@ -111,9 +108,9 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
               <motion.div
                 initial={{ scale: 0, x: 50 }}
                 animate={{ scale: 1, x: 0 }}
-                className="absolute top-4 right-4 z-10"
+                className="absolute top-2 right-2 z-10"
               >
-                <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-lg px-3 py-1 rounded-full">
+                <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-lg px-2 py-1 rounded-full text-xs">
                   <TrendingUp className="w-3 h-3 mr-1" />
                   Sale
                 </Badge>
@@ -127,16 +124,14 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
               src={product.thumbnail || "/images/dental-equipment.jpg"}
               alt={product.name}
               fill
-              className={`object-cover transition-all duration-700 ${
-                isHovered ? "scale-110" : "scale-100"
-              } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              className={`object-contain transition-all duration-700 ${isHovered ? "scale-105" : "scale-100"
+                } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
               onLoad={() => setImageLoaded(true)}
             />
-            
+
             {/* Gradient Overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent transition-opacity duration-300 ${
-              isHovered ? "opacity-100" : "opacity-0"
-            }`} />
+            <div className={`absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
+              }`} />
           </div>
 
           {/* Floating Action Buttons */}
@@ -149,52 +144,52 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
                 transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
                 className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm"
               >
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <motion.div
-                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Button
                       size="sm"
                       variant="secondary"
-                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-xl border-0 h-12 w-12 p-0"
+                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-10 w-10 p-0"
                       onClick={() => {
                         setIsWishlisted(!isWishlisted);
                         toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
                       }}
                     >
-                      <Heart className={`w-5 h-5 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
+                      <Heart className={`w-4 h-4 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
                     </Button>
                   </motion.div>
 
                   <motion.div
-                    whileHover={{ scale: 1.15, rotate: -5 }}
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Button
                       size="sm"
-                      className="rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-xl border-0 h-12 w-12 p-0"
+                      className="rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg border-0 h-10 w-10 p-0"
                       onClick={() => toast.success("Added to cart")}
                     >
-                      <ShoppingCart className="w-5 h-5" />
+                      <ShoppingCart className="w-4 h-4" />
                     </Button>
                   </motion.div>
 
                   <motion.div
-                    whileHover={{ scale: 1.15, rotate: 5 }}
+                    whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     transition={{ type: "spring", stiffness: 400 }}
                   >
                     <Button
                       size="sm"
                       variant="secondary"
-                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-xl border-0 h-12 w-12 p-0"
+                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-10 w-10 p-0"
                       asChild
                     >
                       <Link href={`/products/${product.slug}`}>
-                        <Eye className="w-5 h-5 text-gray-600" />
+                        <Eye className="w-4 h-4 text-gray-600" />
                       </Link>
                     </Button>
                   </motion.div>
@@ -204,91 +199,58 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
           </AnimatePresence>
 
           {/* Stock Indicator */}
-          <div className="absolute bottom-3 left-3">
-            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${
-              product.stockQuantity > 0 
-                ? "bg-green-100/80 text-green-700" 
-                : "bg-red-100/80 text-red-700"
-            }`}>
-              <div className={`w-2 h-2 rounded-full ${
-                product.stockQuantity > 0 ? "bg-green-500" : "bg-red-500"
-              }`} />
+          <div className="absolute bottom-2 left-2">
+            <div className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium backdrop-blur-sm ${product.stockQuantity > 0
+                ? "bg-green-100/90 text-green-700"
+                : "bg-red-100/90 text-red-700"
+              }`}>
+              <div className={`w-2 h-2 rounded-full ${product.stockQuantity > 0 ? "bg-green-500" : "bg-red-500"
+                }`} />
               {product.stockQuantity > 0 ? "In Stock" : "Out of Stock"}
             </div>
           </div>
         </div>
 
         {/* Content */}
-        <CardContent className="p-6 space-y-5">
+        <CardContent className="p-4 flex flex-col flex-grow">
           {/* Category */}
           {product.category && (
-            <div className="flex items-center gap-2">
-              <div className="p-2 bg-gradient-to-r from-blue-100 to-blue-200 rounded-full">
-                <Microscope className="w-4 h-4 text-blue-600" />
-              </div>
-              <span className="text-sm font-semibold text-blue-600">{product.category.name}</span>
-            </div>
+            <span className="text-xs text-blue-600 font-medium mb-2">{product.category.name}</span>
           )}
 
           {/* Title */}
-          <h3 className="font-bold text-xl text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors duration-300 leading-tight">
+          <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight mb-3">
             {product.name}
           </h3>
 
-          {/* Rating */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star
-                  key={i}
-                  className={`w-4 h-4 transition-colors ${
-                    i < (product.rating || 4) ? "text-yellow-400 fill-current" : "text-gray-300"
-                  }`}
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-600 font-medium">({product.reviews || 24} reviews)</span>
-          </div>
-
           {/* Price */}
-          <div className="space-y-2">
-            <div className="flex items-baseline gap-3">
-              <span className="text-2xl font-bold text-gray-900">
+          <div className="mb-4 flex-grow">
+            <div className="flex items-baseline gap-2">
+              <span className="text-lg font-bold text-gray-900">
                 {formatCurrency(product.price)}
               </span>
               {product.comparePrice && (
-                <span className="text-lg text-gray-500 line-through">
+                <span className="text-sm text-gray-500 line-through">
                   {formatCurrency(product.comparePrice)}
                 </span>
               )}
             </div>
             {product.comparePrice && (
-              <div className="flex items-center gap-2">
-                <p className="text-green-600 font-semibold text-sm">
-                  Save {formatCurrency(product.comparePrice - product.price)}
-                </p>
-                <Badge className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full border-0">
-                  {Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
-                </Badge>
-              </div>
+              <p className="text-green-600 font-medium text-xs mt-1">
+                Save {formatCurrency(product.comparePrice - product.price)}
+              </p>
             )}
           </div>
 
           {/* Quick Add Button */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="pt-2"
+          <Button
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm mt-auto"
+            disabled={product.stockQuantity === 0}
+            onClick={() => toast.success("Added to cart")}
           >
-            <Button
-              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-12 rounded-xl font-semibold"
-              disabled={product.stockQuantity === 0}
-              onClick={() => toast.success("Added to cart")}
-            >
-              <ShoppingCart className="w-5 h-5 mr-2" />
-              {product.stockQuantity === 0 ? "Out of Stock" : "Add to Cart"}
-            </Button>
-          </motion.div>
+            <ShoppingCart className="w-4 h-4 mr-2" />
+            {product.stockQuantity === 0 ? "Out of Stock" : "Add to Cart"}
+          </Button>
         </CardContent>
       </Card>
     </motion.div>
@@ -312,7 +274,6 @@ export default function CatalogPage() {
   const [gridCols, setGridCols] = useState(3);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [featuredOnly, setFeaturedOnly] = useState(false);
-  const [minRating, setMinRating] = useState(0);
 
   // Fetch products function
   const fetchProducts = useCallback(async () => {
@@ -329,7 +290,6 @@ export default function CatalogPage() {
         maxPrice: priceRange[1].toString(),
         inStock: inStockOnly.toString(),
         featured: featuredOnly.toString(),
-        minRating: minRating.toString(),
       });
 
       const response = await fetch(`/api/products/public?${params}`);
@@ -344,7 +304,7 @@ export default function CatalogPage() {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly, minRating]);
+  }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
 
   // Fetch data
   useEffect(() => {
@@ -387,545 +347,489 @@ export default function CatalogPage() {
           transition={{ duration: 0.8 }}
           className="relative py-20 px-4 overflow-hidden"
         >
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            animate={{
-              rotate: [0, 360],
-              scale: [1, 1.2, 1],
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{
-              rotate: [360, 0],
-              scale: [1.2, 1, 1.2],
-            }}
-            transition={{
-              duration: 25,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-400/20 to-blue-600/20 rounded-full blur-3xl"
-          />
-        </div>
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden">
+            <motion.div
+              animate={{
+                rotate: [0, 360],
+                scale: [1, 1.2, 1],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-full blur-3xl"
+            />
+            <motion.div
+              animate={{
+                rotate: [360, 0],
+                scale: [1.2, 1, 1.2],
+              }}
+              transition={{
+                duration: 25,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-tr from-blue-400/20 to-blue-600/20 rounded-full blur-3xl"
+            />
+          </div>
 
-        <div className="relative max-w-7xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-blue-600 bg-clip-text text-transparent">
-              Professional Dental Equipment
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover our comprehensive collection of high-quality dental equipment and supplies
-            </p>
-          </motion.div>
+          <div className="relative max-w-7xl mx-auto text-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="space-y-6"
+            >
+              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-blue-600 bg-clip-text text-transparent">
+                Professional Dental Equipment
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                Discover our comprehensive collection of high-quality dental equipment and supplies
+              </p>
+            </motion.div>
 
-          {/* Enhanced Search Bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-12 max-w-2xl mx-auto"
-          >
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-              <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200/50 backdrop-blur-sm">
-                <div className="flex items-center p-2">
-                  <div className="flex-1 flex items-center">
-                    <Search className="w-6 h-6 text-gray-400 ml-4" />
-                    <Input
-                      placeholder="Search for dental equipment, tools, or supplies..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="border-0 bg-transparent text-lg placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
-                    />
-                  </div>
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 rounded-xl px-8"
-                    >
-                      Search
-                    </Button>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="flex gap-8">
-          {/* Innovative Sidebar Filters */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className={`${showFilters ? 'block' : 'hidden'} lg:block w-80 space-y-6`}
-          >
-            <div className="sticky top-8 space-y-6">
-              {/* Filter Header */}
-              <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <SlidersHorizontal className="w-5 h-5 text-blue-600" />
-                    Smart Filters
-                  </h2>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedCategory("all");
-                      setPriceRange([0, 50000]);
-                      setInStockOnly(false);
-                      setFeaturedOnly(false);
-                      setMinRating(0);
-                      setSearchQuery("");
-                    }}
-                    className="text-blue-500 hover:text-blue-600"
-                  >
-                    Clear All
-                  </Button>
-                </div>
-
-                {/* Categories */}
-                <div className="space-y-4">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-blue-500" />
-                    Categories
-                  </h3>
-                  <div className="space-y-2">
+            {/* Enhanced Search Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="mt-12 max-w-2xl mx-auto"
+            >
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+                <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200/50 backdrop-blur-sm">
+                  <div className="flex items-center p-2">
+                    <div className="flex-1 flex items-center">
+                      <Search className="w-6 h-6 text-gray-400 ml-4" />
+                      <Input
+                        placeholder="Search for dental equipment, tools, or supplies..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="border-0 bg-transparent text-lg placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                      />
+                    </div>
                     <motion.div
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                     >
                       <Button
-                        variant={selectedCategory === "all" ? "default" : "ghost"}
-                        className={`w-full justify-start ${
-                          selectedCategory === "all"
-                            ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                            : "hover:bg-blue-50"
-                        }`}
-                        onClick={() => setSelectedCategory("all")}
+                        size="lg"
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 rounded-xl px-8"
                       >
-                        All Products
-                        <Badge variant="secondary" className="ml-auto">
-                          {products.length}
-                        </Badge>
+                        Search
                       </Button>
                     </motion.div>
-                    {categories.map((category) => (
-                      <motion.div
-                        key={category.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          variant={selectedCategory === category.slug ? "default" : "ghost"}
-                          className={`w-full justify-start ${
-                            selectedCategory === category.slug
-                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
-                              : "hover:bg-blue-50"
-                          }`}
-                          onClick={() => setSelectedCategory(category.slug)}
-                        >
-                          {category.name}
-                          <Badge variant="secondary" className="ml-auto">
-                            {category._count.products}
-                          </Badge>
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Price Range */}
-                <div className="space-y-4 pt-6 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Target className="w-4 h-4 text-blue-500" />
-                    Price Range
-                  </h3>
-                  <div className="space-y-4">
-                    <Slider
-                      value={priceRange}
-                      onValueChange={(value) => setPriceRange(value as [number, number])}
-                      max={50000}
-                      min={0}
-                      step={100}
-                      className="w-full"
-                    />
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="number"
-                        placeholder="Min"
-                        value={priceRange[0]}
-                        onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                        className="w-full"
-                      />
-                      <span className="text-gray-500">-</span>
-                      <Input
-                        type="number"
-                        placeholder="Max"
-                        value={priceRange[1]}
-                        onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                        className="w-full"
-                      />
-                    </div>
-                    <div className="flex justify-between text-sm text-gray-500">
-                      <span>{priceRange[0] || 0} TND</span>
-                      <span>{priceRange[1] || 50000} TND</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Filters */}
-                <div className="space-y-4 pt-6 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-blue-500" />
-                    Quick Filters
-                  </h3>
-                  <div className="space-y-3">
-                    <motion.label
-                      className="flex items-center cursor-pointer group"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <Checkbox
-                        checked={inStockOnly}
-                        onCheckedChange={(checked) => setInStockOnly(checked === true)}
-                        className="mr-3"
-                      />
-                      <div className="flex items-center gap-2">
-                        <Package className="w-4 h-4 text-green-600" />
-                        <span className="text-sm group-hover:text-blue-600 transition-colors">In Stock Only</span>
-                      </div>
-                    </motion.label>
-
-                    <motion.label
-                      className="flex items-center cursor-pointer group"
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <Checkbox
-                        checked={featuredOnly}
-                        onCheckedChange={(checked) => setFeaturedOnly(checked === true)}
-                        className="mr-3"
-                      />
-                      <div className="flex items-center gap-2">
-                        <Award className="w-4 h-4 text-yellow-600" />
-                        <span className="text-sm group-hover:text-blue-600 transition-colors">Featured Products</span>
-                      </div>
-                    </motion.label>
-                  </div>
-                </div>
-
-                {/* Rating Filter */}
-                <div className="space-y-4 pt-6 border-t border-gray-200">
-                  <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                    <Star className="w-4 h-4 text-blue-600" />
-                    Minimum Rating
-                  </h3>
-                  <div className="space-y-2">
-                    {[4, 3, 2, 1].map((rating) => (
-                      <motion.label
-                        key={rating}
-                        className="flex items-center cursor-pointer group"
-                        whileHover={{ scale: 1.02 }}
-                      >
-                        <Checkbox
-                          checked={minRating === rating}
-                          onCheckedChange={(checked) => setMinRating(checked ? rating : 0)}
-                          className="mr-3"
-                        />
-                        <div className="flex items-center">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-4 w-4 ${
-                                i < rating ? "text-yellow-400 fill-current" : "text-gray-300"
-                              }`}
-                            />
-                          ))}
-                          <span className="text-sm ml-2 group-hover:text-blue-600 transition-colors">& up</span>
-                        </div>
-                      </motion.label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Products Section */}
-          <div className="flex-1">
-            {/* Top Controls */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8"
-            >
-              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
-                {/* Results Info */}
-                <div className="flex items-center gap-4 flex-wrap">
-                  <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-blue-500" />
-                    {products.length} Product{products.length !== 1 ? 's' : ''} Found
-                  </h2>
-                  {searchQuery && (
-                    <Badge className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 border-0">
-                      &ldquo;{searchQuery}&rdquo;
-                    </Badge>
-                  )}
-                  {selectedCategory !== "all" && (
-                    <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-0">
-                      {categories.find(c => c.slug === selectedCategory)?.name}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Controls */}
-                <div className="flex gap-3 flex-wrap">
-                  {/* Mobile Filter Toggle */}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden"
-                  >
-                    <Filter className="w-4 h-4 mr-2" />
-                    Filters
-                  </Button>
-
-                  {/* Sort */}
-                  <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
-                    const [field, order] = value.split('-');
-                    setSortBy(field);
-                    setSortOrder(order);
-                  }}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Sort by" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="createdAt-desc">Newest First</SelectItem>
-                      <SelectItem value="price-asc">Price: Low to High</SelectItem>
-                      <SelectItem value="price-desc">Price: High to Low</SelectItem>
-                      <SelectItem value="name-asc">Name: A to Z</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  {/* Grid Size Control */}
-                  <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-                    {[2, 3, 4].map((size) => (
-                      <Button
-                        key={size}
-                        variant={gridCols === size ? "default" : "ghost"}
-                        size="sm"
-                        onClick={() => setGridCols(size)}
-                        className="rounded-none border-0"
-                      >
-                        {size === 2 && <Grid2X2 className="h-4 w-4" />}
-                        {size === 3 && <Grid3X3 className="h-4 w-4" />}
-                        {size === 4 && <LayoutGrid className="h-4 w-4" />}
-                      </Button>
-                    ))}
-                  </div>
-
-                  {/* View Mode */}
-                  <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-                    <Button
-                      variant={viewMode === "grid" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setViewMode("grid")}
-                      className="rounded-none border-0"
-                    >
-                      <Grid3X3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant={viewMode === "list" ? "default" : "ghost"}
-                      size="sm"
-                      onClick={() => setViewMode("list")}
-                      className="rounded-none border-0"
-                    >
-                      <List className="h-4 w-4" />
-                    </Button>
                   </div>
                 </div>
               </div>
             </motion.div>
+          </div>
+        </motion.section>
 
-            {/* Products Grid */}
-            {loading ? (
-              <div className={`grid gap-6 ${getGridColumns()}`}>
-                {Array.from({ length: 12 }).map((_, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.3, delay: i * 0.05 }}
-                  >
-                    <Card className="h-96 animate-pulse overflow-hidden">
-                      <div className="h-48 bg-gradient-to-br from-gray-200 to-gray-300 rounded-t-lg"></div>
-                      <CardContent className="p-4 space-y-3">
-                        <div className="h-4 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-3/4"></div>
-                        <div className="h-3 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2"></div>
-                        <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/3"></div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
-              </div>
-            ) : products.length > 0 ? (
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${viewMode}-${gridCols}`}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.4 }}
-                  className={`grid gap-6 ${
-                    viewMode === "list"
-                      ? "grid-cols-1"
-                      : getGridColumns()
-                  }`}
-                >
-                  {products.map((product, index) => (
-                    <motion.div
-                      key={product.id}
-                      layout
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.9 }}
-                      transition={{
-                        duration: 0.3,
-                        delay: index * 0.05,
-                        type: "spring",
-                        stiffness: 300
-                      }}
-                    >
-                      <InnovativeProductCard product={product} />
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </AnimatePresence>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="text-center py-20"
-              >
-                <div className="max-w-md mx-auto">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-                    className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center"
-                  >
-                    <Search className="h-16 w-16 text-blue-500" />
-                  </motion.div>
-                  <motion.h3
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-2xl font-bold text-gray-900 mb-3"
-                  >
-                    No products found
-                  </motion.h3>
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-gray-600 mb-8 leading-relaxed"
-                  >
-                    We couldn&apos;t find any products matching your criteria. Try adjusting your search or filters to discover our amazing dental equipment.
-                  </motion.p>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                  >
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 pb-20">
+          <div className="flex gap-8">
+            {/* Innovative Sidebar Filters */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className={`${showFilters ? 'block' : 'hidden'} lg:block w-80 space-y-6`}
+            >
+              <div className="sticky top-8 space-y-6">
+                {/* Filter Header */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                      <SlidersHorizontal className="w-5 h-5 text-blue-600" />
+                      Smart Filters
+                    </h2>
                     <Button
+                      variant="ghost"
+                      size="sm"
                       onClick={() => {
-                        setSearchQuery("");
                         setSelectedCategory("all");
                         setPriceRange([0, 50000]);
                         setInStockOnly(false);
                         setFeaturedOnly(false);
-                        setMinRating(0);
-                        setCurrentPage(1);
+                        setSearchQuery("");
                       }}
-                      className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                      className="text-blue-500 hover:text-blue-600"
                     >
-                      <X className="mr-2 h-4 w-4" />
-                      Clear All Filters
+                      Clear All
                     </Button>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
+                  </div>
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="flex justify-center mt-12"
-              >
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="hover:bg-blue-50"
-                  >
-                    Previous
-                  </Button>
-
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const page = i + 1;
-                    return (
-                      <Button
-                        key={page}
-                        variant={currentPage === page ? "default" : "outline"}
-                        onClick={() => setCurrentPage(page)}
-                        className={currentPage === page ? "bg-gradient-to-r from-blue-500 to-blue-600" : "hover:bg-blue-50"}
+                  {/* Categories */}
+                  <div className="space-y-4">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <Tag className="w-4 h-4 text-blue-500" />
+                      Categories
+                    </h3>
+                    <div className="space-y-2">
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                       >
-                        {page}
-                      </Button>
-                    );
-                  })}
+                        <Button
+                          variant={selectedCategory === "all" ? "default" : "ghost"}
+                          className={`w-full justify-start ${selectedCategory === "all"
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                              : "hover:bg-blue-50"
+                            }`}
+                          onClick={() => setSelectedCategory("all")}
+                        >
+                          All Products
+                          <Badge variant="secondary" className="ml-auto">
+                            {products.length}
+                          </Badge>
+                        </Button>
+                      </motion.div>
+                      {categories.map((category) => (
+                        <motion.div
+                          key={category.id}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                        >
+                          <Button
+                            variant={selectedCategory === category.slug ? "default" : "ghost"}
+                            className={`w-full justify-start ${selectedCategory === category.slug
+                                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white"
+                                : "hover:bg-blue-50"
+                              }`}
+                            onClick={() => setSelectedCategory(category.slug)}
+                          >
+                            {category.name}
+                            <Badge variant="secondary" className="ml-auto">
+                              {category._count.products}
+                            </Badge>
+                          </Button>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </div>
 
-                  <Button
-                    variant="outline"
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="hover:bg-blue-50"
-                  >
-                    Next
-                  </Button>
+                  {/* Price Range */}
+                  <div className="space-y-4 pt-6 border-t border-gray-200">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <Target className="w-4 h-4 text-blue-500" />
+                      Price Range
+                    </h3>
+                    <div className="space-y-4">
+                      <Slider
+                        value={priceRange}
+                        onValueChange={(value) => setPriceRange(value as [number, number])}
+                        max={50000}
+                        min={0}
+                        step={100}
+                        className="w-full"
+                      />
+                      <div className="flex items-center gap-2">
+                        <Input
+                          type="number"
+                          placeholder="Min"
+                          value={priceRange[0]}
+                          onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                          className="w-full"
+                        />
+                        <span className="text-gray-500">-</span>
+                        <Input
+                          type="number"
+                          placeholder="Max"
+                          value={priceRange[1]}
+                          onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                          className="w-full"
+                        />
+                      </div>
+                      <div className="flex justify-between text-sm text-gray-500">
+                        <span>{priceRange[0] || 0} TND</span>
+                        <span>{priceRange[1] || 50000} TND</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Filters */}
+                  <div className="space-y-4 pt-6 border-t border-gray-200">
+                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-blue-500" />
+                      Quick Filters
+                    </h3>
+                    <div className="space-y-3">
+                      <motion.label
+                        className="flex items-center cursor-pointer group"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <Checkbox
+                          checked={inStockOnly}
+                          onCheckedChange={(checked) => setInStockOnly(checked === true)}
+                          className="mr-3"
+                        />
+                        <div className="flex items-center gap-2">
+                          <Package className="w-4 h-4 text-green-600" />
+                          <span className="text-sm group-hover:text-blue-600 transition-colors">In Stock Only</span>
+                        </div>
+                      </motion.label>
+
+                      <motion.label
+                        className="flex items-center cursor-pointer group"
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <Checkbox
+                          checked={featuredOnly}
+                          onCheckedChange={(checked) => setFeaturedOnly(checked === true)}
+                          className="mr-3"
+                        />
+                        <div className="flex items-center gap-2 mb-4">
+                          <Award className="w-4 h-4 text-yellow-600" />
+                          <span className="text-sm group-hover:text-blue-600 transition-colors">Featured Products</span>
+                        </div>
+                      </motion.label>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Products Section */}
+            <div className="flex-1">
+              {/* Top Controls */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8"
+              >
+                <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                  {/* Results Info */}
+                  <div className="flex items-center gap-4 flex-wrap">
+                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-blue-500" />
+                      {products.length} Product{products.length !== 1 ? 's' : ''} Found
+                    </h2>
+                    {searchQuery && (
+                      <Badge className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 border-0">
+                        &ldquo;{searchQuery}&rdquo;
+                      </Badge>
+                    )}
+                    {selectedCategory !== "all" && (
+                      <Badge className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-700 border-0">
+                        {categories.find(c => c.slug === selectedCategory)?.name}
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Controls */}
+                  <div className="flex gap-3 flex-wrap">
+                    {/* Mobile Filter Toggle */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="lg:hidden"
+                    >
+                      <Filter className="w-4 h-4 mr-2" />
+                      Filters
+                    </Button>
+
+                    {/* Sort */}
+                    <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
+                      const [field, order] = value.split('-');
+                      setSortBy(field);
+                      setSortOrder(order);
+                    }}>
+                      <SelectTrigger className="w-48">
+                        <SelectValue placeholder="Sort by" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="createdAt-desc">Newest First</SelectItem>
+                        <SelectItem value="price-asc">Price: Low to High</SelectItem>
+                        <SelectItem value="price-desc">Price: High to Low</SelectItem>
+                        <SelectItem value="name-asc">Name: A to Z</SelectItem>
+                      </SelectContent>
+                    </Select>
+
+                    {/* Grid Size Control */}
+                    <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                      {[2, 3, 4].map((size) => (
+                        <Button
+                          key={size}
+                          variant={gridCols === size ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => setGridCols(size)}
+                          className="rounded-none border-0"
+                        >
+                          {size === 2 && <Grid2X2 className="h-4 w-4" />}
+                          {size === 3 && <Grid3X3 className="h-4 w-4" />}
+                          {size === 4 && <LayoutGrid className="h-4 w-4" />}
+                        </Button>
+                      ))}
+                    </div>
+
+                    {/* View Mode */}
+                    <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                      <Button
+                        variant={viewMode === "grid" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setViewMode("grid")}
+                        className="rounded-none border-0"
+                      >
+                        <Grid3X3 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant={viewMode === "list" ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setViewMode("list")}
+                        className="rounded-none border-0"
+                      >
+                        <List className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
-            )}
+
+              {/* Products Grid */}
+              {loading ? (
+                <SectionLoader size="lg" />
+              ) : products.length > 0 ? (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${viewMode}-${gridCols}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.4 }}
+                    className={`grid gap-6 ${viewMode === "list"
+                        ? "grid-cols-1"
+                        : getGridColumns()
+                      }`}
+                  >
+                    {products.map((product, index) => (
+                      <motion.div
+                        key={product.id}
+                        layout
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: index * 0.05,
+                          type: "spring",
+                          stiffness: 300
+                        }}
+                      >
+                        <InnovativeProductCard product={product} />
+                      </motion.div>
+                    ))}
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-center py-20"
+                >
+                  <div className="max-w-md mx-auto">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+                      className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center"
+                    >
+                      <Search className="h-16 w-16 text-blue-500" />
+                    </motion.div>
+                    <motion.h3
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-2xl font-bold text-gray-900 mb-3"
+                    >
+                      No products found
+                    </motion.h3>
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                      className="text-gray-600 mb-8 leading-relaxed"
+                    >
+                      We couldn&apos;t find any products matching your criteria. Try adjusting your search or filters to discover our amazing dental equipment.
+                    </motion.p>
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <Button
+                        onClick={() => {
+                          setSearchQuery("");
+                          setSelectedCategory("all");
+                          setPriceRange([0, 50000]);
+                          setInStockOnly(false);
+                          setFeaturedOnly(false);
+                          setCurrentPage(1);
+                        }}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700"
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        Clear All Filters
+                      </Button>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: 0.4 }}
+                  className="flex justify-center mt-12"
+                >
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="hover:bg-blue-50"
+                    >
+                      Previous
+                    </Button>
+
+                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                      const page = i + 1;
+                      return (
+                        <Button
+                          key={page}
+                          variant={currentPage === page ? "default" : "outline"}
+                          onClick={() => setCurrentPage(page)}
+                          className={currentPage === page ? "bg-gradient-to-r from-blue-500 to-blue-600" : "hover:bg-blue-50"}
+                        >
+                          {page}
+                        </Button>
+                      );
+                    })}
+
+                    <Button
+                      variant="outline"
+                      onClick={() => setCurrentPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="hover:bg-blue-50"
+                    >
+                      Next
+                    </Button>
+                  </div>
+                </motion.div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-     
+
       </div>
       <Footer />
     </>

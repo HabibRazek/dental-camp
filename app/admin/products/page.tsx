@@ -5,6 +5,7 @@ import { ProductsTable, Product } from "@/components/products/products-table"
 import { DashboardLayout } from "@/components/layouts/dashboard-layout"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { SectionLoader } from "@/components/ui/loader"
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -91,12 +92,7 @@ export default function ProductsPage() {
         title="Products"
         description="Manage your dental product inventory"
       >
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="flex items-center space-x-2">
-            <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-            <span className="text-gray-600">Loading products...</span>
-          </div>
-        </div>
+        <SectionLoader size="lg" />
       </DashboardLayout>
     )
   }

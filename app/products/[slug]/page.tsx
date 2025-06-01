@@ -26,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import Header from "@/components/landing/header";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
+import { PageLoader } from "@/components/ui/loader";
 
 interface Product {
   id: string;
@@ -107,11 +108,7 @@ export default function ProductPage() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <PageLoader />;
   }
 
   if (!product) {

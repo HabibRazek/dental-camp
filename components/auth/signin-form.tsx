@@ -12,6 +12,7 @@ import { signInSchema, type SignInInput } from "@/lib/zod"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { GoogleSignIn } from "./google-signin"
+import { ButtonLoader } from "@/components/ui/loader"
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -118,14 +119,8 @@ export function SignInForm() {
             className="w-full bg-blue-600 hover:bg-blue-700"
             disabled={isLoading}
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Signing in...
-              </>
-            ) : (
-              "Sign In"
-            )}
+            {isLoading && <ButtonLoader />}
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
 

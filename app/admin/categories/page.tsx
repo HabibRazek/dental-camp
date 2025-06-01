@@ -5,6 +5,7 @@ import { CategoriesTable, Category } from "@/components/categories/categories-ta
 import { DashboardLayout } from "@/components/layouts/dashboard-layout"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
+import { SectionLoader } from "@/components/ui/loader"
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -92,12 +93,7 @@ export default function CategoriesPage() {
         title="Categories"
         description="Manage your product categories"
       >
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
-            <p className="text-gray-600">Loading categories...</p>
-          </div>
-        </div>
+        <SectionLoader size="lg" />
       </DashboardLayout>
     )
   }

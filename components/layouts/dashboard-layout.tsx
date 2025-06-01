@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Loader2 } from "lucide-react"
+import { PageLoader } from "@/components/ui/loader"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -17,14 +18,7 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
   const { data: session, status } = useSession()
 
   if (status === "loading") {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="flex items-center space-x-2">
-          <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-          <span className="text-gray-600">Loading...</span>
-        </div>
-      </div>
-    )
+    return <PageLoader />
   }
 
   if (!session?.user) {

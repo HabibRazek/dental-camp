@@ -118,3 +118,6 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Import custom loader styles */
+@import '../styles/loader.css';

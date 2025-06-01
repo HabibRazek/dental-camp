@@ -9,6 +9,7 @@ import Image from "next/image";
 import dentalequipment from "@/public/images/dental-equipment.jpg";
 import Link from "next/link";
 import { toast } from "sonner";
+import { SectionLoader } from "@/components/ui/loader";
 
 interface Product {
     id: string;
@@ -244,18 +245,7 @@ function ProductsSection() {
 
                 {/* Product grid */}
                 {loading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {Array.from({ length: 6 }).map((_, index) => (
-                            <div key={index} className="animate-pulse">
-                                <div className="bg-gray-200 aspect-[4/3] rounded-2xl mb-4"></div>
-                                <div className="space-y-2">
-                                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                                    <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    <SectionLoader size="lg" />
                 ) : filteredProducts.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {filteredProducts.map((product, index) => (

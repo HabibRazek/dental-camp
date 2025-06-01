@@ -139,7 +139,7 @@ export default function AddProductPage() {
       }
 
       toast.success('Product created successfully!')
-      router.push('/products')
+      router.push('/admin/products')
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create product')
     } finally {
