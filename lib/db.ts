@@ -372,6 +372,30 @@ export async function generateVerificationCode(email: string, userId?: string) {
  */
 export async function verifyEmailWithCode(email: string, code: string) {
   try {
+    // Validate input
+    if (!email || !code) {
+      return { success: false, error: 'Email and code are required' }
+    }
+
+    // Validate code format (must be exactly 6 digits)
+    if (!/^\d{6}$/.test(code)) {
+      return { success: false, error: 'Invalid verification code format' }
+    }
+
+    // Check for too many failed attempts (rate limiting)
+    const recentAttempts = await prisma.verificationCode.count({
+      where: {
+        email,
+        createdAt: {
+          gte: new Date(Date.now() - 60 * 60 * 1000), // Last hour
+        },
+      },
+    })
+
+    if (recentAttempts > 10) {
+      return { success: false, error: 'Too many verification attempts. Please try again later.' }
+    }
+
     // Find the verification code
     const verificationCode = await prisma.verificationCode.findFirst({
       where: {
@@ -403,6 +427,17 @@ export async function verifyEmailWithCode(email: string, code: string) {
         name: true,
         email: true,
         emailVerified: true,
+      },
+    })
+
+    // Clean up old verification codes for this email
+    await prisma.verificationCode.deleteMany({
+      where: {
+        email,
+        OR: [
+          { used: true },
+          { expiresAt: { lt: new Date() } },
+        ],
       },
     })
 

@@ -7,7 +7,6 @@ import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -17,6 +16,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true,
+  // Allow linking accounts with same email
+  allowDangerousEmailAccountLinking: true,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -46,68 +47,77 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           return user
-        } catch (error) {
-          console.error("Authentication error:", error)
+        } catch {
           return null
         }
       },
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        try {
-          // Check if user exists in database
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email! }
-          })
-
-          if (!existingUser) {
-            // Create new user with USER role by default
-            await prisma.user.create({
-              data: {
-                email: user.email!,
-                name: user.name!,
-                image: user.image,
-                isActive: true,
-                emailVerified: new Date()
-              }
-            })
-          }
-          return true
-        } catch (error) {
-          console.error("Error in signIn callback:", error)
-          return false
-        }
-      }
+    async signIn({ user, account, profile }) {
+      // Allow all sign-ins - we'll handle account linking automatically
       return true
     },
-    jwt({ token, user }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id
         token.role = user.role
+      } else if (token.email) {
+        // For existing tokens, fetch fresh role from database
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: token.email as string },
+            select: { id: true, role: true }
+          })
+          if (dbUser) {
+            token.id = dbUser.id
+            token.role = dbUser.role
+          }
+        } catch {
+          // Silently fail - role will remain undefined
+        }
       }
       return token
     },
     async session({ session, token }) {
-      if (token.id) {
-        session.user.id = token.id as string
-        session.user.role = token.role as any
-      } else if (session.user?.email) {
-        // Fetch user data from database if not in token
+      if (session.user?.email) {
         try {
+          // Always fetch fresh user data from database
           const dbUser = await prisma.user.findUnique({
             where: { email: session.user.email }
           })
+
           if (dbUser) {
             session.user.id = dbUser.id
-            session.user.role = (dbUser as any).role
+            session.user.role = dbUser.role
+            session.user.name = dbUser.name || session.user.name
+            session.user.image = dbUser.image || session.user.image
+          } else {
+            // If user doesn't exist, create them (for Google OAuth)
+            const newUser = await prisma.user.create({
+              data: {
+                email: session.user.email,
+                name: session.user.name || "User",
+                image: session.user.image,
+                role: "USER",
+                isActive: true,
+                emailVerified: new Date()
+              }
+            })
+            session.user.id = newUser.id
+            session.user.role = newUser.role
           }
-        } catch (error) {
-          console.error("Error fetching user in session callback:", error)
+        } catch {
+          // Silently fail - user will keep existing session data
         }
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Handle post-signin redirects
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     },
   },
 })

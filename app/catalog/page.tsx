@@ -33,7 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { toast } from "sonner";
 import Header from "@/components/landing/header";
-import Footer from "@/components/footer";
+import Footer from "@/components/landing/footer";
 import { formatCurrency } from "@/lib/utils";
 import { SectionLoader } from "@/components/ui/loader";
 

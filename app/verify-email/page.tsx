@@ -2,65 +2,26 @@
 
 import { useState, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { CheckCircle, Mail, ArrowLeft, Loader2 } from "lucide-react"
+import { CheckCircle, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
+import { OTPVerification } from "@/components/auth/otp-verification"
+import Header from "@/components/landing/header"
+import Footer from "@/components/landing/footer"
 
 function VerifyEmailContent() {
-  const [code, setCode] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
   const [isVerified, setIsVerified] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const email = searchParams.get('email')
 
-  const handleVerifyCode = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (!email) {
-      toast.error("Email parameter is missing")
-      return
-    }
-
-    if (!code || code.length !== 6) {
-      toast.error("Please enter a valid 6-digit verification code")
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      const response = await fetch('/api/verify-email', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, code }),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setIsVerified(true)
-        toast.success("Email verified successfully!")
-        
-        // Redirect to dashboard after 2 seconds
-        setTimeout(() => {
-          router.push('/dashboard')
-        }, 2000)
-      } else {
-        toast.error(data.error || "Verification failed")
-      }
-    } catch (error) {
-      console.error('Error verifying email:', error)
-      toast.error("An error occurred during verification")
-    } finally {
-      setIsLoading(false)
-    }
+  const handleVerificationSuccess = () => {
+    setIsVerified(true)
+    setTimeout(() => {
+      router.push('/auth/signin')
+    }, 2000)
   }
 
   const handleResendCode = async () => {
@@ -68,8 +29,6 @@ function VerifyEmailContent() {
       toast.error("Email parameter is missing")
       return
     }
-
-    setIsLoading(true)
 
     try {
       const response = await fetch('/api/verify-email', {
@@ -82,16 +41,11 @@ function VerifyEmailContent() {
 
       const data = await response.json()
 
-      if (response.ok) {
-        toast.success("Verification code sent to your email!")
-      } else {
-        toast.error(data.error || "Failed to send verification code")
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to send verification code")
       }
     } catch (error) {
-      console.error('Error resending code:', error)
-      toast.error("An error occurred while sending verification code")
-    } finally {
-      setIsLoading(false)
+      throw error
     }
   }
 
@@ -105,12 +59,12 @@ function VerifyEmailContent() {
             </div>
             <CardTitle className="text-2xl text-green-600">Email Verified!</CardTitle>
             <CardDescription>
-              Your email has been successfully verified. You will be redirected to the dashboard shortly.
+              Your email has been successfully verified. You can now sign in to your account.
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button onClick={() => router.push('/dashboard')} className="w-full">
-              Go to Dashboard
+            <Button onClick={() => router.push('/auth/signin')} className="w-full">
+              Go to Sign In
             </Button>
           </CardContent>
         </Card>
@@ -118,62 +72,55 @@ function VerifyEmailContent() {
     )
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-            <Mail className="w-8 h-8 text-blue-600" />
-          </div>
-          <CardTitle className="text-2xl">Verify Your Email</CardTitle>
-          <CardDescription>
-            Weve sent a 6-digit verification code to{" "}
-            <span className="font-medium text-blue-600">{email}</span>
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleVerifyCode} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="code">Verification Code</Label>
-              <Input
-                id="code"
-                type="text"
-                placeholder="Enter 6-digit code"
-                value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                className="text-center text-lg tracking-widest"
-                maxLength={6}
-                required
-              />
-            </div>
-            
-            <Button type="submit" className="w-full" disabled={isLoading || code.length !== 6}>
-              {isLoading ? "Verifying..." : "Verify Email"}
-            </Button>
-          </form>
-          
-          <div className="mt-6 text-center space-y-4">
-            <p className="text-sm text-gray-600">
-              Didnt receive the code?
-            </p>
-            <Button
-              variant="outline"
-              onClick={handleResendCode}
-              disabled={isLoading}
-              className="w-full"
-            >
-              {isLoading ? "Sending..." : "Resend Code"}
-            </Button>
-          </div>
-          
-          <div className="mt-6 text-center">
-            <Link href="/auth/signin" className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800">
-              <ArrowLeft className="w-4 h-4 mr-1" />
-              Back to Sign In
+  if (!email) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="text-center p-8">
+            <p className="text-red-600 mb-4">Email parameter is missing</p>
+            <Link href="/auth/signup">
+              <Button>Go to Sign Up</Button>
             </Link>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Header />
+      <div className="flex-1 flex mt-28">
+        {/* Left Side - Form */}
+        <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div className="w-full max-w-sm">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
+                Verify Your Email
+              </h1>
+              <p className="text-gray-600 leading-relaxed">
+                Enter the verification code sent to your email
+              </p>
+            </div>
+
+            <OTPVerification
+              email={email}
+              onVerificationSuccess={handleVerificationSuccess}
+              onResendCode={handleResendCode}
+            />
+
+            <div className="mt-6 text-center">
+              <Link href="/auth/signin" className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200">
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back to Sign In
+              </Link>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+      
+      </div>
+      <Footer />
     </div>
   )
 }

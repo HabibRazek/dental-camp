@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signInSchema, type SignInInput } from "@/lib/zod"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
+import { Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
 import { GoogleSignIn } from "./google-signin"
 import { ButtonLoader } from "@/components/ui/loader"
-import { redirectAfterLogin } from "@/lib/redirect-actions"
+
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -49,11 +49,24 @@ export function SignInForm() {
           setError("Unable to sign in. Please try again.")
         }
       } else if (result?.ok) {
-        // Use server action for role-based redirect
-        await redirectAfterLogin()
+        // Get fresh session and redirect directly
+        setTimeout(async () => {
+          try {
+            const sessionResponse = await fetch('/api/auth/session')
+            const sessionData = await sessionResponse.json()
+
+            if (sessionData?.user?.role === "ADMIN") {
+              window.location.href = "/dashboard"
+            } else {
+              window.location.href = "/user-space"
+            }
+          } catch (error) {
+            // Fallback to success page
+            window.location.href = "/auth/success"
+          }
+        }, 500)
       }
-    } catch (error) {
-      console.error("Sign in error:", error)
+    } catch {
       setError("An error occurred. Please try again.")
     } finally {
       setIsLoading(false)
@@ -61,60 +74,76 @@ export function SignInForm() {
   }
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="bg-white p-8 rounded-lg shadow-lg border">
-        <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-          <p className="text-gray-600 mt-2">Sign in to your Dental Camp account</p>
-        </div>
+    <div className="w-full max-w-sm mx-auto">
+      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-blue-100">
+        {/* Form header removed since it's now in the page layout */}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Email Address
+            </Label>
             <Input
               id="email"
               type="email"
-              placeholder="johndoe@example.com"
+              placeholder="Enter your email address"
               {...register("email")}
-              className={errors.email ? "border-red-500" : ""}
+              className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+              }`}
             />
             {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                {errors.email.message}
+              </p>
             )}
           </div>
 
-          <div>
-            <Label htmlFor="password">Password</Label>
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Password
+            </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="********"
+                placeholder="Enter your password"
                 {...register("password")}
-                className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+                className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                  errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+                }`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                {errors.password.message}
+              </p>
             )}
           </div>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
+            <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-red-500 rounded-full"></span>
+                {error}
+              </div>
             </div>
           )}
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg hover:shadow-xl"
             disabled={isLoading}
           >
             {isLoading && <ButtonLoader />}

@@ -1,8 +1,8 @@
 import { Suspense } from "react"
 import { SignInForm } from "@/components/auth/signin-form"
 import Header from "@/components/landing/header"
-import AuthFooter from "@/components/layouts/auth-footer"
 import { Metadata } from "next"
+import Footer from "@/components/landing/footer"
 
 export const metadata: Metadata = {
   title: "Sign In | Dental Camp",
@@ -13,16 +13,31 @@ export default function SignInPage() {
   return (
     <div className="min-h-screen bg-white">
       <Header />
-      <div className="flex items-center justify-center py-24 px-4 sm:px-6 lg:px-8">
-        <Suspense fallback={
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex-1 mt-20 flex">
+        {/* Left Side - Form */}
+        <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12">
+          <div className="w-full max-w-sm">
+            <div className="text-center mb-6">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent mb-3">
+                Welcome Back
+              </h1>
+              <p className="text-gray-600 leading-relaxed">
+                Sign in to access your dental solutions dashboard
+              </p>
+            </div>
+            <Suspense fallback={
+              <div className="flex items-center justify-center">
+                <div className="loader"></div>
+              </div>
+            }>
+              <SignInForm />
+            </Suspense>
           </div>
-        }>
-          <SignInForm />
-        </Suspense>
+        </div>
+
+        
       </div>
-      <AuthFooter />
+      <Footer />
     </div>
   )
 }

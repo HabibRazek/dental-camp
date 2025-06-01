@@ -54,9 +54,27 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json()
     const { email, code } = body
 
+    // Enhanced validation
     if (!email || !code) {
       return NextResponse.json(
         { error: "Email and verification code are required" },
+        { status: 400 }
+      )
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email format" },
+        { status: 400 }
+      )
+    }
+
+    // Validate code format (must be exactly 6 digits)
+    if (!/^\d{6}$/.test(code)) {
+      return NextResponse.json(
+        { error: "Verification code must be exactly 6 digits" },
         { status: 400 }
       )
     }
@@ -66,13 +84,17 @@ export async function PATCH(request: NextRequest) {
 
     if (!result.success) {
       return NextResponse.json(
-        { error: result.error },
+        { error: result.error || "Invalid or expired verification code" },
         { status: 400 }
       )
     }
 
     // Send welcome email
-    await sendWelcomeEmail(email, result.user?.name || undefined)
+    try {
+      await sendWelcomeEmail(email, result.user?.name || undefined)
+    } catch (emailError) {
+      // Don't fail verification if welcome email fails
+    }
 
     return NextResponse.json(
       {
