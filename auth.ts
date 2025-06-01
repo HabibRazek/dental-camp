@@ -2,7 +2,6 @@ import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
-import { ZodError } from "zod"
 import { prisma } from "./lib/prisma"
 import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
@@ -17,8 +16,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
   },
   secret: process.env.AUTH_SECRET,
-  trustHost: true, // Required for Vercel deployment
-  debug: false, // Disable debug to remove warnings
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -56,15 +54,58 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          // Check if user exists in database
+          const existingUser = await prisma.user.findUnique({
+            where: { email: user.email! }
+          })
+
+          if (!existingUser) {
+            // Create new user with USER role by default
+            await prisma.user.create({
+              data: {
+                email: user.email!,
+                name: user.name!,
+                image: user.image,
+                isActive: true,
+                emailVerified: new Date()
+              }
+            })
+          }
+          return true
+        } catch (error) {
+          console.error("Error in signIn callback:", error)
+          return false
+        }
+      }
+      return true
+    },
     jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.role = user.role
       }
       return token
     },
-    session({ session, token }) {
+    async session({ session, token }) {
       if (token.id) {
         session.user.id = token.id as string
+        session.user.role = token.role as any
+      } else if (session.user?.email) {
+        // Fetch user data from database if not in token
+        try {
+          const dbUser = await prisma.user.findUnique({
+            where: { email: session.user.email }
+          })
+          if (dbUser) {
+            session.user.id = dbUser.id
+            session.user.role = (dbUser as any).role
+          }
+        } catch (error) {
+          console.error("Error fetching user in session callback:", error)
+        }
       }
       return session
     },

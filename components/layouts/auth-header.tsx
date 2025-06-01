@@ -9,14 +9,14 @@ import Link from "next/link";
 import { GoogleSignInClient } from "../auth/google-signin-client";
 
 const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Our Products", href: "/catalog" },
-    { name: "Contact", href: "/contact" },
-    { name: "FAQs", href: "/faqs" }
+  { name: "Home", href: "/" },
+  { name: "About", href: "/about" },
+  { name: "Our Products", href: "/catalog" },
+  { name: "Contact", href: "/contact" },
+  { name: "FAQs", href: "/faqs" }
 ];
 
-function Header() {
+function AuthHeader() {
     const [menuOpen, setMenuOpen] = useState(false);
     const { data: session, status } = useSession();
 
@@ -78,7 +78,7 @@ function Header() {
                         </Button>
                     </div>
 
-                    {/* My Account */}
+                    {/* My Account Button */}
                     {status === "loading" ? (
                         <div className="w-32 h-9 bg-gray-200 rounded-full animate-pulse"></div>
                     ) : session ? (
@@ -205,12 +205,6 @@ function Header() {
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
-                                        <GoogleSignInClient
-                                            variant="outline"
-                                            className="w-full text-sm"
-                                        >
-                                            Se connecter avec Google
-                                        </GoogleSignInClient>
                                         <Link href="/auth/signin">
                                             <Button
                                                 variant="ghost"
@@ -232,4 +226,4 @@ function Header() {
     );
 }
 
-export default Header;
+export default AuthHeader;

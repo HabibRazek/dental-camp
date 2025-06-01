@@ -50,6 +50,7 @@ interface User {
   name: string | null
   email: string
   image: string | null
+  role: "USER" | "ADMIN"
   createdAt: string
   updatedAt: string
   emailVerified: string | null
@@ -308,6 +309,47 @@ export function CustomersTable({ initialUsers = [], initialPagination }: Custome
     } catch (error) {
       toast.error('Network error occurred', {
         id: 'delete-user',
+        duration: 5000,
+        description: 'Please check your connection and try again.'
+      })
+    }
+  }
+
+  const handleRoleChange = async (userId: string, newRole: 'USER' | 'ADMIN') => {
+    try {
+      toast.loading(`Updating user role to ${newRole}...`, { id: 'role-change' })
+
+      const response = await fetch('/api/customers/role', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId, role: newRole }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        toast.success(`User role updated to ${newRole} successfully!`, {
+          id: 'role-change',
+          duration: 4000,
+          description: `User now has ${newRole.toLowerCase()} privileges.`,
+        })
+
+        // Refresh the users list
+        fetchUsers(pagination.currentPage)
+
+        // Emit custom event to update dashboard
+        window.dispatchEvent(new CustomEvent('customerUpdated'))
+      } else {
+        toast.error(data.error || 'Failed to update user role', {
+          id: 'role-change',
+          duration: 5000,
+        })
+      }
+    } catch (error) {
+      toast.error('Network error occurred', {
+        id: 'role-change',
         duration: 5000,
         description: 'Please check your connection and try again.'
       })
@@ -621,6 +663,7 @@ export function CustomersTable({ initialUsers = [], initialPagination }: Custome
               <TableRow>
                 <TableHead>Customer</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
                 <TableHead>Auth Provider</TableHead>
                 <TableHead>Verification</TableHead>
                 <TableHead>Status</TableHead>
@@ -631,13 +674,13 @@ export function CustomersTable({ initialUsers = [], initialPagination }: Custome
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     Loading customers...
                   </TableCell>
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-12">
+                  <TableCell colSpan={8} className="text-center py-12">
                     <div className="flex flex-col items-center gap-4">
                       <div className="text-gray-500">
                         <Shield className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -694,6 +737,11 @@ export function CustomersTable({ initialUsers = [], initialPagination }: Custome
                           <Mail className="h-4 w-4 text-muted-foreground" />
                           {user.email}
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'} className="font-medium">
+                          {user.role}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge className={`${authProvider.color} border font-medium flex items-center gap-1.5`}>
@@ -793,6 +841,14 @@ export function CustomersTable({ initialUsers = [], initialPagination }: Custome
                                 Send Verification Email
                               </DropdownMenuItem>
                             )}
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              onClick={() => handleRoleChange(user.id, user.role === 'ADMIN' ? 'USER' : 'ADMIN')}
+                              className={user.role === 'ADMIN' ? 'text-orange-600 focus:text-orange-600 focus:bg-orange-50' : 'text-blue-600 focus:text-blue-600 focus:bg-blue-50'}
+                            >
+                              <Shield className="mr-2 h-4 w-4" />
+                              {user.role === 'ADMIN' ? 'Remove Admin' : 'Make Admin'}
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
                               onClick={() => handleDeleteUser(user.id, user.name || 'Unknown', user.email)}

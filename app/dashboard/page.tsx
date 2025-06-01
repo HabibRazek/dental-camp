@@ -15,6 +15,11 @@ export default async function DashboardPage() {
     redirect("/auth/signin")
   }
 
+  // Ensure only admins can access this dashboard
+  if (session.user.role !== "ADMIN") {
+    redirect("/user/dashboard")
+  }
+
   return (
     <SessionProvider session={session}>
       <SidebarProvider>

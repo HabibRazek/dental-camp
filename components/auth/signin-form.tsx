@@ -13,6 +13,7 @@ import { Eye, EyeOff, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { GoogleSignIn } from "./google-signin"
 import { ButtonLoader } from "@/components/ui/loader"
+import { redirectAfterLogin } from "@/lib/redirect-actions"
 
 export function SignInForm() {
   const [isLoading, setIsLoading] = useState(false)
@@ -35,7 +36,6 @@ export function SignInForm() {
     setError(null)
 
     try {
-      // Proceed with authentication - system will auto-create user if needed
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -49,10 +49,8 @@ export function SignInForm() {
           setError("Unable to sign in. Please try again.")
         }
       } else if (result?.ok) {
-        // Successful login - redirect to callback URL or dashboard
-        console.log("Login successful, redirecting to:", callbackUrl)
-        router.push(callbackUrl)
-        router.refresh()
+        // Use server action for role-based redirect
+        await redirectAfterLogin()
       }
     } catch (error) {
       console.error("Sign in error:", error)

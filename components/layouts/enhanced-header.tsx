@@ -148,10 +148,13 @@ export function EnhancedHeader() {
                 </Badge>
               </Button>
 
-              {/* User Menu */}
-              <Button variant="ghost" size="sm">
-                <User className="h-4 w-4" />
-              </Button>
+              {/* My Account */}
+              <Link href="/auth/signin">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline text-sm">My Account</span>
+                </Button>
+              </Link>
 
               {/* Mobile Menu Button */}
               <Button

@@ -17,6 +17,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
         email: true,
         password: true,
         image: true,
+        role: true,
         isActive: true,
         createdAt: true,
       },
@@ -42,6 +43,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
           email: true,
           password: true,
           image: true,
+          role: true,
           isActive: true,
           createdAt: true,
         },
@@ -55,6 +57,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
         name: user.name,
         email: user.email,
         image: user.image,
+        role: user.role,
         createdAt: user.createdAt,
       }
     }
@@ -101,6 +104,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
       name: user.name,
       email: user.email,
       image: user.image,
+      role: user.role,
       createdAt: user.createdAt,
     }
   } catch (error) {
@@ -220,6 +224,7 @@ export async function getAllUsers(page: number = 1, limit: number = 10, search?:
           name: true,
           email: true,
           image: true,
+          role: true,
           createdAt: true,
           updatedAt: true,
           emailVerified: true,
