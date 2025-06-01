@@ -10,7 +10,7 @@ function GoogleSignInContent() {
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
 
   const handleGoogleSignIn = async () => {
-    await signInWithGoogle(callbackUrl)
+    await signInWithGoogle()
   }
 
   return (

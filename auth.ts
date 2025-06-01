@@ -16,8 +16,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   secret: process.env.AUTH_SECRET,
   trustHost: true,
-  // Allow linking accounts with same email
-  allowDangerousEmailAccountLinking: true,
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,

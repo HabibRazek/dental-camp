@@ -78,6 +78,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
           email: true,
           password: true,
           image: true,
+          role: true,
           isActive: true,
           createdAt: true,
         },
@@ -85,14 +86,24 @@ export async function getUserFromDb(email: string, plainPassword: string) {
 
     }
 
+    // Check if user exists after potential update
+    if (!user) {
+      return null
+    }
+
     // Check if user account is disabled
     if (!user.isActive) {
       return null
     }
 
+    // Check if user has a password
+    if (!user.password) {
+      return null
+    }
+
     // Import bcrypt here to avoid issues with edge runtime
     const bcrypt = await import("bcryptjs")
-    const isValidPassword = await bcrypt.compare(plainPassword, user.password!)
+    const isValidPassword = await bcrypt.compare(plainPassword, user.password)
 
     if (!isValidPassword) {
       return null

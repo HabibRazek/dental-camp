@@ -111,7 +111,11 @@ export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <NavUser user={{
+          name: "User",
+          email: "user@example.com",
+          avatar: "/avatars/default.jpg"
+        }} />
       </SidebarFooter>
     </Sidebar>
   )
