@@ -393,7 +393,7 @@ function FeaturedProductsSection() {
                         className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-lg transition-all duration-300"
                         asChild
                     >
-                        <Link href="/products">
+                        <Link href="/catalog">
                             Voir tous les produits
                             <ArrowRight className="ml-2 h-5 w-5" />
                         </Link>

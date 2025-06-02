@@ -22,7 +22,7 @@ export default function AuthSuccessPage() {
       if (session.user.role === "ADMIN") {
         window.location.href = "/dashboard"
       } else {
-        window.location.href = "/user-space"
+        window.location.href = "/user/dashboard"
       }
     }, 1500)
 

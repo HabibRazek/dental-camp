@@ -77,7 +77,6 @@ export async function GET() {
           name: true,
           description: true,
           slug: true,
-          color: true,
           isActive: true,
           createdAt: true,
           _count: {
@@ -98,14 +97,25 @@ export async function GET() {
       })
 
       if (dbCategories && dbCategories.length > 0) {
-        categories = dbCategories
+        // Map database results to match expected format
+        categories = dbCategories.map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          description: cat.description || '',
+          slug: cat.slug,
+          icon: 'package', // Default icon for database categories
+          image: null,
+          color: '#3B82F6', // Default color since color field doesn't exist in database
+          isActive: cat.isActive,
+          _count: cat._count
+        }))
         usingDatabase = true
         console.log(`✅ Loaded ${dbCategories.length} categories from database`)
       } else {
         console.log("📝 No categories found in database, using mock data")
       }
     } catch (dbError) {
-      console.log("🔄 Database not available, using mock data:", dbError.message)
+      console.log("🔄 Database not available, using mock data:", dbError instanceof Error ? dbError.message : 'Unknown error')
     }
 
     return NextResponse.json({

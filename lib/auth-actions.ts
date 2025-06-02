@@ -6,7 +6,7 @@ import { redirect } from "next/navigation"
 export async function signInWithGoogle(callbackUrl?: string) {
   try {
     await signIn("google", {
-      redirectTo: callbackUrl || "/user/dashboard",
+      redirectTo: callbackUrl || "/auth/success",
       redirect: true
     })
   } catch (error) {

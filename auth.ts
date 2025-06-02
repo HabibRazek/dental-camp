@@ -108,7 +108,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           // Use token data first (more reliable)
           if (token.id && token.role) {
             session.user.id = token.id as string
-            session.user.role = token.role as string
+            session.user.role = token.role
             session.user.name = token.name as string || session.user.name
             session.user.image = token.picture as string || session.user.image
             return session
@@ -169,22 +169,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session
     },
     async redirect({ url, baseUrl }) {
-      // Ensure we have a valid baseUrl
-      const validBaseUrl = process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000'
-        : baseUrl
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log("Redirect callback:", { url, baseUrl: validBaseUrl })
-      }
+      // Use environment variable or fallback to baseUrl
+      const validBaseUrl = process.env.NEXTAUTH_URL || baseUrl
 
       // If URL is relative, make it absolute
       if (url.startsWith("/")) {
-        const redirectUrl = `${validBaseUrl}${url}`
-        if (process.env.NODE_ENV === 'development') {
-          console.log("Relative URL redirect:", redirectUrl)
-        }
-        return redirectUrl
+        return `${validBaseUrl}${url}`
       }
 
       // If URL is from the same origin, allow it
@@ -192,27 +182,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const urlObj = new URL(url)
         const baseUrlObj = new URL(validBaseUrl)
         if (urlObj.origin === baseUrlObj.origin) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log("Same origin redirect:", url)
-          }
           return url
         }
       } catch (error) {
-        if (process.env.NODE_ENV === 'development') {
-          console.log("URL parsing error:", error)
-        }
+        // URL parsing failed, use default
       }
 
-      // For successful sign-in, redirect to user dashboard
-      if (url.includes('/auth/success') || url === validBaseUrl || url.includes('dental-camp.vercel.app')) {
-        return `${validBaseUrl}/user/dashboard`
-      }
-
-      // Default to base URL
-      if (process.env.NODE_ENV === 'development') {
-        console.log("Default redirect to baseUrl:", validBaseUrl)
-      }
-      return validBaseUrl
+      // Default to auth success page for OAuth flows
+      return `${validBaseUrl}/auth/success`
     },
   },
 })

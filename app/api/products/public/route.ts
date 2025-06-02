@@ -8,6 +8,9 @@ const mockProducts = [
     description: 'Composite haute qualité pour restaurations esthétiques durables',
     price: '269.99',
     comparePrice: '329.99',
+    stockQuantity: 25,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: true,
@@ -28,6 +31,9 @@ const mockProducts = [
     description: 'Set complet d\'instruments en acier inoxydable pour chirurgie dentaire',
     price: '899.99',
     comparePrice: '1049.99',
+    stockQuantity: 15,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: true,
@@ -48,6 +54,9 @@ const mockProducts = [
     description: 'Lampe LED haute puissance pour polymérisation rapide et efficace',
     price: '599.99',
     comparePrice: '749.99',
+    stockQuantity: 8,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: true,
@@ -68,6 +77,9 @@ const mockProducts = [
     description: 'Autoclave professionnel pour stérilisation complète des instruments',
     price: '1299.99',
     comparePrice: '1499.99',
+    stockQuantity: 12,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: false,
@@ -83,11 +95,14 @@ const mockProducts = [
     createdAt: new Date().toISOString()
   },
   {
-    id: '4',
+    id: '5',
     name: 'Autoclave Classe B',
     description: 'Stérilisateur professionnel avec cycles automatiques',
     price: '3899.99',
     comparePrice: '4499.99',
+    stockQuantity: 5,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: true,
@@ -103,11 +118,14 @@ const mockProducts = [
     createdAt: new Date().toISOString()
   },
   {
-    id: '5',
+    id: '6',
     name: 'Caméra Intra-Orale',
     description: 'Caméra haute définition pour diagnostic précis et documentation',
     price: '2699.99',
     comparePrice: '3299.99',
+    stockQuantity: 20,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: false,
@@ -123,11 +141,14 @@ const mockProducts = [
     createdAt: new Date().toISOString()
   },
   {
-    id: '6',
+    id: '7',
     name: 'Seringues Anesthésie',
     description: 'Seringues jetables pour anesthésie locale, stériles et sécurisées',
     price: '74.99',
     comparePrice: '89.99',
+    stockQuantity: 100,
+    lowStockThreshold: 10,
+    trackQuantity: true,
     thumbnail: null,
     images: [],
     isFeatured: false,
@@ -235,10 +256,25 @@ export async function GET(request: NextRequest) {
 
       if (dbProducts && dbProducts.length > 0) {
         filteredProducts = dbProducts.map((product) => ({
-          ...product,
+          id: product.id,
+          name: product.name,
+          description: product.description || '',
+          sku: product.sku,
+          slug: product.slug,
           price: product.price.toString(),
-          comparePrice: product.comparePrice?.toString() || null,
+          comparePrice: product.comparePrice?.toString() || '',
+          stockQuantity: product.stockQuantity,
+          lowStockThreshold: product.lowStockThreshold,
+          trackQuantity: product.trackQuantity,
+          thumbnail: product.thumbnail,
+          images: product.images || [],
+          isFeatured: product.isFeatured,
+          status: product.status.toString(),
+          isActive: product.isActive,
+          tags: Array.isArray(product.tags) ? product.tags.join(', ') : (product.tags || ''),
+          category: product.category || { id: '', name: 'Uncategorized', slug: 'uncategorized' },
           dimensions: product.dimensions ? JSON.parse(product.dimensions) : null,
+          createdAt: product.createdAt.toISOString(),
         }));
         usingDatabase = true;
         console.log(`✅ Loaded ${dbProducts.length} products from database`);
@@ -261,7 +297,7 @@ export async function GET(request: NextRequest) {
         console.log("📝 No products found in database, using mock data");
       }
     } catch (dbError) {
-      console.log("🔄 Database not available, using mock data:", dbError.message);
+      console.log("🔄 Database not available, using mock data:", dbError instanceof Error ? dbError.message : 'Unknown error');
     }
 
     // Use mock data with filtering
