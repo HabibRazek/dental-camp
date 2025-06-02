@@ -1,18 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Product type for consistency
+interface ProductResponse {
+  id: string;
+  name: string;
+  description: string;
+  sku: string;
+  slug: string;
+  price: string;
+  comparePrice: string;
+  stockQuantity: number;
+  lowStockThreshold: number;
+  trackQuantity: boolean;
+  thumbnail: string | null;
+  images: string[];
+  isFeatured: boolean;
+  status: string;
+  isActive: boolean;
+  tags: string;
+  category: {
+    id: string;
+    name: string;
+    slug: string;
+  };
+  dimensions: any;
+  createdAt: string;
+}
+
 // Mock products data for when database is not available
-const mockProducts = [
+const mockProducts: ProductResponse[] = [
   {
     id: '1',
     name: 'Composite Dentaire Premium',
     description: 'Composite haute qualité pour restaurations esthétiques durables',
+    sku: 'COMP-PREM-001',
+    slug: 'composite-dentaire-premium',
     price: '269.99',
     comparePrice: '329.99',
     stockQuantity: 25,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: true,
     status: 'PUBLISHED',
     isActive: true,
@@ -29,13 +58,15 @@ const mockProducts = [
     id: '2',
     name: 'Kit Instruments Chirurgicaux',
     description: 'Set complet d\'instruments en acier inoxydable pour chirurgie dentaire',
+    sku: 'KIT-CHIR-001',
+    slug: 'kit-instruments-chirurgicaux',
     price: '899.99',
     comparePrice: '1049.99',
     stockQuantity: 15,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: true,
     status: 'PUBLISHED',
     isActive: true,
@@ -52,13 +83,15 @@ const mockProducts = [
     id: '3',
     name: 'Lampe LED Polymérisation',
     description: 'Lampe LED haute puissance pour polymérisation rapide et efficace',
+    sku: 'LED-POLY-001',
+    slug: 'lampe-led-polymerisation',
     price: '599.99',
     comparePrice: '749.99',
     stockQuantity: 8,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: true,
     status: 'PUBLISHED',
     isActive: true,
@@ -75,13 +108,15 @@ const mockProducts = [
     id: '4',
     name: 'Autoclave Stérilisation',
     description: 'Autoclave professionnel pour stérilisation complète des instruments',
+    sku: 'AUTO-STER-001',
+    slug: 'autoclave-sterilisation',
     price: '1299.99',
     comparePrice: '1499.99',
     stockQuantity: 12,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: false,
     status: 'PUBLISHED',
     isActive: true,
@@ -98,13 +133,15 @@ const mockProducts = [
     id: '5',
     name: 'Autoclave Classe B',
     description: 'Stérilisateur professionnel avec cycles automatiques',
+    sku: 'AUTO-CLASSB-001',
+    slug: 'autoclave-classe-b',
     price: '3899.99',
     comparePrice: '4499.99',
     stockQuantity: 5,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: true,
     status: 'PUBLISHED',
     isActive: true,
@@ -121,13 +158,15 @@ const mockProducts = [
     id: '6',
     name: 'Caméra Intra-Orale',
     description: 'Caméra haute définition pour diagnostic précis et documentation',
+    sku: 'CAM-INTRA-001',
+    slug: 'camera-intra-orale',
     price: '2699.99',
     comparePrice: '3299.99',
     stockQuantity: 20,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: false,
     status: 'PUBLISHED',
     isActive: true,
@@ -144,13 +183,15 @@ const mockProducts = [
     id: '7',
     name: 'Seringues Anesthésie',
     description: 'Seringues jetables pour anesthésie locale, stériles et sécurisées',
+    sku: 'SER-ANESTH-001',
+    slug: 'seringues-anesthesie',
     price: '74.99',
     comparePrice: '89.99',
     stockQuantity: 100,
     lowStockThreshold: 10,
     trackQuantity: true,
     thumbnail: null,
-    images: [],
+    images: [] as string[],
     isFeatured: false,
     status: 'PUBLISHED',
     isActive: true,
@@ -177,7 +218,7 @@ export async function GET(request: NextRequest) {
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const sortOrder = searchParams.get("sortOrder") || "desc";
 
-    let filteredProducts = [...mockProducts];
+    let filteredProducts: ProductResponse[] = [...mockProducts];
     let usingDatabase = false;
 
     // Try to use database if available
