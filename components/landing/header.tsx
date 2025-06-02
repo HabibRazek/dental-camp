@@ -1,12 +1,26 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, Menu, X, User, LogOut, ShoppingCart } from "lucide-react";
+import { Heart, Search, Menu, X, User, LogOut, ShoppingCart, MoreVertical, Settings, CreditCard, Bell } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { GoogleSignInClient } from "../auth/google-signin-client";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navItems = [
     { name: "Home", href: "/" },
@@ -78,30 +92,69 @@ function Header() {
                         </Button>
                     </div>
 
-                    {/* My Account */}
+                    {/* User Account */}
                     {status === "loading" ? (
-                        <div className="w-32 h-9 bg-gray-200 rounded-full animate-pulse"></div>
+                        <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
                     ) : session ? (
-                        <div className="flex items-center gap-2">
-                            <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
                                 <Button
                                     variant="ghost"
-                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out flex items-center gap-2 px-4 py-2"
+                                    className="relative h-10 w-10 rounded-full hover:bg-blue-100 transition duration-200 ease-in-out"
                                 >
-                                    <User className="h-4 w-4" />
-                                    <span className="hidden sm:inline">My Account</span>
+                                    <Avatar className="h-9 w-9">
+                                        <AvatarImage
+                                            src={session.user?.image || ""}
+                                            alt={session.user?.name || "User"}
+                                        />
+                                        <AvatarFallback className="bg-blue-600 text-white text-sm">
+                                            {session.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                                        </AvatarFallback>
+                                    </Avatar>
                                 </Button>
-                            </Link>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => signOut()}
-                                className="rounded-full hover:bg-red-100 hover:text-red-600 transition duration-200 ease-in-out"
-                                aria-label="Sign Out"
-                            >
-                                <LogOut className="h-5 w-5" />
-                            </Button>
-                        </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56" align="end" forceMount>
+                                <DropdownMenuLabel className="font-normal">
+                                    <div className="flex flex-col space-y-1">
+                                        <p className="text-sm font-medium leading-none">
+                                            {session.user?.name || "User"}
+                                        </p>
+                                        <p className="text-xs leading-none text-muted-foreground">
+                                            {session.user?.email}
+                                        </p>
+                                    </div>
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem asChild>
+                                        <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Settings className="mr-2 h-4 w-4" />
+                                        <span>Settings</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <CreditCard className="mr-2 h-4 w-4" />
+                                        <span>Billing</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Bell className="mr-2 h-4 w-4" />
+                                        <span>Notifications</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                    onClick={() => signOut({ callbackUrl: "/" })}
+                                    className="text-red-600 focus:text-red-600"
+                                >
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    <span>Sign out</span>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     ) : (
                         <div className="flex items-center gap-2">
                             <Link href="/auth/signin">
@@ -110,7 +163,7 @@ function Header() {
                                     className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out flex items-center gap-2 px-4 py-2"
                                 >
                                     <User className="h-4 w-4" />
-                                    <span className="hidden sm:inline">My Account</span>
+                                    <span className="hidden sm:inline">Sign In</span>
                                 </Button>
                             </Link>
                         </div>
@@ -180,28 +233,60 @@ function Header() {
                             {/* Mobile Authentication */}
                             <div className="mt-6 pt-4 border-t border-gray-200">
                                 {session ? (
-                                    <div className="space-y-2">
-                                        <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                                    <div className="space-y-3">
+                                        {/* User Info */}
+                                        <div className="flex items-center gap-3 p-2">
+                                            <Avatar className="h-10 w-10">
+                                                <AvatarImage
+                                                    src={session.user?.image || ""}
+                                                    alt={session.user?.name || "User"}
+                                                />
+                                                <AvatarFallback className="bg-blue-600 text-white text-sm">
+                                                    {session.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex flex-col">
+                                                <p className="text-sm font-medium text-gray-900">
+                                                    {session.user?.name || "User"}
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                    {session.user?.email}
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Menu Items */}
+                                        <div className="space-y-1">
+                                            <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                                                <Button
+                                                    variant="ghost"
+                                                    className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
+                                                    onClick={() => setMenuOpen(false)}
+                                                >
+                                                    <User className="h-4 w-4 mr-2" />
+                                                    Dashboard
+                                                </Button>
+                                            </Link>
                                             <Button
                                                 variant="ghost"
                                                 className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
                                                 onClick={() => setMenuOpen(false)}
                                             >
-                                                <User className="h-4 w-4 mr-2" />
-                                                My Account
+                                                <Settings className="h-4 w-4 mr-2" />
+                                                Settings
                                             </Button>
-                                        </Link>
-                                        <Button
-                                            variant="ghost"
-                                            className="w-full justify-start text-red-600 text-sm hover:bg-red-100"
-                                            onClick={() => {
-                                                signOut();
-                                                setMenuOpen(false);
-                                            }}
-                                        >
-                                            <LogOut className="h-4 w-4 mr-2" />
-                                            Sign Out
-                                        </Button>
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full justify-start text-red-600 text-sm hover:bg-red-100"
+                                                onClick={() => {
+                                                    signOut({ callbackUrl: "/" });
+                                                    setMenuOpen(false);
+                                                }}
+                                            >
+                                                <LogOut className="h-4 w-4 mr-2" />
+                                                Sign Out
+                                            </Button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div className="space-y-2">
@@ -218,7 +303,7 @@ function Header() {
                                                 onClick={() => setMenuOpen(false)}
                                             >
                                                 <User className="h-4 w-4 mr-2" />
-                                                My Account
+                                                Sign In
                                             </Button>
                                         </Link>
                                     </div>

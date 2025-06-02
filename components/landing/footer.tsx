@@ -83,21 +83,28 @@ function Footer() {
                                             <MapPin className="h-4 w-4 text-gray-600" />
                                         </div>
                                         <p className="text-gray-600">
-                                            123 Dental Plaza, Suite 500<br />
-                                            Boston, MA 02110
+                                            Rue Korbus 8058<br />
+                                            Mrezga Hammamet Nord<br />
+                                            Nabeul Tunisia
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-gray-100 rounded-lg">
                                             <Phone className="h-4 w-4 text-gray-600" />
                                         </div>
-                                        <p className="text-gray-600">(800) 555-DENTAL</p>
+                                        <div className="text-gray-600">
+                                            <p>+216 51 407 444</p>
+                                            <p>+216 53 761 761</p>
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-gray-100 rounded-lg">
                                             <Mail className="h-4 w-4 text-gray-600" />
                                         </div>
-                                        <p className="text-gray-600">info@dentalcamp.com</p>
+                                        <div className="text-gray-600">
+                                            <p>Contact@medicalponos.com</p>
+                                            <p>Commande@medicalponos.com</p>
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-gray-100 rounded-lg">

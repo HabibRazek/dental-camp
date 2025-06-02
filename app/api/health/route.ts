@@ -11,10 +11,26 @@ export async function GET() {
       nextAuthUrl: process.env.NEXTAUTH_URL,
     }
 
+    // Test database connection
+    let dbStatus = "unknown"
+    try {
+      const { prisma } = await import("@/lib/prisma")
+      await prisma.$queryRaw`SELECT 1`
+      dbStatus = "connected"
+    } catch (dbError) {
+      dbStatus = "disconnected"
+    }
+
     return NextResponse.json({
       status: "healthy",
       timestamp: new Date().toISOString(),
       environment: envCheck,
+      database: dbStatus,
+      auth: {
+        configured: envCheck.hasAuthSecret && envCheck.hasNextAuthUrl,
+        provider: "google",
+        baseUrl: process.env.NEXTAUTH_URL
+      }
     })
   } catch (error) {
     return NextResponse.json(

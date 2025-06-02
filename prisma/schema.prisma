@@ -107,6 +107,17 @@ model Category {
   name        String    @unique
   description String?
   slug        String    @unique
+
+  // Visual elements
+  icon        String?   // Icon name or class
+  image       String?   // Category image URL
+  color       String?   // Hex color code for theming
+
+  // SEO & Display
+  metaTitle       String?
+  metaDescription String?
+  displayOrder    Int?      // For sorting categories
+
   isActive    Boolean   @default(true)
   products    Product[]
 
@@ -115,6 +126,7 @@ model Category {
 
   @@index([slug])
   @@index([isActive])
+  @@index([displayOrder])
 }
 
 model Product {
@@ -173,4 +185,52 @@ enum ProductStatus {
   DRAFT
   PUBLISHED
   ARCHIVED
+}
+
+// Contact Messages Model
+model ContactMessage {
+  id          String   @id @default(cuid())
+  name        String
+  email       String
+  phone       String?
+  company     String?
+  subject     String
+  message     String
+
+  // Status tracking
+  status      MessageStatus @default(UNREAD)
+  priority    MessagePriority @default(NORMAL)
+
+  // Admin response
+  adminResponse String?
+  respondedAt   DateTime?
+  respondedBy   String?
+
+  // Metadata
+  ipAddress     String?
+  userAgent     String?
+  source        String? // "landing_page", "contact_page", etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([priority])
+  @@index([createdAt])
+  @@index([email])
+}
+
+enum MessageStatus {
+  UNREAD
+  READ
+  IN_PROGRESS
+  RESOLVED
+  ARCHIVED
+}
+
+enum MessagePriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
 }

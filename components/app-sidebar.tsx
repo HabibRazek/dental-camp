@@ -16,6 +16,7 @@ import {
   Store,
   Boxes,
   Tag,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react"
 
@@ -64,6 +65,11 @@ const data = {
       title: "Categories",
       url: "/admin/categories",
       icon: Tag,
+    },
+    {
+      title: "Messages",
+      url: "/admin/messages",
+      icon: MessageSquare,
     },
     {
       title: "Analytics",

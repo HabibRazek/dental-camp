@@ -8,7 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "clean": "rimraf .next",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx scripts/seed-database.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

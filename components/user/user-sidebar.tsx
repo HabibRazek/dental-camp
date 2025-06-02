@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useSession } from "next-auth/react"
 import {
   User,
   ShoppingBag,
@@ -87,6 +88,18 @@ const data = {
 }
 
 export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession()
+
+  const user = session?.user ? {
+    name: session.user.name || "User",
+    email: session.user.email || "user@example.com",
+    avatar: session.user.image || "/avatars/default.jpg",
+  } : {
+    name: "User",
+    email: "user@example.com",
+    avatar: "/avatars/default.jpg"
+  }
+
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
@@ -111,11 +124,7 @@ export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={{
-          name: "User",
-          email: "user@example.com",
-          avatar: "/avatars/default.jpg"
-        }} />
+        <NavUser user={user} />
       </SidebarFooter>
     </Sidebar>
   )

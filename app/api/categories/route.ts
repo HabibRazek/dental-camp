@@ -19,6 +19,76 @@ function generateSlug(name: string): string {
     .replace(/(^-|-$)/g, '')
 }
 
+// Mock categories for fallback
+const mockCategories = [
+  {
+    id: '1',
+    name: 'Composite & Adhésif',
+    description: 'Matériaux de restauration dentaire de haute qualité',
+    slug: 'composite-adhesif',
+    icon: 'heart',
+    image: null,
+    color: '#3B82F6',
+    isActive: true,
+    _count: { products: 24 }
+  },
+  {
+    id: '2',
+    name: 'Instruments Dentaires',
+    description: 'Instruments de précision pour tous vos besoins',
+    slug: 'instruments',
+    icon: 'scissors',
+    image: null,
+    color: '#60A5FA',
+    isActive: true,
+    _count: { products: 45 }
+  },
+  {
+    id: '3',
+    name: 'Équipement Médical',
+    description: 'Technologies avancées pour votre cabinet',
+    slug: 'equipement',
+    icon: 'zap',
+    image: null,
+    color: '#93C5FD',
+    isActive: true,
+    _count: { products: 18 }
+  },
+  {
+    id: '4',
+    name: 'Stérilisation',
+    description: 'Solutions complètes d\'hygiène et stérilisation',
+    slug: 'sterilisation',
+    icon: 'shield',
+    image: null,
+    color: '#BFDBFE',
+    isActive: true,
+    _count: { products: 32 }
+  },
+  {
+    id: '5',
+    name: 'Diagnostic',
+    description: 'Outils de diagnostic de pointe',
+    slug: 'diagnostic',
+    icon: 'microscope',
+    image: null,
+    color: '#DBEAFE',
+    isActive: true,
+    _count: { products: 28 }
+  },
+  {
+    id: '6',
+    name: 'Anesthésie',
+    description: 'Produits anesthésiques et accessoires',
+    slug: 'anesthesie',
+    icon: 'syringe',
+    image: null,
+    color: '#EFF6FF',
+    isActive: true,
+    _count: { products: 15 }
+  }
+]
+
 // GET /api/categories - Get all categories
 export async function GET(request: NextRequest) {
   try {
@@ -26,47 +96,73 @@ export async function GET(request: NextRequest) {
     const includeProducts = searchParams.get('includeProducts') === 'true'
     const isActive = searchParams.get('isActive')
 
-    const where: any = {}
-    if (isActive !== null) {
-      where.isActive = isActive === 'true'
-    }
+    let categories = mockCategories
+    let usingDatabase = false
 
-    const categories = await prisma.category.findMany({
-      where,
-      include: includeProducts ? {
-        products: {
-          select: {
-            id: true,
-            name: true,
-            price: true,
-            thumbnail: true,
-            status: true,
+    // Try to use database if available
+    try {
+      const where: any = {}
+      if (isActive !== null) {
+        where.isActive = isActive === 'true'
+      }
+
+      const dbCategories = await prisma.category.findMany({
+        where,
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          slug: true,
+          color: true,
+          isActive: true,
+          createdAt: true,
+          products: includeProducts ? {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              thumbnail: true,
+              status: true,
+            }
+          } : false,
+          _count: {
+            select: {
+              products: true
+            }
           }
         },
-        _count: {
-          select: {
-            products: true
-          }
-        }
-      } : {
-        _count: {
-          select: {
-            products: true
-          }
-        }
-      },
-      orderBy: {
-        name: 'asc'
+        orderBy: [
+          { createdAt: 'asc' },
+          { name: 'asc' }
+        ]
+      })
+
+      if (dbCategories && dbCategories.length > 0) {
+        categories = dbCategories
+        usingDatabase = true
+        console.log(`✅ Loaded ${dbCategories.length} categories from database`)
+      } else {
+        console.log("📝 No categories found in database, using mock data")
       }
+    } catch (dbError) {
+      console.log("🔄 Database not available, using mock data:", dbError.message)
+    }
+
+    return NextResponse.json({
+      categories,
+      success: true,
+      source: usingDatabase ? "database" : "mock"
     })
 
-    return NextResponse.json({ categories })
-
   } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    )
+    console.error("❌ Error in categories API:", error)
+
+    // Return mock data as fallback
+    return NextResponse.json({
+      categories: mockCategories,
+      success: true,
+      source: "fallback"
+    })
   }
 }
 
