@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 import { z } from "zod"
-import bcrypt from "bcryptjs"
+// Dynamic import for bcrypt to avoid build issues
 
 // Security validation schemas
 const ChangePasswordSchema = z.object({
@@ -89,45 +89,67 @@ export async function POST(request: NextRequest) {
     if (type === 'password') {
       // Handle password change
       const validatedData = ChangePasswordSchema.parse(data)
-      
-      // Get current user with password
-      const user = await prisma.user.findUnique({
-        where: { id: session.user.id },
-        select: { password: true }
-      })
 
-      if (!user) {
-        return NextResponse.json(
-          { error: "User not found" },
-          { status: 404 }
-        )
-      }
+      try {
+        // Get current user with password
+        const user = await prisma.user.findUnique({
+          where: { id: session.user.id },
+          select: { password: true }
+        })
 
-      // Verify current password
-      const isValidPassword = await bcrypt.compare(validatedData.currentPassword, user.password)
-      if (!isValidPassword) {
-        return NextResponse.json(
-          { error: "Current password is incorrect" },
-          { status: 400 }
-        )
-      }
-
-      // Hash new password
-      const hashedPassword = await bcrypt.hash(validatedData.newPassword, 12)
-
-      // Update password
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: { 
-          password: hashedPassword,
-          passwordChangedAt: new Date()
+        if (!user) {
+          return NextResponse.json(
+            { error: "User not found" },
+            { status: 404 }
+          )
         }
-      })
 
-      return NextResponse.json({
-        success: true,
-        message: "Password changed successfully"
-      })
+        if (!user.password) {
+          return NextResponse.json(
+            { error: "No password set for this user" },
+            { status: 400 }
+          )
+        }
+
+        // Dynamic import bcrypt to avoid build issues
+        const bcrypt = await import("bcryptjs")
+
+        // Verify current password with proper type handling
+        const currentPassword: string = validatedData.currentPassword
+        const storedPassword: string = user.password
+        const isValidPassword = await bcrypt.default.compare(currentPassword, storedPassword)
+
+        if (!isValidPassword) {
+          return NextResponse.json(
+            { error: "Current password is incorrect" },
+            { status: 400 }
+          )
+        }
+
+        // Hash new password
+        const newPassword: string = validatedData.newPassword
+        const hashedPassword = await bcrypt.default.hash(newPassword, 12)
+
+        // Update password
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            password: hashedPassword,
+            passwordChangedAt: new Date()
+          }
+        })
+
+        return NextResponse.json({
+          success: true,
+          message: "Password changed successfully"
+        })
+      } catch (bcryptError) {
+        console.error('Bcrypt error:', bcryptError)
+        return NextResponse.json(
+          { error: "Failed to process password change" },
+          { status: 500 }
+        )
+      }
     } else if (type === 'settings') {
       // Handle security settings update
       const validatedData = SecuritySettingsSchema.parse(data)
