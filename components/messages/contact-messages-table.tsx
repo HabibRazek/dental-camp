@@ -66,23 +66,44 @@ interface ContactMessagesTableProps {
 
 const getStatusBadge = (status: string) => {
   const variants = {
-    UNREAD: "bg-red-100 text-red-800 hover:bg-red-200",
-    READ: "bg-blue-100 text-blue-800 hover:bg-blue-200",
-    IN_PROGRESS: "bg-yellow-100 text-yellow-800 hover:bg-yellow-200",
-    RESOLVED: "bg-green-100 text-green-800 hover:bg-green-200",
-    ARCHIVED: "bg-gray-100 text-gray-800 hover:bg-gray-200"
+    UNREAD: "bg-gradient-to-r from-red-500 to-red-600 text-white shadow-lg shadow-red-500/25 hover:shadow-red-500/40 border-red-500 animate-pulse",
+    READ: "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 border-blue-500",
+    IN_PROGRESS: "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 border-amber-500",
+    RESOLVED: "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-500/25 hover:shadow-emerald-500/40 border-emerald-500",
+    ARCHIVED: "bg-gradient-to-r from-slate-500 to-gray-600 text-white shadow-lg shadow-slate-500/25 hover:shadow-slate-500/40 border-slate-500"
   }
   return variants[status as keyof typeof variants] || variants.UNREAD
 }
 
 const getPriorityBadge = (priority: string) => {
   const variants = {
-    LOW: "bg-gray-100 text-gray-800",
-    NORMAL: "bg-blue-100 text-blue-800",
-    HIGH: "bg-orange-100 text-orange-800",
-    URGENT: "bg-red-100 text-red-800"
+    LOW: "bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-md shadow-gray-400/20 hover:shadow-gray-400/30 border-gray-400",
+    NORMAL: "bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-md shadow-blue-500/20 hover:shadow-blue-500/30 border-blue-500",
+    HIGH: "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 border-orange-500",
+    URGENT: "bg-gradient-to-r from-red-600 to-pink-600 text-white shadow-lg shadow-red-600/30 hover:shadow-red-600/50 border-red-600 animate-pulse"
   }
   return variants[priority as keyof typeof variants] || variants.NORMAL
+}
+
+const getStatusIcon = (status: string) => {
+  const icons = {
+    UNREAD: "🔴",
+    READ: "👁️",
+    IN_PROGRESS: "⚡",
+    RESOLVED: "✅",
+    ARCHIVED: "📁"
+  }
+  return icons[status as keyof typeof icons] || icons.UNREAD
+}
+
+const getPriorityIcon = (priority: string) => {
+  const icons = {
+    LOW: "🟢",
+    NORMAL: "🔵",
+    HIGH: "🟠",
+    URGENT: "🔴"
+  }
+  return icons[priority as keyof typeof icons] || icons.NORMAL
 }
 
 export function ContactMessagesTable({
@@ -175,17 +196,38 @@ export function ContactMessagesTable({
             value={status}
             onValueChange={(value) => onStatusChange(row.original.id, value)}
           >
-            <SelectTrigger className="w-32">
-              <Badge className={getStatusBadge(status)}>
+            <SelectTrigger className="w-36 border-none bg-transparent p-1 h-auto">
+              <Badge className={`${getStatusBadge(status)} transition-all duration-300 hover:scale-105 cursor-pointer px-3 py-1.5 rounded-full font-medium text-xs flex items-center gap-1.5`}>
+                <span className="text-sm">{getStatusIcon(status)}</span>
                 {status.replace('_', ' ')}
               </Badge>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="UNREAD">Unread</SelectItem>
-              <SelectItem value="READ">Read</SelectItem>
-              <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-              <SelectItem value="RESOLVED">Resolved</SelectItem>
-              <SelectItem value="ARCHIVED">Archived</SelectItem>
+              <SelectItem value="UNREAD" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  🔴 Unread
+                </span>
+              </SelectItem>
+              <SelectItem value="READ" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  👁️ Read
+                </span>
+              </SelectItem>
+              <SelectItem value="IN_PROGRESS" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  ⚡ In Progress
+                </span>
+              </SelectItem>
+              <SelectItem value="RESOLVED" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  ✅ Resolved
+                </span>
+              </SelectItem>
+              <SelectItem value="ARCHIVED" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  📁 Archived
+                </span>
+              </SelectItem>
             </SelectContent>
           </Select>
         )
@@ -201,16 +243,33 @@ export function ContactMessagesTable({
             value={priority}
             onValueChange={(value) => onPriorityChange(row.original.id, value)}
           >
-            <SelectTrigger className="w-24">
-              <Badge className={getPriorityBadge(priority)}>
+            <SelectTrigger className="w-28 border-none bg-transparent p-1 h-auto">
+              <Badge className={`${getPriorityBadge(priority)} transition-all duration-300 hover:scale-105 cursor-pointer px-3 py-1.5 rounded-full font-medium text-xs flex items-center gap-1.5`}>
+                <span className="text-sm">{getPriorityIcon(priority)}</span>
                 {priority}
               </Badge>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="LOW">Low</SelectItem>
-              <SelectItem value="NORMAL">Normal</SelectItem>
-              <SelectItem value="HIGH">High</SelectItem>
-              <SelectItem value="URGENT">Urgent</SelectItem>
+              <SelectItem value="LOW" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  🟢 Low
+                </span>
+              </SelectItem>
+              <SelectItem value="NORMAL" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  🔵 Normal
+                </span>
+              </SelectItem>
+              <SelectItem value="HIGH" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  🟠 High
+                </span>
+              </SelectItem>
+              <SelectItem value="URGENT" className="flex items-center gap-2">
+                <span className="flex items-center gap-2">
+                  🔴 Urgent
+                </span>
+              </SelectItem>
             </SelectContent>
           </Select>
         )
@@ -338,12 +397,12 @@ export function ContactMessagesTable({
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="UNREAD">Unread</SelectItem>
-              <SelectItem value="READ">Read</SelectItem>
-              <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-              <SelectItem value="RESOLVED">Resolved</SelectItem>
-              <SelectItem value="ARCHIVED">Archived</SelectItem>
+              <SelectItem value="all">📋 All Status</SelectItem>
+              <SelectItem value="UNREAD">🔴 Unread</SelectItem>
+              <SelectItem value="READ">👁️ Read</SelectItem>
+              <SelectItem value="IN_PROGRESS">⚡ In Progress</SelectItem>
+              <SelectItem value="RESOLVED">✅ Resolved</SelectItem>
+              <SelectItem value="ARCHIVED">📁 Archived</SelectItem>
             </SelectContent>
           </Select>
 
@@ -355,11 +414,11 @@ export function ContactMessagesTable({
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="LOW">Low</SelectItem>
-              <SelectItem value="NORMAL">Normal</SelectItem>
-              <SelectItem value="HIGH">High</SelectItem>
-              <SelectItem value="URGENT">Urgent</SelectItem>
+              <SelectItem value="all">📊 All Priority</SelectItem>
+              <SelectItem value="LOW">🟢 Low</SelectItem>
+              <SelectItem value="NORMAL">🔵 Normal</SelectItem>
+              <SelectItem value="HIGH">🟠 High</SelectItem>
+              <SelectItem value="URGENT">🔴 Urgent</SelectItem>
             </SelectContent>
           </Select>
 
