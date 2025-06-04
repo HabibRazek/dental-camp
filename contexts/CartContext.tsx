@@ -31,7 +31,7 @@ type CartAction =
   | { type: 'LOAD_CART'; payload: CartItem[] }
 
 const cartReducer = (state: CartState, action: CartAction): CartState => {
-  console.log("🛒 CartReducer: Action received:", action.type, action.payload)
+  console.log("🛒 CartReducer: Action received:", action.type, 'payload' in action ? action.payload : 'no payload')
   console.log("🛒 CartReducer: Current state:", state)
 
   switch (action.type) {

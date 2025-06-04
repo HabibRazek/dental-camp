@@ -19,6 +19,13 @@ export async function GET(request: NextRequest) {
     // Check if user is admin
     if (session.user.role !== 'ADMIN') {
       // For regular users, return only their orders
+      if (!session.user.email) {
+        return NextResponse.json(
+          { error: "Email utilisateur non trouvé" },
+          { status: 400 }
+        )
+      }
+
       orders = await prisma.order.findMany({
         where: {
           customerEmail: session.user.email

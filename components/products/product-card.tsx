@@ -191,7 +191,7 @@ export function ProductCard({
                       product={{
                         id: product.id,
                         name: product.name,
-                        price: product.price,
+                        price: product.price.toString(),
                         thumbnail: product.thumbnail,
                         images: product.images,
                         slug: product.slug,
@@ -407,7 +407,7 @@ export function ProductCard({
                 product={{
                   id: product.id,
                   name: product.name,
-                  price: product.price,
+                  price: product.price.toString(),
                   thumbnail: product.thumbnail,
                   images: product.images,
                   slug: product.slug,

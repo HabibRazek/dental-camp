@@ -71,7 +71,7 @@ export async function PATCH(request: NextRequest) {
       }
 
       // Prevent users from disabling themselves
-      if (user.email === session.user.email && action === 'disable') {
+      if (session.user.email && user.email === session.user.email && action === 'disable') {
         return NextResponse.json(
           { error: "You cannot disable your own account" },
           { status: 400 }
@@ -91,7 +91,7 @@ export async function PATCH(request: NextRequest) {
         }
       })
 
-      console.log(`👤 User ${email} ${action}d by ${session.user.email}`)
+      console.log(`👤 User ${email} ${action}d by ${session.user.email || 'unknown'}`)
 
       return NextResponse.json(
         {

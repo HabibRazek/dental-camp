@@ -374,7 +374,7 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
                                         <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                                           <div className="flex-1">
                                             <h4 className="font-medium">{item.name}</h4>
-                                            <p className="text-sm text-gray-600">SKU: {item.sku}</p>
+                                            <p className="text-sm text-gray-600">ID: {item.id}</p>
                                           </div>
                                           <div className="text-center">
                                             <p className="text-sm text-gray-500">Quantité</p>
