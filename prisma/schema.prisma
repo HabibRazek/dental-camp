@@ -234,3 +234,64 @@ enum MessagePriority {
   HIGH
   URGENT
 }
+
+// Orders Model
+model Order {
+  id          String   @id @default(cuid())
+  orderNumber String   @unique
+  status      OrderStatus @default(PENDING)
+
+  // Customer information
+  customerId    String?
+  customerName  String
+  customerEmail String
+  customerPhone String?
+
+  // Shipping address
+  shippingAddress String
+  shippingCity    String
+  shippingPostalCode String?
+  shippingCountry String @default("Tunisie")
+
+  // Payment information
+  paymentMethod String
+  paymentStatus PaymentStatus @default(PENDING)
+
+  // Delivery information
+  deliveryNotes String?
+
+  // Totals
+  subtotal Decimal
+  total    Decimal
+
+  // Additional notes
+  notes String?
+
+  // Order items (JSON for now, could be normalized later)
+  items Json // Array of order items
+
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([customerEmail])
+  @@index([createdAt])
+  @@index([orderNumber])
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}

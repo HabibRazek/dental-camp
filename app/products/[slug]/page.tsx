@@ -27,6 +27,7 @@ import Header from "@/components/landing/header";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 import { PageLoader } from "@/components/ui/loader";
+import { useCart } from "@/contexts/CartContext";
 
 interface Product {
   id: string;
@@ -55,7 +56,8 @@ interface Product {
 export default function ProductPage() {
   const params = useParams();
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
-  
+  const { addItem } = useCart();
+
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,23 @@ export default function ProductPage() {
   }, [slug]);
 
   const handleAddToCart = () => {
-    toast.success(`Added ${quantity} ${product?.name} to cart`);
+    if (!product) return;
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.thumbnail || product.images?.[0] || "/images/dental-equipment.jpg",
+      slug: product.slug,
+      stockQuantity: product.stockQuantity
+    };
+
+    // Add the item multiple times based on quantity
+    for (let i = 0; i < quantity; i++) {
+      addItem(cartItem);
+    }
+
+    // Don't show toast here - CartContext will handle it
   };
 
   const handleAddToWishlist = () => {
@@ -316,7 +334,7 @@ export default function ProductPage() {
                   size="lg"
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
-                  {isInStock ? "Add to Cart" : "Out of Stock"}
+                  {isInStock ? "Ajouter au panier" : "Rupture de stock"}
                 </Button>
                 <Button
                   onClick={handleAddToWishlist}

@@ -1,8 +1,9 @@
 "use client"
 
-import { Search, Bell, MessageSquare } from "lucide-react"
+import { Bell, MessageSquare, LogOut, Settings, Home, Package, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useSession, signOut } from "next-auth/react"
+import { usePathname, useRouter } from "next/navigation"
 import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
@@ -15,8 +16,106 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export function SiteHeader() {
+  const { data: session } = useSession()
+  const pathname = usePathname()
+  const router = useRouter()
+
+  // Get user initials for avatar
+  const getUserInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2)
+  }
+
+  const userInitials = session?.user?.name ? getUserInitials(session.user.name) : 'U'
+  const userName = session?.user?.name || 'Utilisateur'
+  const userEmail = session?.user?.email || ''
+
+  // Dynamic page information based on current route
+  const getPageInfo = () => {
+    const pathSegments = pathname.split('/').filter(Boolean)
+
+    if (pathname === '/dashboard') {
+      return {
+        icon: '🏠',
+        title: 'Dashboard',
+        description: 'Vue d\'ensemble de votre activité'
+      }
+    }
+
+    if (pathname === '/orders') {
+      return {
+        icon: '📦',
+        title: 'Commandes',
+        description: 'Gestion des commandes clients'
+      }
+    }
+
+    if (pathname.startsWith('/admin/products')) {
+      return {
+        icon: '🦷',
+        title: 'Produits',
+        description: 'Gestion du catalogue produits'
+      }
+    }
+
+    if (pathname.startsWith('/admin/categories')) {
+      return {
+        icon: '📂',
+        title: 'Catégories',
+        description: 'Organisation des produits'
+      }
+    }
+
+    if (pathname === '/customers') {
+      return {
+        icon: '👥',
+        title: 'Clients',
+        description: 'Gestion de la clientèle'
+      }
+    }
+
+    if (pathname.startsWith('/admin/messages')) {
+      return {
+        icon: '💬',
+        title: 'Messages',
+        description: 'Communication client'
+      }
+    }
+
+    // Default fallback
+    return {
+      icon: '📊',
+      title: 'Overview',
+      description: 'Tableau de bord'
+    }
+  }
+
+  const pageInfo = getPageInfo()
+
+  // Handle navigation
+  const handleNavigation = (path: string) => {
+    router.push(path)
+  }
+
+  // Handle logout
+  const handleLogout = async () => {
+    await signOut({ callbackUrl: '/' })
+  }
+
   return (
     <header className="flex h-20 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-16 bg-white/80 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
       <div className="flex items-center gap-4 px-6">
@@ -28,7 +127,11 @@ export function SiteHeader() {
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink
                 href="/dashboard"
-                className="text-gray-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center gap-2"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleNavigation('/dashboard')
+                }}
+                className="text-gray-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center gap-2 cursor-pointer"
               >
                 🏠 Dashboard
               </BreadcrumbLink>
@@ -36,7 +139,7 @@ export function SiteHeader() {
             <BreadcrumbSeparator className="hidden md:block text-gray-400" />
             <BreadcrumbItem>
               <BreadcrumbPage className="text-gray-900 font-bold flex items-center gap-2">
-                📊 Overview
+                {pageInfo.icon} {pageInfo.title}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -44,22 +147,14 @@ export function SiteHeader() {
       </div>
 
       <div className="ml-auto flex items-center gap-4 px-6">
-        {/* Enhanced Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
-            type="search"
-            placeholder="🔍 Search products, orders, customers..."
-            className="w-[350px] pl-10 pr-4 py-2.5 border-gray-200/50 bg-gray-50/50 focus:bg-white focus:border-blue-300 focus:ring-2 focus:ring-blue-500/20 rounded-xl transition-all duration-300 font-medium"
-          />
-        </div>
-
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <Button
             variant="ghost"
             size="icon"
+            onClick={() => handleNavigation('/admin/messages')}
             className="h-10 w-10 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 rounded-xl relative group"
+            title="Messages clients"
           >
             <MessageSquare className="h-5 w-5" />
             <span className="sr-only">Messages</span>
@@ -70,7 +165,9 @@ export function SiteHeader() {
           <Button
             variant="ghost"
             size="icon"
+            onClick={() => handleNavigation('/orders')}
             className="h-10 w-10 text-gray-600 hover:bg-gradient-to-r hover:from-emerald-50 hover:to-teal-50 hover:text-emerald-700 transition-all duration-300 rounded-xl relative group"
+            title="Notifications commandes"
           >
             <Bell className="h-5 w-5" />
             <span className="sr-only">Notifications</span>
@@ -78,16 +175,63 @@ export function SiteHeader() {
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full border-2 border-white shadow-sm" />
           </Button>
 
-          {/* User Profile */}
-          <Button
-            variant="ghost"
-            className="h-10 px-3 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl font-medium"
-          >
-            <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
-              MB
-            </div>
-            <span className="hidden sm:inline">Dr. Mourad Bayar</span>
-          </Button>
+          {/* User Profile Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="h-10 px-3 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-xl font-medium"
+              >
+                <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-xs font-bold mr-2">
+                  {userInitials}
+                </div>
+                <span className="hidden sm:inline">{userName}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">{userName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {userEmail}
+                  </p>
+                  <p className="text-xs text-blue-600 font-medium">
+                    {session?.user?.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur'}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => handleNavigation('/dashboard')}>
+                <Home className="mr-2 h-4 w-4" />
+                <span>Mon Dashboard</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleNavigation('/orders')}>
+                <Package className="mr-2 h-4 w-4" />
+                <span>Mes Commandes</span>
+              </DropdownMenuItem>
+              {session?.user?.role === 'ADMIN' && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => handleNavigation('/admin/products')}>
+                    <Settings className="mr-2 h-4 w-4" />
+                    <span>Gestion Produits</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleNavigation('/customers')}>
+                    <Users className="mr-2 h-4 w-4" />
+                    <span>Gestion Clients</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-red-600 focus:text-red-600"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Se déconnecter</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

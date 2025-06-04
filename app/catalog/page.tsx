@@ -36,6 +36,7 @@ import Header from "@/components/landing/header";
 import Footer from "@/components/landing/footer";
 import { formatCurrency } from "@/lib/utils";
 import { SectionLoader } from "@/components/ui/loader";
+import { useCart } from "@/contexts/CartContext";
 
 // Types
 interface Product {
@@ -72,6 +73,24 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { addItem } = useCart();
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.thumbnail || "/images/dental-equipment.jpg",
+      slug: product.slug,
+      stockQuantity: product.stockQuantity
+    };
+
+    addItem(cartItem);
+    // Don't show toast here - CartContext will handle it
+  };
 
   return (
     <motion.div
@@ -171,7 +190,8 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
                     <Button
                       size="sm"
                       className="rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg border-0 h-10 w-10 p-0"
-                      onClick={() => toast.success("Added to cart")}
+                      onClick={handleAddToCart}
+                      disabled={product.stockQuantity === 0}
                     >
                       <ShoppingCart className="w-4 h-4" />
                     </Button>
@@ -246,10 +266,10 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
           <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm mt-auto"
             disabled={product.stockQuantity === 0}
-            onClick={() => toast.success("Added to cart")}
+            onClick={handleAddToCart}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
-            {product.stockQuantity === 0 ? "Out of Stock" : "Add to Cart"}
+            {product.stockQuantity === 0 ? "Out of Stock" : "Ajouter au panier"}
           </Button>
         </CardContent>
       </Card>
@@ -258,6 +278,9 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
 };
 
 export default function CatalogPage() {
+  // Cart functionality
+  const { addItem } = useCart();
+
   // State management
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);

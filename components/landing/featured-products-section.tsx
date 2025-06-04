@@ -19,6 +19,10 @@ import Image from "next/image";
 import Link from "next/link";
 // import dentalequipment from "@/public/images/dental-equipment.jpg";
 import { useState, useEffect } from "react";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { useCart } from "@/contexts/CartContext";
+import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 interface Product {
     id: string;
@@ -30,6 +34,8 @@ interface Product {
     images: string[];
     isFeatured: boolean;
     status: string;
+    slug: string;
+    stockQuantity: number;
     category?: {
         id: string;
         name: string;
@@ -41,6 +47,7 @@ function FeaturedProductsSection() {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const { addItem } = useCart();
 
     useEffect(() => {
         fetchFeaturedProducts();
@@ -80,6 +87,8 @@ function FeaturedProductsSection() {
                     images: [],
                     isFeatured: true,
                     status: 'PUBLISHED',
+                    slug: 'composite-dentaire-premium',
+                    stockQuantity: 25,
                     category: {
                         id: '1',
                         name: 'Composite & Adhésif',
@@ -96,6 +105,8 @@ function FeaturedProductsSection() {
                     images: [],
                     isFeatured: true,
                     status: 'PUBLISHED',
+                    slug: 'kit-instruments-chirurgicaux',
+                    stockQuantity: 15,
                     category: {
                         id: '2',
                         name: 'Instruments Dentaires',
@@ -112,6 +123,8 @@ function FeaturedProductsSection() {
                     images: [],
                     isFeatured: true,
                     status: 'PUBLISHED',
+                    slug: 'lampe-led-polymerisation',
+                    stockQuantity: 8,
                     category: {
                         id: '3',
                         name: 'Équipement Médical',
@@ -128,6 +141,8 @@ function FeaturedProductsSection() {
                     images: [],
                     isFeatured: true,
                     status: 'PUBLISHED',
+                    slug: 'autoclave-classe-b',
+                    stockQuantity: 5,
                     category: {
                         id: '4',
                         name: 'Stérilisation',
@@ -145,7 +160,7 @@ function FeaturedProductsSection() {
     };
 
     const formatPrice = (price: string) => {
-        return parseFloat(price).toFixed(2);
+        return formatCurrency(parseFloat(price));
     };
 
     const getRandomRating = () => {
@@ -246,6 +261,8 @@ function FeaturedProductsSection() {
                     <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                         Découvrez les produits les plus appréciés par nos clients professionnels
                     </p>
+
+
                 </motion.div>
 
                 {/* Products Grid */}
@@ -308,11 +325,11 @@ function FeaturedProductsSection() {
                                             <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 shadow-sm">
                                                 <div className="flex items-center gap-1">
                                                     <span className="text-lg font-bold text-gray-900">
-                                                        {formatPrice(product.price)} TND TTC
+                                                        {formatPrice(product.price)}
                                                     </span>
                                                     {product.comparePrice && (
                                                         <span className="text-xs text-gray-500 line-through">
-                                                            {formatPrice(product.comparePrice)} TND
+                                                            {formatPrice(product.comparePrice)}
                                                         </span>
                                                     )}
                                                 </div>
@@ -364,8 +381,26 @@ function FeaturedProductsSection() {
                                             </div>
 
                                             {/* Action Button - Full Width */}
-                                            <Button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm py-2 rounded-lg transition-all duration-300 group-hover:shadow-lg">
-                                                <ShoppingCart className="h-4 w-4 mr-2" />
+                                            <Button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    e.stopPropagation();
+
+                                                    const cartItem = {
+                                                        id: product.id,
+                                                        name: product.name,
+                                                        price: parseFloat(product.price),
+                                                        image: product.thumbnail || product.images?.[0] || "/images/dental-equipment.jpg",
+                                                        slug: product.slug,
+                                                        stockQuantity: product.stockQuantity
+                                                    };
+
+                                                    addItem(cartItem);
+                                                    toast.success(`${product.name} ajouté au panier!`);
+                                                }}
+                                                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm py-2 rounded-lg transition-all duration-300 group-hover:shadow-lg flex items-center justify-center gap-2"
+                                            >
+                                                <ShoppingCart className="h-4 w-4" />
                                                 Ajouter au panier
                                             </Button>
                                         </div>

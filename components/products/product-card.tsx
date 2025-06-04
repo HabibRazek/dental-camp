@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
+import { AddToCartButton } from "@/components/cart/AddToCartButton";
 
 interface Product {
   id: string;
@@ -85,10 +86,10 @@ export function ProductCard({
     e.preventDefault();
     e.stopPropagation();
     if (!isInStock) {
-      toast.error("Product is out of stock");
+      toast.error("Produit en rupture de stock");
       return;
     }
-    toast.success(`Added ${product.name} to cart`);
+    toast.success(`${product.name} ajouté au panier`);
   };
 
   if (variant === "compact") {
@@ -186,15 +187,20 @@ export function ProductCard({
                 </Button>
                 {showQuickActions && (
                   <div className="flex gap-2">
-                    <Button
-                      variant="secondary"
+                    <AddToCartButton
+                      product={{
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        thumbnail: product.thumbnail,
+                        images: product.images,
+                        slug: product.slug,
+                        stockQuantity: product.stockQuantity
+                      }}
+                      variant="icon"
                       size="sm"
                       className="flex-1 shadow-lg"
-                      onClick={handleAddToCart}
-                      disabled={!isInStock}
-                    >
-                      <ShoppingCart className="h-4 w-4" />
-                    </Button>
+                    />
                     <Button
                       variant="secondary"
                       size="sm"
@@ -393,6 +399,23 @@ export function ProductCard({
                   {rating.toFixed(1)}
                 </span>
               </div>
+            </div>
+
+            {/* Add to Cart Button */}
+            <div className="pt-3">
+              <AddToCartButton
+                product={{
+                  id: product.id,
+                  name: product.name,
+                  price: product.price,
+                  thumbnail: product.thumbnail,
+                  images: product.images,
+                  slug: product.slug,
+                  stockQuantity: product.stockQuantity
+                }}
+                variant="compact"
+                size="sm"
+              />
             </div>
           </div>
         </CardContent>
