@@ -126,7 +126,8 @@ export default function SettingsPage() {
       toast.success("Store settings saved successfully!")
     } catch (error) {
       console.error('Save store settings error:', error)
-      toast.error(error.message || "Failed to save store settings")
+      const errorMessage = error instanceof Error ? error.message : "Failed to save store settings"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -154,7 +155,8 @@ export default function SettingsPage() {
       toast.success("Notification settings saved successfully!")
     } catch (error) {
       console.error('Save notification settings error:', error)
-      toast.error(error.message || "Failed to save notification settings")
+      const errorMessage = error instanceof Error ? error.message : "Failed to save notification settings"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -182,7 +184,8 @@ export default function SettingsPage() {
       toast.success("Appearance settings saved successfully!")
     } catch (error) {
       console.error('Save appearance settings error:', error)
-      toast.error(error.message || "Failed to save appearance settings")
+      const errorMessage = error instanceof Error ? error.message : "Failed to save appearance settings"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }

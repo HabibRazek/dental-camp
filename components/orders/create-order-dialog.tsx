@@ -235,8 +235,7 @@ export function CreateOrderDialog({ open, onOpenChange }: CreateOrderDialogProps
           name: item.product.name,
           price: Number(item.price || 0),
           quantity: Number(item.quantity || 0),
-          image: item.product.thumbnail || '',
-          slug: item.product.slug || ''
+          image: item.product.thumbnail || ''
         })),
         customer: {
           firstName: selectedCustomer.name.split(' ')[0] || '',

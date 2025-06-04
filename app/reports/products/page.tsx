@@ -422,11 +422,13 @@ export default function ProductCatalogsPage() {
 
           toast.success(`📄 Exported ${filteredProducts.length} products from current page (fallback mode)`)
         } else {
-          toast.error(`❌ No products available to export. Error: ${error.message || 'Unknown error'}`)
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          toast.error(`❌ No products available to export. Error: ${errorMessage}`)
         }
       } catch (fallbackError) {
         console.error('❌ Fallback export also failed:', fallbackError)
-        toast.error(`❌ Export failed: ${error.message || 'Please try again later'}`)
+        const errorMessage = error instanceof Error ? error.message : 'Please try again later'
+        toast.error(`❌ Export failed: ${errorMessage}`)
       }
     } finally {
       setExportLoading(false)
@@ -672,7 +674,7 @@ export default function ProductCatalogsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">In Stock (>5)</span>
+                      <span className="text-sm font-medium">In Stock (&gt;5)</span>
                       <span className="text-sm text-green-600 font-medium">
                         {summary.totalProducts - summary.lowStockProducts - summary.outOfStockProducts}
                       </span>

@@ -155,7 +155,8 @@ export default function SecurityPage() {
       setPasswords({ current: "", new: "", confirm: "" })
     } catch (error) {
       console.error('Change password error:', error)
-      toast.error(error.message || "Failed to change password")
+      const errorMessage = error instanceof Error ? error.message : "Failed to change password"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -183,7 +184,8 @@ export default function SecurityPage() {
       toast.success("Security settings saved successfully!")
     } catch (error) {
       console.error('Save security settings error:', error)
-      toast.error(error.message || "Failed to save security settings")
+      const errorMessage = error instanceof Error ? error.message : "Failed to save security settings"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -212,7 +214,8 @@ export default function SecurityPage() {
       toast.success("Two-factor authentication enabled!")
     } catch (error) {
       console.error('Enable 2FA error:', error)
-      toast.error(error.message || "Failed to enable two-factor authentication")
+      const errorMessage = error instanceof Error ? error.message : "Failed to enable two-factor authentication"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -241,7 +244,8 @@ export default function SecurityPage() {
       toast.success("Two-factor authentication disabled!")
     } catch (error) {
       console.error('Disable 2FA error:', error)
-      toast.error(error.message || "Failed to disable two-factor authentication")
+      const errorMessage = error instanceof Error ? error.message : "Failed to disable two-factor authentication"
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
