@@ -1,7 +1,9 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Plus, Mail, Bell, type LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -10,6 +12,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { CreateOrderDialog } from "@/components/orders/create-order-dialog"
+import Link from "next/link"
 
 export function NavMain({
   items,
@@ -20,6 +24,134 @@ export function NavMain({
     icon?: LucideIcon
   }[]
 }) {
+  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false)
+  const [unreadMessages, setUnreadMessages] = useState(0)
+  const [lowStockAlerts, setLowStockAlerts] = useState(0)
+
+  // Fetch unread messages count
+  useEffect(() => {
+    const fetchUnreadMessages = async () => {
+      try {
+        const response = await fetch('/api/contact?status=UNREAD&limit=1')
+        if (response.ok) {
+          const data = await response.json()
+          setUnreadMessages(data.pagination?.totalCount || 0)
+        }
+      } catch (error) {
+        console.error('Failed to fetch unread messages:', error)
+      }
+    }
+
+    fetchUnreadMessages()
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchUnreadMessages, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Listen for message updates to refresh badge immediately
+  useEffect(() => {
+    const handleMessagesUpdate = async () => {
+      try {
+        console.log('📧 Messages updated event received, refreshing badge...')
+        const response = await fetch('/api/contact?status=UNREAD&limit=1')
+        if (response.ok) {
+          const data = await response.json()
+          const newCount = data.pagination?.totalCount || 0
+          setUnreadMessages(newCount)
+          console.log('📧 Messages badge updated:', newCount)
+        }
+      } catch (error) {
+        console.error('Failed to fetch unread messages:', error)
+      }
+    }
+
+    // Listen for custom events when messages are updated
+    window.addEventListener('messagesUpdated', handleMessagesUpdate)
+
+    return () => {
+      window.removeEventListener('messagesUpdated', handleMessagesUpdate)
+    }
+  }, [])
+
+  // Fetch low stock alerts (respecting dismissed alerts)
+  useEffect(() => {
+    const fetchLowStockAlerts = async () => {
+      try {
+        // Get dismissed alerts from localStorage
+        const dismissedAlerts = JSON.parse(localStorage.getItem('alertStates') || '{}')
+        const dismissedAlertIds = Object.keys(dismissedAlerts).filter(id => dismissedAlerts[id]?.isDismissed)
+
+        // Fetch base alert count
+        const response = await fetch('/api/alerts/count')
+        if (response.ok) {
+          const data = await response.json()
+
+          // Calculate actual visible alerts by subtracting dismissed ones
+          let visibleAlerts = data.baseAlertCount || 0
+
+          // Subtract dismissed alerts
+          dismissedAlertIds.forEach(alertId => {
+            if (alertId.startsWith('out_of_stock_') || alertId === 'low_stock_warning') {
+              visibleAlerts = Math.max(0, visibleAlerts - 1)
+            }
+          })
+
+          setLowStockAlerts(visibleAlerts)
+        }
+      } catch (error) {
+        console.error('Failed to fetch low stock alerts:', error)
+      }
+    }
+
+    fetchLowStockAlerts()
+
+    // Refresh every 30 seconds to stay in sync with alerts page
+    const interval = setInterval(fetchLowStockAlerts, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Listen for localStorage changes to update badge immediately
+  useEffect(() => {
+    const handleStorageChange = () => {
+      // Re-fetch alerts when localStorage changes
+      const fetchLowStockAlerts = async () => {
+        try {
+          const dismissedAlerts = JSON.parse(localStorage.getItem('alertStates') || '{}')
+          const dismissedAlertIds = Object.keys(dismissedAlerts).filter(id => dismissedAlerts[id]?.isDismissed)
+
+          const response = await fetch('/api/alerts/count')
+          if (response.ok) {
+            const data = await response.json()
+            let visibleAlerts = data.baseAlertCount || 0
+
+            dismissedAlertIds.forEach(alertId => {
+              if (alertId.startsWith('out_of_stock_') || alertId === 'low_stock_warning') {
+                visibleAlerts = Math.max(0, visibleAlerts - 1)
+              }
+            })
+
+            setLowStockAlerts(visibleAlerts)
+          }
+        } catch (error) {
+          console.error('Failed to fetch low stock alerts:', error)
+        }
+      }
+
+      fetchLowStockAlerts()
+    }
+
+    // Listen for storage events (from other tabs)
+    window.addEventListener('storage', handleStorageChange)
+
+    // Also listen for custom events when localStorage is updated from same tab
+    window.addEventListener('alertsUpdated', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('alertsUpdated', handleStorageChange)
+    }
+  }, [])
+
   return (
     <SidebarGroup className="px-4">
       <SidebarGroupContent className="flex flex-col gap-4">
@@ -29,7 +161,8 @@ export function NavMain({
             <SidebarMenuItem>
               <SidebarMenuButton
                 tooltip="Create New Order"
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white duration-300 ease-out hover:from-blue-700 hover:to-blue-800 hover:text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold"
+                onClick={() => setIsCreateOrderOpen(true)}
+                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white duration-300 ease-out hover:from-blue-700 hover:to-blue-800 hover:text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold cursor-pointer"
               >
                 <Plus className="h-5 w-5" />
                 <span>New Order</span>
@@ -40,19 +173,35 @@ export function NavMain({
           <div className="flex gap-2">
             <Button
               size="sm"
-              className="flex-1 border-gray-200/50 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 rounded-lg"
+              className="flex-1 border-gray-200/50 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 transition-all duration-300 rounded-lg relative"
               variant="outline"
+              asChild
             >
-              <Mail className="h-4 w-4" />
-              <span className="hidden sm:inline">Messages</span>
+              <Link href="/admin/messages">
+                <Mail className="h-4 w-4" />
+                <span className="hidden sm:inline">Messages</span>
+                {unreadMessages > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 bg-red-500 text-white text-xs flex items-center justify-center rounded-full animate-pulse">
+                    {unreadMessages > 99 ? '99+' : unreadMessages}
+                  </Badge>
+                )}
+              </Link>
             </Button>
             <Button
               size="sm"
-              className="flex-1 border-blue-200 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-lg"
+              className="flex-1 border-blue-200 text-gray-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-blue-100 hover:text-blue-700 transition-all duration-300 rounded-lg relative"
               variant="outline"
+              asChild
             >
-              <Bell className="h-4 w-4" />
-              <span className="hidden sm:inline">Alerts</span>
+              <Link href="/admin/alerts">
+                <Bell className="h-4 w-4" />
+                <span className="hidden sm:inline">Alerts</span>
+                {lowStockAlerts > 0 && (
+                  <Badge className="absolute -top-2 -right-2 h-5 w-5 p-0 bg-red-500 text-white text-xs flex items-center justify-center rounded-full animate-pulse">
+                    {lowStockAlerts > 99 ? '99+' : lowStockAlerts}
+                  </Badge>
+                )}
+              </Link>
             </Button>
           </div>
         </div>
@@ -94,6 +243,12 @@ export function NavMain({
           </SidebarMenu>
         </div>
       </SidebarGroupContent>
+
+      {/* Create Order Dialog */}
+      <CreateOrderDialog
+        open={isCreateOrderOpen}
+        onOpenChange={setIsCreateOrderOpen}
+      />
     </SidebarGroup>
   )
 }

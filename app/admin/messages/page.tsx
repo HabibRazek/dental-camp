@@ -91,11 +91,15 @@ export default function ContactMessagesPage() {
       }
 
       // Update the message in the local state
-      setMessages(prev => prev.map(msg => 
-        msg.id === messageId 
+      setMessages(prev => prev.map(msg =>
+        msg.id === messageId
           ? { ...msg, status: newStatus as ContactMessage['status'] }
           : msg
       ))
+
+      // Dispatch custom event to update sidebar badge immediately
+      console.log('📧 Dispatching messagesUpdated event for status change:', newStatus)
+      window.dispatchEvent(new CustomEvent('messagesUpdated'))
 
       toast.success('Message status updated successfully')
     } catch (err) {
@@ -149,6 +153,10 @@ export default function ContactMessagesPage() {
       // Remove the message from the local state
       setMessages(prev => prev.filter(msg => msg.id !== messageId))
       setTotalCount(prev => prev - 1)
+
+      // Dispatch custom event to update sidebar badge immediately
+      console.log('📧 Dispatching messagesUpdated event for message deletion')
+      window.dispatchEvent(new CustomEvent('messagesUpdated'))
 
       toast.success('Message deleted successfully')
     } catch (err) {

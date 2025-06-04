@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
+import { CreateOrderDialog } from "@/components/orders/create-order-dialog"
 import {
   Table,
   TableBody,
@@ -54,7 +55,8 @@ import {
   Mail,
   User,
   CreditCard,
-  Calendar
+  Calendar,
+  Plus
 } from "lucide-react"
 import { Order } from "@/app/admin/orders/page"
 
@@ -77,6 +79,7 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false)
 
   const paymentMethodLabels = {
     cash: 'Paiement à la livraison',
@@ -136,10 +139,16 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
           </p>
         </div>
         
-        <Button onClick={onRefresh} variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Actualiser
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={() => setIsCreateOrderOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="h-4 w-4 mr-2" />
+            Nouvelle Commande
+          </Button>
+          <Button onClick={onRefresh} variant="outline" size="sm">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Actualiser
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -475,6 +484,18 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
           )}
         </CardContent>
       </Card>
+
+      {/* Create Order Dialog */}
+      <CreateOrderDialog
+        open={isCreateOrderOpen}
+        onOpenChange={(open) => {
+          setIsCreateOrderOpen(open)
+          if (!open) {
+            // Refresh orders when dialog closes after successful creation
+            onRefresh()
+          }
+        }}
+      />
     </div>
   )
 }

@@ -18,7 +18,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, CheckCircle, ArrowRight } from "lucide-react"
 import Link from "next/link"
 
 interface Category {
@@ -51,6 +51,7 @@ export default function AddProductPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
+  const [isProductCreated, setIsProductCreated] = useState(false)
 
   // Form state
   const [formData, setFormData] = useState<ProductFormData>({
@@ -138,8 +139,32 @@ export default function AddProductPage() {
         throw new Error(errorData.error || 'Failed to create product')
       }
 
-      toast.success('Product created successfully!')
-      router.push('/admin/products')
+      const result = await response.json()
+      console.log('✅ Product created successfully:', result)
+
+      // Mark product as created
+      setIsProductCreated(true)
+
+      // Show success message with action buttons
+      toast.success('Product created successfully!', {
+        duration: 4000,
+        action: {
+          label: 'View Products',
+          onClick: () => router.push('/admin/products')
+        }
+      })
+
+      // Add a small delay to ensure the toast is shown before redirect
+      setTimeout(() => {
+        console.log('🔄 Redirecting to products list...')
+        try {
+          router.push('/admin/products')
+        } catch (routerError) {
+          console.error('Router push failed, using window.location:', routerError)
+          // Fallback to window.location if router.push fails
+          window.location.href = '/admin/products'
+        }
+      }, 1500)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to create product')
     } finally {
@@ -162,7 +187,53 @@ export default function AddProductPage() {
           </Link>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Success Banner */}
+        {isProductCreated && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
+                <div>
+                  <h3 className="text-green-800 font-medium">Product Created Successfully!</h3>
+                  <p className="text-green-600 text-sm">Your product has been added to the catalog.</p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => router.push('/admin/products')}
+                  className="bg-green-600 hover:bg-green-700"
+                >
+                  <ArrowRight className="h-4 w-4 mr-2" />
+                  View Products
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsProductCreated(false)
+                    // Reset form
+                    setFormData({
+                      name: "",
+                      description: "",
+                      sku: "",
+                      price: 0,
+                      stockQuantity: 0,
+                      lowStockThreshold: 10,
+                      trackQuantity: true,
+                      status: "DRAFT",
+                      isActive: true,
+                      isFeatured: false,
+                    })
+                    setUploadedImages([])
+                  }}
+                >
+                  Add Another Product
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className={`space-y-6 ${isProductCreated ? 'opacity-50 pointer-events-none' : ''}`}>
           {/* Basic Information */}
           <Card className="border-blue-200 shadow-sm">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-blue-100/50">

@@ -3,14 +3,14 @@ import { prisma } from "@/lib/prisma"
 import { z } from "zod"
 import { headers } from "next/headers"
 
-// Contact message validation schema
+// Contact message validation schema with French error messages
 const ContactMessageSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
-  email: z.string().email("Invalid email address"),
+  name: z.string().min(1, "Le nom est requis").max(100, "Le nom doit contenir moins de 100 caractères"),
+  email: z.string().email("Adresse email invalide"),
   phone: z.string().optional(),
   company: z.string().optional(),
-  subject: z.string().min(1, "Subject is required").max(200, "Subject must be less than 200 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters").max(2000, "Message must be less than 2000 characters"),
+  subject: z.string().min(1, "Le sujet est requis").max(200, "Le sujet doit contenir moins de 200 caractères"),
+  message: z.string().min(10, "Le message doit contenir au moins 10 caractères").max(2000, "Le message doit contenir moins de 2000 caractères"),
   source: z.string().optional().default("landing_page")
 })
 
@@ -82,7 +82,14 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
+
+    // Log the incoming data for debugging
+    console.log('Contact API received data:', body)
+
     const messageData = ContactMessageSchema.parse(body)
+
+    // Log the validated data
+    console.log('Contact API validated data:', messageData)
 
     // Get client IP and user agent
     const headersList = await headers()
@@ -120,7 +127,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: "Your message has been sent successfully. We'll get back to you soon!",
+        message: "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais !",
         id: contactMessage.id
       },
       { status: 201 }
@@ -129,8 +136,8 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { 
-          error: "Invalid message data", 
+        {
+          error: "Données du message invalides",
           details: error.errors.map(err => ({
             field: err.path.join('.'),
             message: err.message
@@ -142,7 +149,7 @@ export async function POST(request: NextRequest) {
 
     console.error('Error creating contact message:', error)
     return NextResponse.json(
-      { error: "Failed to send message. Please try again." },
+      { error: "Échec de l'envoi du message. Veuillez réessayer." },
       { status: 500 }
     )
   }

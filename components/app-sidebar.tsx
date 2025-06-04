@@ -76,11 +76,6 @@ const data = {
       url: "/analytics",
       icon: BarChart3,
     },
-    {
-      title: "Staff",
-      url: "/staff",
-      icon: UserCheck,
-    },
   ],
   navClouds: [
     {
@@ -123,7 +118,7 @@ const data = {
     },
     {
       name: "Product Catalogs",
-      url: "/catalogs",
+      url: "/reports/products",
       icon: Package,
     },
     {

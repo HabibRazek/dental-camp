@@ -55,26 +55,58 @@ function InnovativeContactSection() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Client-side validation
+        if (!formData.name.trim()) {
+            toast.error("Le nom est requis");
+            return;
+        }
+
+        if (!formData.email.trim()) {
+            toast.error("L'email est requis");
+            return;
+        }
+
+        if (!formData.subject.trim()) {
+            toast.error("Le sujet est requis");
+            return;
+        }
+
+        if (!formData.message.trim()) {
+            toast.error("Le message est requis");
+            return;
+        }
+
+        if (formData.message.trim().length < 10) {
+            toast.error("Le message doit contenir au moins 10 caractères");
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
+            const requestData = {
+                ...formData,
+                source: 'landing_page'
+            };
+
+            console.log('Sending contact form data:', requestData);
+
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    ...formData,
-                    source: 'landing_page'
-                }),
+                body: JSON.stringify(requestData),
             });
 
             const data = await response.json();
+            console.log('Contact API response:', { status: response.status, data });
 
             if (response.ok) {
                 setIsSubmitted(true);
                 toast.success(data.message || "Message envoyé avec succès!");
-                
+
                 // Reset form after 3 seconds
                 setTimeout(() => {
                     setIsSubmitted(false);
@@ -88,7 +120,15 @@ function InnovativeContactSection() {
                     });
                 }, 3000);
             } else {
-                toast.error(data.error || "Erreur lors de l'envoi du message");
+                // Handle validation errors from API
+                if (data.details && Array.isArray(data.details)) {
+                    const errorMessages = data.details.map((detail: any) =>
+                        `${detail.field}: ${detail.message}`
+                    ).join(', ');
+                    toast.error(`Erreur de validation: ${errorMessages}`);
+                } else {
+                    toast.error(data.error || "Erreur lors de l'envoi du message");
+                }
             }
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -324,14 +364,29 @@ function InnovativeContactSection() {
                                                 required
                                                 rows={5}
                                                 className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl resize-none"
-                                                placeholder="Décrivez vos besoins en détail..."
+                                                placeholder="Décrivez vos besoins en détail... (minimum 10 caractères)"
                                             />
+                                            <div className="flex justify-between items-center mt-1">
+                                                <p className={`text-xs ${
+                                                    formData.message.length < 10
+                                                        ? 'text-red-500'
+                                                        : 'text-gray-500'
+                                                }`}>
+                                                    {formData.message.length < 10
+                                                        ? `${10 - formData.message.length} caractères manquants`
+                                                        : 'Minimum atteint ✓'
+                                                    }
+                                                </p>
+                                                <p className="text-xs text-gray-400">
+                                                    {formData.message.length}/2000
+                                                </p>
+                                            </div>
                                         </div>
 
                                         <Button
                                             type="submit"
-                                            disabled={isSubmitting}
-                                            className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                                            disabled={isSubmitting || !formData.name.trim() || !formData.email.trim() || !formData.subject.trim() || formData.message.trim().length < 10}
+                                            className="w-full h-12 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {isSubmitting ? (
                                                 <>

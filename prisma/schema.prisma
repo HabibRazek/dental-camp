@@ -21,6 +21,16 @@ model User {
   password      String?         // For credentials authentication
   role          UserRole        @default(USER) // User role for access control
   isActive      Boolean         @default(true) // Enable/disable user
+
+  // Security settings
+  twoFactorEnabled    Boolean?  @default(false)
+  twoFactorEnabledAt  DateTime?
+  loginNotifications  Boolean?  @default(true)
+  sessionTimeout      Int?      @default(30) // minutes
+  passwordExpiry      Int?      @default(90) // days
+  passwordChangedAt   DateTime?
+  ipWhitelist         String[]  @default([])
+
   accounts      Account[]
   sessions      Session[]
   // Optional for WebAuthn support
@@ -294,4 +304,16 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
+}
+
+// Settings Model for application configuration
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
 }
