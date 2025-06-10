@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       id: product.id,
       name: product.name,
       price: Number(product.price),
-      originalPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
+      originalPrice: product.comparePrice ? Number(product.comparePrice) : null,
       image: product.thumbnail || '/api/placeholder/300/300',
       category: product.category || 'General',
       rating: 4.5 + Math.random() * 0.5, // Random rating between 4.5-5.0
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
       addedDate: new Date().toISOString(),
       slug: product.slug,
       description: product.description || '',
-      discount: product.compareAtPrice && product.price ? 
-        Math.round(((Number(product.compareAtPrice) - Number(product.price)) / Number(product.compareAtPrice)) * 100) : 
+      discount: product.comparePrice && product.price ?
+        Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100) :
         null
     }))
 

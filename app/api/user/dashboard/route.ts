@@ -139,9 +139,9 @@ export async function GET(request: NextRequest) {
       id: product.id,
       name: product.name,
       price: Number(product.price),
-      originalPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
-      discount: product.compareAtPrice && product.price ? 
-        Math.round(((Number(product.compareAtPrice) - Number(product.price)) / Number(product.compareAtPrice)) * 100) : 
+      originalPrice: product.comparePrice ? Number(product.comparePrice) : null,
+      discount: product.comparePrice && product.price ?
+        Math.round(((Number(product.comparePrice) - Number(product.price)) / Number(product.comparePrice)) * 100) :
         0,
       image: product.thumbnail || '/api/placeholder/300/300',
       inStock: product.stockQuantity > 0
