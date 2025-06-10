@@ -112,10 +112,14 @@ export function ChartAreaInteractive() {
         const monthName = monthParts[0]
         const year = monthParts[1] || new Date().getFullYear()
 
+        // Generate a date from the month and year
+        const monthDate = new Date(`${monthName} 1, ${year}`)
+        const dateString = monthDate.toISOString().split('T')[0]
+
         console.log(`💰 REVENUE DATA: ${item.month} - Revenue: ${revenue} TND`)
 
         return {
-          date: item.date || new Date().toISOString().split('T')[0],
+          date: dateString,
           revenue: revenue,
           month: monthName,
           fullMonth: `${monthName} ${year}`,
