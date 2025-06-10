@@ -9,7 +9,7 @@ import { UserStatisticsContent } from "@/components/user/user-statistics-content
 export default async function UserStatisticsPage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/auth/signin")
   }
 

@@ -5,7 +5,7 @@ import { UserProfileContent } from "@/components/user/user-profile-content"
 export default async function UserProfilePage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/auth/signin")
   }
 

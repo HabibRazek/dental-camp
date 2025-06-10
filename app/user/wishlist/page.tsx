@@ -9,7 +9,7 @@ import { UserWishlistContent } from "@/components/user/user-wishlist-content"
 export default async function UserWishlistPage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/auth/signin")
   }
 

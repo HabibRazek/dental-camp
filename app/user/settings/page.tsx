@@ -9,7 +9,7 @@ import { UserSettingsContent } from "@/components/user/user-settings-content"
 export default async function UserSettingsPage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user || !session.user.email) {
     redirect("/auth/signin")
   }
 
@@ -22,7 +22,7 @@ export default async function UserSettingsPage() {
           <div className="flex flex-1 flex-col bg-gradient-to-br from-blue-50/30 via-white to-blue-100/20 min-h-screen">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-8 py-8 md:py-10">
-                <UserSettingsContent userId={session.user.id} userEmail={session.user.email} />
+                <UserSettingsContent userId={session.user.id} userEmail={session.user.email as string} />
               </div>
             </div>
           </div>

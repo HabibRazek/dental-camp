@@ -24,7 +24,7 @@ import { UserOrdersStats } from "@/components/user/user-orders-stats"
 export default async function UserOrdersPage() {
   const session = await auth()
 
-  if (!session) {
+  if (!session || !session.user) {
     redirect("/auth/signin")
   }
 
