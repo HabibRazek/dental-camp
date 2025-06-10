@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
       where: {
         isActive: true
       },
+      include: {
+        category: true
+      },
       take: 8, // Limit to 8 products for demo
       orderBy: {
         createdAt: 'desc'
@@ -36,7 +39,7 @@ export async function GET(request: NextRequest) {
       price: Number(product.price),
       originalPrice: product.comparePrice ? Number(product.comparePrice) : null,
       image: product.thumbnail || '/api/placeholder/300/300',
-      category: product.category || 'General',
+      category: product.category?.name || 'General',
       rating: 4.5 + Math.random() * 0.5, // Random rating between 4.5-5.0
       reviewCount: Math.floor(Math.random() * 200) + 10, // Random reviews 10-210
       inStock: product.stockQuantity > 0,
