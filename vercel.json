@@ -10,5 +10,10 @@
   },
   "env": {
     "NEXTAUTH_URL": "https://www.dental-camp.com"
+  },
+  "build": {
+    "env": {
+      "SKIP_ENV_VALIDATION": "1"
+    }
   }
 }

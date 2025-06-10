@@ -4,12 +4,27 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
   serverExternalPackages: ['@prisma/client'],
   webpack: (config, { isServer }) => {
-    // Fix for Prisma source map issues
+    // Fix for Prisma and other server-side packages
     if (isServer) {
       config.externals.push('@prisma/client')
     }
+
+    // Handle node modules that might cause issues
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      net: false,
+      tls: false,
+    }
+
     return config
   },
   images: {
