@@ -7,9 +7,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client'],
-  },
   serverExternalPackages: ['@prisma/client'],
   webpack: (config, { isServer }) => {
     // Fix for Prisma and other server-side packages

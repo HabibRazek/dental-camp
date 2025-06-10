@@ -581,7 +581,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                         <p className="font-semibold text-gray-900">{item.name}</p>
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-bold text-green-600">{formatPrice(item.price)}</p>
-                          {item.discount > 0 && (
+                          {item.discount > 0 && item.originalPrice && (
                             <>
                               <p className="text-xs text-gray-500 line-through">{formatPrice(item.originalPrice)}</p>
                               <Badge variant="destructive" className="text-xs">-{item.discount}%</Badge>
