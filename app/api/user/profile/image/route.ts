@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await auth()
     
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     // Update the user's profile image in the database
     const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
+      where: { email: session.user.email as string },
       data: { image: mockImageUrl }
     })
 

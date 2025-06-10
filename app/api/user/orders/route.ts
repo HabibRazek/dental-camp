@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
     
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     // Build where clause - ALWAYS filter by current user's email
     const whereClause: any = {
-      customerEmail: session.user.email // Filter by current user's email
+      customerEmail: session.user.email as string // Filter by current user's email
     }
 
     if (status) {

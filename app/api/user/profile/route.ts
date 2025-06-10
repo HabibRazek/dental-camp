@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await auth()
     
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
 
     // Get user from database - only select fields that definitely exist
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { email: session.user.email as string },
       select: {
         id: true,
         name: true,
@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
 
     try {
       const userWithExtras = await prisma.user.findUnique({
-        where: { email: session.user.email },
+        where: { email: session.user.email as string },
         select: {
           phone: true,
           bio: true
@@ -93,7 +93,7 @@ export async function PUT(request: NextRequest) {
   try {
     const session = await auth()
     
-    if (!session || !session.user) {
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -115,7 +115,7 @@ export async function PUT(request: NextRequest) {
     try {
       // Test if fields exist by trying to select them first
       await prisma.user.findFirst({
-        where: { email: session.user.email },
+        where: { email: session.user.email as string },
         select: { phone: true, bio: true }
       })
 
@@ -129,7 +129,7 @@ export async function PUT(request: NextRequest) {
     }
 
     const updatedUser = await prisma.user.update({
-      where: { email: session.user.email },
+      where: { email: session.user.email as string },
       data: updateData,
       select: {
         id: true,
