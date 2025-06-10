@@ -7,17 +7,18 @@ const prisma = new PrismaClient()
 // POST /api/products/[id]/rating - Add or update user rating for product
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
-    
+
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
     const { rating, review } = await request.json()
-    const productId = params.id
+    const resolvedParams = await params
+    const productId = resolvedParams.id
 
     if (!rating || rating < 1 || rating > 5) {
       return NextResponse.json({ error: "Rating must be between 1 and 5" }, { status: 400 })
@@ -64,16 +65,17 @@ export async function POST(
 // GET /api/products/[id]/rating - Get user's rating for product
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth()
-    
+
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const productId = params.id
+    const resolvedParams = await params
+    const productId = resolvedParams.id
 
     // For now, return a default rating since we don't have a ratings table
     // In a real app, you'd query the ratings table
