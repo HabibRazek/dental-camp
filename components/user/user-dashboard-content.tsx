@@ -1,414 +1,544 @@
 "use client"
 
+import React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
-import {
-  ShoppingBag,
-  Heart,
-  CreditCard,
-  Package,
-  TrendingUp,
-  Calendar,
-  MapPin,
+import { 
+  ShoppingBag, 
+  Heart, 
+  TrendingUp, 
+  Package, 
+  Clock,
   Star,
   ArrowRight,
-  DollarSign,
-  Gift,
-  Zap,
-  Award,
-  Target,
-  Clock,
-  CheckCircle,
-  Truck,
-  Eye,
   Plus,
+  DollarSign,
+  Users,
+  Activity,
+  CreditCard,
+  Calendar,
+  Gift,
+  Truck,
+  CheckCircle,
+  AlertCircle,
+  Zap,
+  Target,
+  Award,
   Sparkles,
-  Crown,
+  Eye,
+  BarChart3,
+  PieChart as PieChartIcon,
   Flame,
-  HelpCircle,
+  Crown,
+  MapPin
 } from "lucide-react"
+import { motion } from "framer-motion"
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell } from 'recharts'
+import Link from "next/link"
 
 interface UserDashboardContentProps {
-  user: {
-    id: string
-    name?: string | null
-    email?: string | null
-    image?: string | null
-    role: string
-  }
+  user: any
 }
 
+// Sample data for charts
+const spendingData = [
+  { month: 'Jan', amount: 400, orders: 2 },
+  { month: 'Feb', amount: 300, orders: 1 },
+  { month: 'Mar', amount: 600, orders: 4 },
+  { month: 'Apr', amount: 800, orders: 3 },
+  { month: 'May', amount: 500, orders: 2 },
+  { month: 'Jun', amount: 900, orders: 5 }
+]
+
+const orderStatusData = [
+  { name: 'Delivered', value: 65, color: '#10B981' },
+  { name: 'Shipping', value: 20, color: '#3B82F6' },
+  { name: 'Processing', value: 10, color: '#F59E0B' },
+  { name: 'Cancelled', value: 5, color: '#EF4444' }
+]
+
+const activityData = [
+  { day: 'Mon', orders: 2, views: 12 },
+  { day: 'Tue', orders: 1, views: 8 },
+  { day: 'Wed', orders: 4, views: 20 },
+  { day: 'Thu', orders: 3, views: 15 },
+  { day: 'Fri', orders: 6, views: 25 },
+  { day: 'Sat', orders: 2, views: 10 },
+  { day: 'Sun', orders: 1, views: 6 }
+]
+
+const recentOrders = [
+  {
+    id: "ORD-2024-001",
+    date: "2024-01-15",
+    status: "Delivered",
+    total: 299.990,
+    items: 3,
+    product: "Dental Scaler Pro"
+  },
+  {
+    id: "ORD-2024-002", 
+    date: "2024-01-12",
+    status: "Shipped",
+    total: 149.500,
+    items: 2,
+    product: "Ultrasonic Cleaner"
+  },
+  {
+    id: "ORD-2024-003",
+    date: "2024-01-10",
+    status: "Processing",
+    total: 89.990,
+    items: 1,
+    product: "Dental Mirror Set"
+  }
+]
+
+const wishlistItems = [
+  {
+    id: "1",
+    name: "Professional Dental Scaler",
+    price: 199.990,
+    originalPrice: 249.990,
+    discount: 20,
+    image: "/images/dental-equipment.jpg",
+    inStock: true
+  },
+  {
+    id: "2", 
+    name: "Ultrasonic Cleaner Pro",
+    price: 299.990,
+    originalPrice: 349.990,
+    discount: 15,
+    image: "/images/dental-equipment.jpg",
+    inStock: true
+  },
+  {
+    id: "3",
+    name: "LED Dental Light",
+    price: 450.000,
+    originalPrice: 500.000,
+    discount: 10,
+    image: "/images/dental-equipment.jpg",
+    inStock: false
+  }
+]
+
 export function UserDashboardContent({ user }: UserDashboardContentProps) {
-  // Mock data - in real app, this would come from API
-  const stats = {
-    totalOrders: 12,
-    totalSpent: 2450.00,
-    wishlistItems: 8,
-    loyaltyPoints: 1250,
-    monthlyGrowth: 15.2,
-    completedOrders: 10,
-    pendingOrders: 2,
-    savedAmount: 350.75,
+  const [currentTime, setCurrentTime] = React.useState(new Date())
+  const [stats, setStats] = React.useState({
+    totalOrders: 0,
+    wishlistItems: 0,
+    totalSpent: 0,
+    pendingOrders: 0,
+    loyaltyPoints: 0,
+    savedAmount: 0,
+    completionRate: 0
+  })
+  const [loading, setLoading] = React.useState(true)
+
+  // Update time every second
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [])
+
+  // Simulate loading stats with animation
+  React.useEffect(() => {
+    const loadStats = async () => {
+      await new Promise(resolve => setTimeout(resolve, 1500))
+      
+      setStats({
+        totalOrders: 24,
+        wishlistItems: 12,
+        totalSpent: 2847.50,
+        pendingOrders: 3,
+        loyaltyPoints: 1250,
+        savedAmount: 340.25,
+        completionRate: 85
+      })
+      setLoading(false)
+    }
+
+    loadStats()
+  }, [])
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
   }
 
-  // Format currency in TND
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.5
+      }
+    }
+  }
+
+  const getGreeting = () => {
+    const hour = currentTime.getHours()
+    if (hour < 12) return "Good Morning"
+    if (hour < 17) return "Good Afternoon"
+    return "Good Evening"
+  }
+
   const formatPrice = (price: number) => {
     return `${price.toFixed(3)} TND`
   }
 
-  const recentOrders = [
-    {
-      id: "ORD-001",
-      date: "2024-01-15",
-      status: "Delivered",
-      total: 299.990,
-      items: 3,
-    },
-    {
-      id: "ORD-002",
-      date: "2024-01-10",
-      status: "Shipped",
-      total: 149.500,
-      items: 2,
-    },
-    {
-      id: "ORD-003",
-      date: "2024-01-05",
-      status: "Processing",
-      total: 89.990,
-      items: 1,
-    },
-  ]
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Delivered': return 'bg-green-100 text-green-800'
+      case 'Shipped': return 'bg-blue-100 text-blue-800'
+      case 'Processing': return 'bg-yellow-100 text-yellow-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
 
-  const wishlistItems = [
-    {
-      id: "1",
-      name: "Professional Dental Scaler",
-      price: 199.990,
-      image: "/images/dental-equipment.jpg",
-    },
-    {
-      id: "2",
-      name: "Ultrasonic Cleaner",
-      price: 299.990,
-      image: "/images/dental-equipment.jpg",
-    },
-  ]
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'Delivered': return <CheckCircle className="h-4 w-4" />
+      case 'Shipped': return <Truck className="h-4 w-4" />
+      case 'Processing': return <Clock className="h-4 w-4" />
+      default: return <AlertCircle className="h-4 w-4" />
+    }
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Welcome Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Welcome back, {user.name || "User"}!</h1>
-            <p className="text-blue-100 mt-1">
-              Here's what's happening with your account today.
-            </p>
-          </div>
-          <div className="hidden md:block">
-            <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center">
-              <Package className="h-8 w-8" />
+    <motion.div 
+      className="space-y-8 p-6 bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 min-h-screen"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Dynamic Welcome Section */}
+      <motion.div 
+        variants={itemVariants}
+        className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-2xl"
+      >
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative z-10">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
+                <Sparkles className="h-8 w-8 text-yellow-300" />
+                {getGreeting()}, {user.name || 'User'}!
+              </h1>
+              <p className="text-blue-100 text-lg mb-4">
+                Welcome to your personalized dashboard. Here's your activity overview.
+              </p>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  {currentTime.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  {currentTime.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </div>
+              </div>
+            </div>
+            <div className="hidden md:block">
+              <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Activity className="h-16 w-16 text-white/80" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+        
+        {/* Animated background elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-32 translate-x-32"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+      </motion.div>
 
       {/* Enhanced KPI Cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <motion.div 
+        variants={itemVariants}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+      >
         {/* Total Orders Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
-          <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-500 to-blue-600 text-white group hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardContent className="p-6 relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <ShoppingBag className="h-6 w-6" />
-                </div>
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                  +{stats.pendingOrders} pending
-                </Badge>
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white group hover:scale-105 transition-all duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <ShoppingBag className="h-6 w-6" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium opacity-90">Total Orders</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{stats.totalOrders}</span>
-                  <span className="text-sm opacity-75">orders</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <TrendingUp className="h-4 w-4" />
-                  <span>+2 from last month</span>
-                </div>
+              <Badge className="bg-white/20 text-white border-white/30">
+                +{stats.pendingOrders} pending
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium opacity-90">Total Orders</h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">
+                  {loading ? "..." : stats.totalOrders}
+                </span>
+                <span className="text-sm opacity-75">orders</span>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="h-4 w-4" />
+                <span>+2 from last month</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Total Spent Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-emerald-500 to-emerald-600 text-white group hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardContent className="p-6 relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <DollarSign className="h-6 w-6" />
-                </div>
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                  +{stats.monthlyGrowth}%
-                </Badge>
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-green-500 to-green-600 text-white group hover:scale-105 transition-all duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <DollarSign className="h-6 w-6" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium opacity-90">Total Spent</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{formatPrice(stats.totalSpent)}</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Flame className="h-4 w-4" />
-                  <span>+{stats.monthlyGrowth}% from last month</span>
-                </div>
+              <Badge className="bg-white/20 text-white border-white/30">
+                +15.2%
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium opacity-90">Total Spent</h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">
+                  {loading ? "..." : formatPrice(stats.totalSpent)}
+                </span>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <div className="flex items-center gap-2 text-sm">
+                <TrendingUp className="h-4 w-4" />
+                <span>Saved {formatPrice(stats.savedAmount)}</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Wishlist Items Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-purple-500 to-purple-600 text-white group hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardContent className="p-6 relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Heart className="h-6 w-6" />
-                </div>
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                  +3 this week
-                </Badge>
+        {/* Wishlist Card */}
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white group hover:scale-105 transition-all duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Heart className="h-6 w-6" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium opacity-90">Wishlist Items</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{stats.wishlistItems}</span>
-                  <span className="text-sm opacity-75">items</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Sparkles className="h-4 w-4" />
-                  <span>Ready to purchase</span>
-                </div>
+              <Badge className="bg-white/20 text-white border-white/30">
+                3 on sale
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium opacity-90">Wishlist Items</h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">
+                  {loading ? "..." : stats.wishlistItems}
+                </span>
+                <span className="text-sm opacity-75">items</span>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+              <div className="flex items-center gap-2 text-sm">
+                <Gift className="h-4 w-4" />
+                <span>Special offers available</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Loyalty Points Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-orange-500 to-orange-600 text-white group hover:scale-105">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardContent className="p-6 relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                  <Crown className="h-6 w-6" />
-                </div>
-                <Badge className="bg-white/20 text-white border-white/30 hover:bg-white/30">
-                  VIP Status
-                </Badge>
+        <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white group hover:scale-105 transition-all duration-300">
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <CardContent className="p-6 relative z-10">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Crown className="h-6 w-6" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium opacity-90">Loyalty Points</h3>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold">{stats.loyaltyPoints}</span>
-                  <span className="text-sm opacity-75">pts</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <Award className="h-4 w-4" />
-                  <span>+120 this month</span>
-                </div>
+              <Badge className="bg-white/20 text-white border-white/30">
+                Gold
+              </Badge>
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-sm font-medium opacity-90">Loyalty Points</h3>
+              <div className="flex items-baseline gap-2">
+                <span className="text-3xl font-bold">
+                  {loading ? "..." : stats.loyaltyPoints}
+                </span>
+                <span className="text-sm opacity-75">pts</span>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Zap className="h-4 w-4" />
+                <span>250 pts to next tier</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Spending Chart */}
+        <motion.div variants={itemVariants}>
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <BarChart3 className="h-5 w-5 text-blue-600" />
+                Monthly Spending
+              </CardTitle>
+              <CardDescription>Your spending pattern over the last 6 months</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={spendingData}>
+                    <defs>
+                      <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+                    <XAxis dataKey="month" stroke="#6B7280" />
+                    <YAxis stroke="#6B7280" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      formatter={(value) => [`${value} TND`, 'Amount']}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="amount"
+                      stroke="#3B82F6"
+                      strokeWidth={3}
+                      fillOpacity={1}
+                      fill="url(#colorAmount)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Order Status Chart */}
+        <motion.div variants={itemVariants}>
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                <PieChartIcon className="h-5 w-5 text-purple-600" />
+                Order Status
+              </CardTitle>
+              <CardDescription>Distribution of your order statuses</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={orderStatusData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      dataKey="value"
+                    >
+                      {orderStatusData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #E5E7EB',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                      }}
+                      formatter={(value) => [`${value}%`, 'Percentage']}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mt-4">
+                {orderStatusData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <div
+                      className="w-3 h-3 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className="text-sm text-gray-600">{item.name}</span>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
         </motion.div>
       </div>
 
-      {/* Additional Stats Row */}
-      <div className="grid gap-6 md:grid-cols-3">
-        {/* Order Status Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Target className="h-5 w-5 text-blue-600" />
-                Order Progress
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span className="text-sm">Completed</span>
-                  </div>
-                  <span className="font-semibold">{stats.completedOrders}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4 text-orange-500" />
-                    <span className="text-sm">Pending</span>
-                  </div>
-                  <span className="font-semibold">{stats.pendingOrders}</span>
-                </div>
-                <Progress value={(stats.completedOrders / stats.totalOrders) * 100} className="h-2" />
-                <p className="text-xs text-muted-foreground">
-                  {Math.round((stats.completedOrders / stats.totalOrders) * 100)}% completion rate
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Savings Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-green-50 to-emerald-50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Gift className="h-5 w-5 text-green-600" />
-                Total Savings
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="text-2xl font-bold text-green-600">
-                  {formatPrice(stats.savedAmount)}
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Saved through discounts & offers
-                </p>
-                <div className="flex items-center gap-2 text-sm text-green-600">
-                  <Zap className="h-4 w-4" />
-                  <span>Keep shopping to save more!</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Quick Action Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-        >
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-blue-50 to-indigo-50">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Zap className="h-5 w-5 text-blue-600" />
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <Button asChild className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700">
-                  <Link href="/catalog">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Browse Products
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full">
-                  <Link href="/user/orders">
-                    <Eye className="mr-2 h-4 w-4" />
-                    Track Orders
-                  </Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        {/* Enhanced Recent Orders */}
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-lg">
+      {/* Recent Orders & Wishlist */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Orders */}
+        <motion.div variants={itemVariants}>
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+            <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Package className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Package className="h-5 w-5 text-green-600" />
                     Recent Orders
                   </CardTitle>
-                  <CardDescription className="text-gray-600">Your latest purchases</CardDescription>
+                  <CardDescription>Your latest purchases and their status</CardDescription>
                 </div>
-                <Button asChild variant="outline" size="sm" className="hover:bg-blue-50">
-                  <Link href="/user/orders">
+                <Link href="/user/orders">
+                  <Button variant="outline" size="sm" className="hover:bg-blue-50">
                     View All
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <div className="space-y-4">
                 {recentOrders.map((order, index) => (
                   <motion.div
                     key={order.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.9 + index * 0.1 }}
-                    className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:border-blue-200 hover:bg-blue-50/30 transition-all duration-200"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                        <Package className="h-6 w-6 text-blue-600" />
+                        {getStatusIcon(order.status)}
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">{order.id}</p>
-                        <p className="text-sm text-gray-600">{order.items} items • {order.date}</p>
+                        <p className="text-sm text-gray-600">{order.product}</p>
+                        <p className="text-xs text-gray-500">{order.date}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-lg text-gray-900">{formatPrice(order.total)}</p>
-                      <Badge
-                        variant={
-                          order.status === "Delivered" ? "default" :
-                          order.status === "Shipped" ? "secondary" : "outline"
-                        }
-                        className={
-                          order.status === "Delivered" ? "bg-green-100 text-green-700 hover:bg-green-200" :
-                          order.status === "Shipped" ? "bg-blue-100 text-blue-700 hover:bg-blue-200" :
-                          "bg-orange-100 text-orange-700 hover:bg-orange-200"
-                        }
-                      >
+                      <p className="font-bold text-gray-900">{formatPrice(order.total)}</p>
+                      <Badge className={getStatusColor(order.status)}>
                         {order.status}
                       </Badge>
                     </div>
@@ -419,67 +549,63 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
           </Card>
         </motion.div>
 
-        {/* Enhanced Wishlist Preview */}
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.8 }}
-        >
-          <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300">
-            <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-lg">
+        {/* Wishlist Items */}
+        <motion.div variants={itemVariants}>
+          <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+            <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="flex items-center gap-2 text-xl">
-                    <Heart className="h-5 w-5 text-purple-600" />
+                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                    <Heart className="h-5 w-5 text-red-600" />
                     Wishlist
                   </CardTitle>
-                  <CardDescription className="text-gray-600">Items you're interested in</CardDescription>
+                  <CardDescription>Items you're interested in</CardDescription>
                 </div>
-                <Button asChild variant="outline" size="sm" className="hover:bg-purple-50">
-                  <Link href="/user/wishlist">
+                <Link href="/user/wishlist">
+                  <Button variant="outline" size="sm" className="hover:bg-red-50">
                     View All
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
+                  </Button>
+                </Link>
               </div>
             </CardHeader>
-            <CardContent className="p-6">
+            <CardContent>
               <div className="space-y-4">
-                {wishlistItems.map((item, index) => (
+                {wishlistItems.slice(0, 3).map((item, index) => (
                   <motion.div
                     key={item.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.9 + index * 0.1 }}
-                    className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:border-purple-200 hover:bg-purple-50/30 transition-all duration-200"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center overflow-hidden">
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={48}
-                          height={48}
-                          className="object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.parentElement!.innerHTML = '<div class="w-full h-full bg-gradient-to-br from-purple-100 to-pink-100 flex items-center justify-center"><span class="text-purple-600 font-bold text-lg">D</span></div>';
-                          }}
-                        />
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center">
+                        <Heart className="h-6 w-6 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900 text-sm">{item.name}</p>
-                        <p className="text-sm font-bold text-purple-600">{formatPrice(item.price)}</p>
+                        <p className="font-semibold text-gray-900">{item.name}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-bold text-green-600">{formatPrice(item.price)}</p>
+                          {item.discount > 0 && (
+                            <>
+                              <p className="text-xs text-gray-500 line-through">{formatPrice(item.originalPrice)}</p>
+                              <Badge variant="destructive" className="text-xs">-{item.discount}%</Badge>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
-                    >
-                      <Plus className="mr-1 h-4 w-4" />
-                      Add to Cart
-                    </Button>
+                    <div className="flex items-center gap-2">
+                      {item.inStock ? (
+                        <Badge className="bg-green-100 text-green-800">In Stock</Badge>
+                      ) : (
+                        <Badge variant="secondary">Out of Stock</Badge>
+                      )}
+                      <Button size="sm" variant="outline">
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </motion.div>
                 ))}
               </div>
@@ -488,95 +614,92 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
         </motion.div>
       </div>
 
-      {/* Enhanced Quick Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0 }}
-      >
-        <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-r from-gray-50 to-blue-50/30">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl flex items-center justify-center gap-2">
-              <Zap className="h-6 w-6 text-blue-600" />
+      {/* Quick Actions */}
+      <motion.div variants={itemVariants}>
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Zap className="h-5 w-5 text-yellow-600" />
               Quick Actions
             </CardTitle>
-            <CardDescription className="text-gray-600">Frequently used features for faster access</CardDescription>
+            <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  asChild
-                  className="h-24 flex-col space-y-3 w-full bg-gradient-to-br from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Link href="/catalog">
-                    <ShoppingBag className="h-8 w-8" />
-                    <span className="font-semibold">Browse Products</span>
-                  </Link>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <Link href="/products">
+                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
+                  <Plus className="h-8 w-8 text-blue-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">Browse Products</span>
                 </Button>
-              </motion.div>
+              </Link>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  asChild
-                  className="h-24 flex-col space-y-3 w-full bg-gradient-to-br from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Link href="/user/orders">
-                    <Truck className="h-8 w-8" />
-                    <span className="font-semibold">Track Orders</span>
-                  </Link>
+              <Link href="/user/wishlist">
+                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-red-50 hover:border-red-200 transition-all duration-300 group">
+                  <Heart className="h-8 w-8 text-red-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">My Wishlist</span>
                 </Button>
-              </motion.div>
+              </Link>
 
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  asChild
-                  className="h-24 flex-col space-y-3 w-full bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-                >
-                  <Link href="/user/payment-methods">
-                    <CreditCard className="h-8 w-8" />
-                    <span className="font-semibold">Payment Methods</span>
-                  </Link>
+              <Link href="/user/orders">
+                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-green-50 hover:border-green-200 transition-all duration-300 group">
+                  <Package className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">Track Orders</span>
                 </Button>
-              </motion.div>
-            </div>
+              </Link>
 
-            {/* Additional Quick Links */}
-            <div className="mt-6 grid gap-3 md:grid-cols-2">
-              <Button
-                asChild
-                variant="outline"
-                className="justify-start h-12 hover:bg-blue-50 hover:border-blue-200 transition-all duration-200"
-              >
-                <Link href="/user/wishlist" className="flex items-center gap-3">
-                  <Heart className="h-5 w-5 text-red-500" />
-                  <span>View Wishlist ({stats.wishlistItems} items)</span>
-                </Link>
-              </Button>
-
-              <Button
-                asChild
-                variant="outline"
-                className="justify-start h-12 hover:bg-green-50 hover:border-green-200 transition-all duration-200"
-              >
-                <Link href="/user/support" className="flex items-center gap-3">
-                  <HelpCircle className="h-5 w-5 text-green-500" />
-                  <span>Help & Support</span>
-                </Link>
-              </Button>
+              <Link href="/user/statistics">
+                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-purple-50 hover:border-purple-200 transition-all duration-300 group">
+                  <BarChart3 className="h-8 w-8 text-purple-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-sm font-medium">View Analytics</span>
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
       </motion.div>
-    </div>
+
+      {/* Performance Metrics */}
+      <motion.div variants={itemVariants}>
+        <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Target className="h-5 w-5 text-indigo-600" />
+              Your Progress
+            </CardTitle>
+            <CardDescription>Track your shopping journey and achievements</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">Order Completion Rate</span>
+                  <span className="text-sm font-bold text-gray-900">{stats.completionRate}%</span>
+                </div>
+                <Progress value={stats.completionRate} className="h-2" />
+                <p className="text-xs text-gray-600">Excellent completion rate!</p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">Loyalty Progress</span>
+                  <span className="text-sm font-bold text-gray-900">83%</span>
+                </div>
+                <Progress value={83} className="h-2" />
+                <p className="text-xs text-gray-600">250 points to Gold tier</p>
+              </div>
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-gray-700">Savings Goal</span>
+                  <span className="text-sm font-bold text-gray-900">68%</span>
+                </div>
+                <Progress value={68} className="h-2" />
+                <p className="text-xs text-gray-600">Keep going to reach your goal!</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
   )
 }

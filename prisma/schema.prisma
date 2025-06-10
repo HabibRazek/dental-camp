@@ -22,6 +22,10 @@ model User {
   role          UserRole        @default(USER) // User role for access control
   isActive      Boolean         @default(true) // Enable/disable user
 
+  // Profile information
+  phone         String?         // User phone number
+  bio           String?         // User biography/description
+
   // Security settings
   twoFactorEnabled    Boolean?  @default(false)
   twoFactorEnabledAt  DateTime?
@@ -30,6 +34,7 @@ model User {
   passwordExpiry      Int?      @default(90) // days
   passwordChangedAt   DateTime?
   ipWhitelist         String[]  @default([])
+  backupCodes         String?   // JSON array of hashed backup codes
 
   accounts      Account[]
   sessions      Session[]

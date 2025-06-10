@@ -8,6 +8,7 @@ import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -58,12 +59,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      // For Google OAuth, ensure we have the user data
+      // For Google OAuth, ensure we have the user data and set default role
       if (account?.provider === "google" && profile) {
         // Update user object with Google profile data
         user.name = profile.name || user.name
         user.email = profile.email || user.email
         user.image = profile.picture || user.image
+
+        // Ensure OAuth users have the correct role set
+        if (!user.role) {
+          user.role = "USER"
+        }
       }
       return true
     },
@@ -114,7 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return session
           }
 
-          // Fallback to database lookup with better error handling
+          // Fallback to database lookup - PrismaAdapter should have created the user
           const dbUser = await prisma.user.findUnique({
             where: { email: session.user.email },
             select: {
@@ -126,36 +132,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
           })
 
-          if (dbUser) {
+          if (dbUser && dbUser.isActive) {
             session.user.id = dbUser.id
             session.user.role = dbUser.role
             session.user.name = dbUser.name || session.user.name
             session.user.image = dbUser.image || session.user.image
           } else {
-            // If user doesn't exist, create them (for Google OAuth)
-            const userName = token.name as string || session.user.name || "User"
-            const userImage = token.picture as string || session.user.image
-
-            try {
-              const newUser = await prisma.user.create({
-                data: {
-                  email: session.user.email,
-                  name: userName,
-                  image: userImage,
-                  role: "USER",
-                  isActive: true,
-                  emailVerified: new Date()
-                }
-              })
-              session.user.id = newUser.id
-              session.user.role = newUser.role
-              session.user.name = newUser.name
-              session.user.image = newUser.image
-            } catch (createError) {
-              // If user creation fails, set default values
-              session.user.role = "USER"
-              console.error("Failed to create user:", createError)
-            }
+            // Set default role if user not found or inactive
+            session.user.role = "USER"
           }
         } catch (error) {
           // Log error in development for debugging

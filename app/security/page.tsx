@@ -255,25 +255,63 @@ export default function SecurityPage() {
     toast.success("Session terminated successfully")
   }
 
-  const handleDownloadBackupCodes = () => {
-    // Simulate downloading backup codes
-    const codes = [
-      "1234-5678-9012",
-      "2345-6789-0123",
-      "3456-7890-1234",
-      "4567-8901-2345",
-      "5678-9012-3456"
-    ]
-    
-    const blob = new Blob([codes.join('\n')], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'backup-codes.txt'
-    a.click()
-    URL.revokeObjectURL(url)
-    
-    toast.success("Backup codes downloaded successfully")
+  const handleDownloadBackupCodes = async () => {
+    setLoading(true)
+    try {
+      const response = await fetch('/api/auth/backup-codes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+
+        // Handle specific error cases
+        if (error.error?.includes('Two-factor authentication must be enabled')) {
+          toast.error("Please enable Two-Factor Authentication first before generating backup codes")
+          return
+        }
+
+        if (error.error?.includes('Database schema needs to be updated')) {
+          toast.warning("Database is being updated automatically. Please try again in a moment.")
+          return
+        }
+
+        throw new Error(error.error || 'Failed to generate backup codes')
+      }
+
+      const data = await response.json()
+
+      // Create downloadable file
+      const codesText = [
+        'Dental Camp - Backup Codes',
+        '================================',
+        'Generated: ' + new Date().toLocaleString(),
+        '',
+        'IMPORTANT: Store these codes in a safe place.',
+        'Each code can only be used once.',
+        '',
+        ...data.codes.map((code: string, index: number) => `${index + 1}. ${code}`)
+      ].join('\n')
+
+      const blob = new Blob([codesText], { type: 'text/plain' })
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `dental-camp-backup-codes-${new Date().toISOString().split('T')[0]}.txt`
+      a.click()
+      URL.revokeObjectURL(url)
+
+      toast.success("Backup codes generated and downloaded successfully!")
+    } catch (error) {
+      console.error('Generate backup codes error:', error)
+      const errorMessage = error instanceof Error ? error.message : "Failed to generate backup codes"
+      toast.error(errorMessage)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (initialLoading) {

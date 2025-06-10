@@ -16,7 +16,7 @@ import {
   BarChart3,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+import { UserNavMain } from "@/components/user/user-nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import {
@@ -60,29 +60,9 @@ const data = {
       icon: User,
     },
     {
-      title: "Payment Methods",
-      url: "/user/payment-methods",
-      icon: CreditCard,
-    },
-    {
-      title: "Addresses",
-      url: "/user/addresses",
-      icon: MapPin,
-    },
-    {
-      title: "Notifications",
-      url: "/user/notifications",
-      icon: Bell,
-    },
-    {
       title: "Settings",
       url: "/user/settings",
       icon: Settings,
-    },
-    {
-      title: "Help & Support",
-      url: "/user/support",
-      icon: HelpCircle,
     },
   ],
 }
@@ -120,7 +100,7 @@ export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <UserNavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

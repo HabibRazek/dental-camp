@@ -35,16 +35,50 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's security settings
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: {
-        twoFactorEnabled: true,
-        loginNotifications: true,
-        sessionTimeout: true,
-        passwordExpiry: true,
-        ipWhitelist: true
+    let user
+    try {
+      user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: {
+          twoFactorEnabled: true,
+          loginNotifications: true,
+          sessionTimeout: true,
+          passwordExpiry: true,
+          ipWhitelist: true
+        }
+      })
+    } catch (dbError: any) {
+      // If security fields don't exist, try to add them
+      if (dbError.message?.includes('column')) {
+        console.log('⚠️ Security fields missing, attempting to add them...')
+        try {
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "twoFactorEnabled" BOOLEAN DEFAULT false;`
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "loginNotifications" BOOLEAN DEFAULT true;`
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "sessionTimeout" INTEGER DEFAULT 30;`
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "passwordExpiry" INTEGER DEFAULT 90;`
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "ipWhitelist" TEXT[] DEFAULT ARRAY[]::TEXT[];`
+          console.log('✅ Added security fields to database')
+
+          // Retry the query
+          user = await prisma.user.findUnique({
+            where: { id: session.user.id },
+            select: {
+              twoFactorEnabled: true,
+              loginNotifications: true,
+              sessionTimeout: true,
+              passwordExpiry: true,
+              ipWhitelist: true
+            }
+          })
+        } catch (retryError) {
+          console.error('❌ Failed to add security fields:', retryError)
+          // Return basic user info without security fields
+          user = { twoFactorEnabled: false, loginNotifications: true, sessionTimeout: 30, passwordExpiry: 90, ipWhitelist: [] }
+        }
+      } else {
+        throw dbError
       }
-    })
+    }
 
     if (!user) {
       return NextResponse.json(
@@ -117,7 +151,7 @@ export async function POST(request: NextRequest) {
         // Verify current password with proper type handling
         const currentPassword: string = validatedData.currentPassword
         const storedPassword: string = user.password
-        const isValidPassword = await bcrypt.default.compare(currentPassword, storedPassword)
+        const isValidPassword = await bcrypt.compare(currentPassword, storedPassword)
 
         if (!isValidPassword) {
           return NextResponse.json(
@@ -128,7 +162,7 @@ export async function POST(request: NextRequest) {
 
         // Hash new password
         const newPassword: string = validatedData.newPassword
-        const hashedPassword = await bcrypt.default.hash(newPassword, 12)
+        const hashedPassword = await bcrypt.hash(newPassword, 12)
 
         // Update password
         await prisma.user.update({
@@ -166,14 +200,34 @@ export async function POST(request: NextRequest) {
     } else if (type === '2fa') {
       // Handle 2FA enable/disable
       const { enabled } = data
-      
-      await prisma.user.update({
-        where: { id: session.user.id },
-        data: { 
-          twoFactorEnabled: enabled,
-          twoFactorEnabledAt: enabled ? new Date() : null
+
+      try {
+        await prisma.user.update({
+          where: { id: session.user.id },
+          data: {
+            twoFactorEnabled: enabled,
+            twoFactorEnabledAt: enabled ? new Date() : null
+          }
+        })
+      } catch (dbError: any) {
+        // If 2FA fields don't exist, add them and retry
+        if (dbError.message?.includes('twoFactor')) {
+          console.log('⚠️ 2FA fields missing, adding them...')
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "twoFactorEnabled" BOOLEAN DEFAULT false;`
+          await prisma.$executeRaw`ALTER TABLE "User" ADD COLUMN IF NOT EXISTS "twoFactorEnabledAt" TIMESTAMP(3);`
+
+          // Retry the update
+          await prisma.user.update({
+            where: { id: session.user.id },
+            data: {
+              twoFactorEnabled: enabled,
+              twoFactorEnabledAt: enabled ? new Date() : null
+            }
+          })
+        } else {
+          throw dbError
         }
-      })
+      }
 
       return NextResponse.json({
         success: true,

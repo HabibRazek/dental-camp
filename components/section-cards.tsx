@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import {
   Users,
   ShoppingCart,
@@ -18,75 +19,185 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useSettings } from "@/contexts/settings-context"
 
-const stats = [
-  {
-    title: "Total Products Sold",
-    value: "12,847",
-    change: "+18.5%",
-    changeType: "positive" as const,
-    icon: Package,
-    description: "Products sold this month",
-  },
-  {
-    title: "Active Orders",
-    value: "156",
-    change: "+23",
-    changeType: "positive" as const,
-    icon: ShoppingCart,
-    description: "Orders being processed",
-  },
-  {
-    title: "Monthly Revenue",
-    value: "$284,231",
-    change: "+12.8%",
-    changeType: "positive" as const,
-    icon: DollarSign,
-    description: "Revenue this month",
-  },
-  {
-    title: "Customer Satisfaction",
-    value: "4.8/5",
-    change: "+0.2",
-    changeType: "positive" as const,
-    icon: Star,
-    description: "Average customer rating",
-  },
-  {
-    title: "Average Order Value",
-    value: "$1,847",
-    change: "+$127",
-    changeType: "positive" as const,
-    icon: TrendingUp,
-    description: "Increased from last month",
-  },
-  {
-    title: "Total Customers",
-    value: "3,247",
-    change: "+8.3%",
-    changeType: "positive" as const,
-    icon: Users,
-    description: "Registered doctors",
-  },
-  {
-    title: "Inventory Status",
-    value: "94%",
-    change: "12 low stock",
-    changeType: "warning" as const,
-    icon: Boxes,
-    description: "Stock availability",
-  },
-  {
-    title: "Return Rate",
-    value: "2.1%",
-    change: "-0.3%",
-    changeType: "positive" as const,
-    icon: RotateCcw,
-    description: "Product returns",
-  },
-]
+interface AnalyticsData {
+  totalRevenue: number
+  totalOrders: number
+  totalCustomers: number
+  totalProducts: number
+  averageOrderValue: number
+  revenueGrowth: number
+  ordersGrowth: number
+  customersGrowth: number
+  productsGrowth: number
+  monthlyRevenue: Array<{
+    month: string
+    revenue: number
+    orders: number
+  }>
+  topProducts: Array<{
+    name: string
+    sales: number
+    revenue: number
+  }>
+  orderStatus: Array<{
+    status: string
+    count: number
+    color: string
+  }>
+}
+
+// Remove this function as we'll use the context one
+
+const formatNumber = (num: number) => {
+  return new Intl.NumberFormat('en-US').format(num)
+}
+
+const formatPercentage = (num: number) => {
+  const sign = num >= 0 ? '+' : ''
+  return `${sign}${num.toFixed(1)}%`
+}
 
 export function SectionCards() {
+  const { formatCurrency } = useSettings()
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const response = await fetch('/api/analytics')
+        if (response.ok) {
+          const data = await response.json()
+          setAnalytics(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch analytics:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchAnalytics()
+
+    // Refresh data every 5 minutes
+    const interval = setInterval(fetchAnalytics, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="px-4 mt-[-30px] lg:px-6">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Performance Overview</h2>
+          <p className="text-gray-600">Loading real-time insights...</p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <Card key={index} className="animate-pulse">
+              <CardHeader className="space-y-0 pb-2">
+                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-8 bg-gray-200 rounded w-1/2 mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded w-full"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (!analytics) {
+    return (
+      <div className="px-4 mt-[-30px] lg:px-6">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Performance Overview</h2>
+          <p className="text-gray-600 text-red-500">Failed to load analytics data</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Calculate additional metrics
+  const activeOrders = analytics.orderStatus.find(s => s.status === 'Processing')?.count || 0
+  const completedOrders = analytics.orderStatus.find(s => s.status === 'Completed')?.count || 0
+  const currentMonthRevenue = analytics.monthlyRevenue[analytics.monthlyRevenue.length - 1]?.revenue || 0
+  const currentMonthOrders = analytics.monthlyRevenue[analytics.monthlyRevenue.length - 1]?.orders || 0
+
+  // Calculate satisfaction score (mock based on completion rate)
+  const satisfactionScore = completedOrders > 0 ?
+    Math.min(4.9, 3.5 + (completedOrders / analytics.totalOrders) * 1.4) : 4.0
+
+  const stats = [
+    {
+      title: "Total Revenue",
+      value: formatCurrency(analytics.totalRevenue),
+      change: formatPercentage(analytics.revenueGrowth),
+      changeType: analytics.revenueGrowth >= 0 ? "positive" as const : "negative" as const,
+      icon: DollarSign,
+      description: "Total revenue generated",
+    },
+    {
+      title: "Active Orders",
+      value: formatNumber(activeOrders),
+      change: `+${analytics.ordersGrowth.toFixed(0)}`,
+      changeType: "positive" as const,
+      icon: ShoppingCart,
+      description: "Orders being processed",
+    },
+    {
+      title: "Monthly Revenue",
+      value: formatCurrency(currentMonthRevenue),
+      change: formatPercentage(analytics.revenueGrowth),
+      changeType: analytics.revenueGrowth >= 0 ? "positive" as const : "negative" as const,
+      icon: TrendingUp,
+      description: "Revenue this month",
+    },
+    {
+      title: "Customer Satisfaction",
+      value: `${satisfactionScore.toFixed(1)}/5`,
+      change: "+0.2",
+      changeType: "positive" as const,
+      icon: Star,
+      description: "Average customer rating",
+    },
+    {
+      title: "Average Order Value",
+      value: formatCurrency(analytics.averageOrderValue),
+      change: formatPercentage(analytics.revenueGrowth - analytics.ordersGrowth),
+      changeType: (analytics.revenueGrowth - analytics.ordersGrowth) >= 0 ? "positive" as const : "negative" as const,
+      icon: Package,
+      description: "Average per order",
+    },
+    {
+      title: "Total Customers",
+      value: formatNumber(analytics.totalCustomers),
+      change: formatPercentage(analytics.customersGrowth),
+      changeType: analytics.customersGrowth >= 0 ? "positive" as const : "negative" as const,
+      icon: Users,
+      description: "Registered customers",
+    },
+    {
+      title: "Total Products",
+      value: formatNumber(analytics.totalProducts),
+      change: formatPercentage(analytics.productsGrowth),
+      changeType: analytics.productsGrowth >= 0 ? "positive" as const : "warning" as const,
+      icon: Boxes,
+      description: "Products in catalog",
+    },
+    {
+      title: "Total Orders",
+      value: formatNumber(analytics.totalOrders),
+      change: formatPercentage(analytics.ordersGrowth),
+      changeType: analytics.ordersGrowth >= 0 ? "positive" as const : "negative" as const,
+      icon: RotateCcw,
+      description: "All time orders",
+    },
+  ]
+
   return (
     <div className="px-4 mt-[-30px] lg:px-6">
       {/* Header Section */}

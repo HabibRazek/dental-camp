@@ -126,6 +126,19 @@ export function SiteHeader() {
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink
+                href="/"
+                onClick={(e) => {
+                  e.preventDefault()
+                  handleNavigation('/')
+                }}
+                className="text-gray-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center gap-2 cursor-pointer"
+              >
+                🏠 Home
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="hidden md:block text-gray-400" />
+            <BreadcrumbItem className="hidden md:block">
+              <BreadcrumbLink
                 href="/dashboard"
                 onClick={(e) => {
                   e.preventDefault()
@@ -133,7 +146,7 @@ export function SiteHeader() {
                 }}
                 className="text-gray-600 hover:text-blue-700 font-medium transition-colors duration-200 flex items-center gap-2 cursor-pointer"
               >
-                🏠 Dashboard
+                📊 Dashboard
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block text-gray-400" />

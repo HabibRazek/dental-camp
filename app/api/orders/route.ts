@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         status: 'PENDING',
         customerId: session.user.id,
         customerName: `${customer.firstName} ${customer.lastName}`.trim(),
-        customerEmail: customer.email,
+        customerEmail: session.user.email, // Use session email for consistency
         customerPhone: customer.phone || null,
         shippingAddress: shipping.address,
         shippingCity: shipping.city,
@@ -217,6 +217,8 @@ export async function POST(request: NextRequest) {
     }
 
     console.log("✅ Order created successfully:", newOrder.orderNumber)
+    console.log("📧 Order customer email:", newOrder.customerEmail)
+    console.log("👤 Session user email:", session.user.email)
 
     return NextResponse.json({
       success: true,

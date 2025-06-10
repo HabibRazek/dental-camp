@@ -1,0 +1,162 @@
+import { NextRequest, NextResponse } from "next/server"
+import { auth } from "@/auth"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
+// GET /api/user/profile - Get user profile data
+export async function GET(request: NextRequest) {
+  try {
+    const session = await auth()
+    
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    console.log('👤 Fetching profile for user:', session.user.email)
+
+    // Get user from database - only select fields that definitely exist
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        createdAt: true,
+        emailVerified: true
+      }
+    })
+
+    // Try to get additional fields if they exist
+    let phone = ''
+    let bio = ''
+
+    try {
+      const userWithExtras = await prisma.user.findUnique({
+        where: { email: session.user.email },
+        select: {
+          phone: true,
+          bio: true
+        }
+      })
+      phone = userWithExtras?.phone || ''
+      bio = userWithExtras?.bio || ''
+    } catch (extraFieldsError) {
+      console.log('📝 Phone/Bio fields not available yet, using defaults')
+      // Fields don't exist yet, use empty strings
+    }
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    // Parse name into first and last name
+    const nameParts = user.name?.split(' ') || []
+    const firstName = nameParts[0] || ''
+    const lastName = nameParts.slice(1).join(' ') || ''
+
+    const profileData = {
+      id: user.id,
+      firstName,
+      lastName,
+      email: user.email,
+      phone: phone,
+      bio: bio,
+      image: user.image,
+      role: user.role,
+      createdAt: user.createdAt,
+      emailVerified: user.emailVerified
+    }
+
+    console.log('✅ Profile data fetched:', profileData)
+
+    return NextResponse.json({
+      success: true,
+      profile: profileData
+    })
+
+  } catch (error) {
+    console.error("Error fetching user profile:", error)
+    return NextResponse.json(
+      { error: "Failed to fetch profile" },
+      { status: 500 }
+    )
+  } finally {
+    await prisma.$disconnect()
+  }
+}
+
+// PUT /api/user/profile - Update user profile
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth()
+    
+    if (!session || !session.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    const { firstName, lastName, email, phone, bio } = await request.json()
+
+    console.log('💾 Updating profile for user:', session.user.email)
+    console.log('📋 Profile data:', { firstName, lastName, email, phone, bio })
+
+    // Combine first and last name
+    const fullName = `${firstName} ${lastName}`.trim()
+
+    // Update user in database - only update fields that exist
+    let updateData: any = {
+      name: fullName,
+      email: email
+    }
+
+    // Try to update phone and bio if fields exist
+    try {
+      // Test if fields exist by trying to select them first
+      await prisma.user.findFirst({
+        where: { email: session.user.email },
+        select: { phone: true, bio: true }
+      })
+
+      // If no error, fields exist, so we can update them
+      updateData.phone = phone || null
+      updateData.bio = bio || null
+
+      console.log('📝 Updating with phone/bio fields')
+    } catch (fieldError) {
+      console.log('📝 Phone/Bio fields not available, updating only name and email')
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { email: session.user.email },
+      data: updateData,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        role: true,
+        createdAt: true,
+        emailVerified: true
+      }
+    })
+
+    console.log('✅ Profile updated successfully:', updatedUser)
+
+    return NextResponse.json({
+      success: true,
+      message: "Profile updated successfully",
+      profile: updatedUser
+    })
+
+  } catch (error) {
+    console.error("Error updating user profile:", error)
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 }
+    )
+  } finally {
+    await prisma.$disconnect()
+  }
+}

@@ -26,6 +26,7 @@ import {
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
+import { useSettings } from "@/contexts/settings-context"
 
 interface StoreSettings {
   storeName: string
@@ -54,6 +55,7 @@ interface AppearanceSettings {
 }
 
 export default function SettingsPage() {
+  const { language, currency, setLanguage, setCurrency } = useSettings()
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
@@ -62,9 +64,9 @@ export default function SettingsPage() {
     storeEmail: "contact@dentalcamp.com",
     storePhone: "+216 12 345 678",
     storeAddress: "123 Dental Street, Tunis, Tunisia",
-    currency: "TND",
+    currency: currency,
     timezone: "Africa/Tunis",
-    language: "en"
+    language: language
   })
 
   const [notifications, setNotifications] = useState<NotificationSettings>({
@@ -290,9 +292,10 @@ export default function SettingsPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="currency">Currency</Label>
-                      <Select value={storeSettings.currency} onValueChange={(value) => 
+                      <Select value={storeSettings.currency} onValueChange={(value) => {
                         setStoreSettings(prev => ({ ...prev, currency: value }))
-                      }>
+                        setCurrency(value) // Update global context
+                      }}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -333,9 +336,10 @@ export default function SettingsPage() {
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="language">Default Language</Label>
-                      <Select value={storeSettings.language} onValueChange={(value) => 
+                      <Select value={storeSettings.language} onValueChange={(value) => {
                         setStoreSettings(prev => ({ ...prev, language: value }))
-                      }>
+                        setLanguage(value) // Update global context
+                      }}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>

@@ -219,7 +219,7 @@ export async function getAllUsers(page: number = 1, limit: number = 10, search?:
             }
           }
         }] : []),
-        ...(search.toLowerCase().includes('email') || search.toLowerCase().includes('credential') ? [{
+        ...(search.toLowerCase().includes('credentials') ? [{
           accounts: {
             none: {}
           }

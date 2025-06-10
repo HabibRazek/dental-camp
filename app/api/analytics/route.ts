@@ -82,29 +82,51 @@ export async function GET(request: Request) {
     // Calculate average order value
     const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0
 
-    // Calculate monthly revenue (last 6 months)
-    const monthlyRevenue = []
+    // Calculate REAL monthly revenue and orders from database
+    const monthlyData = []
     const currentDate = new Date()
 
-    for (let i = 5; i >= 0; i--) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
-      const monthName = date.toLocaleDateString('en-US', { month: 'short' })
-      
+    // Always show 12 months for the chart
+    const monthsToShow = 12
+
+    console.log(`📊 Processing ${orders.length} orders for monthly analytics`)
+
+    for (let i = monthsToShow - 1; i >= 0; i--) {
+      const monthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1)
+      const monthName = monthDate.toLocaleDateString('en-US', { month: 'short' })
+      const year = monthDate.getFullYear()
+      const monthKey = `${monthName} ${year}`
+
+      // Filter orders for this specific month and year
       const monthOrders = orders.filter(order => {
         const orderDate = new Date(order.createdAt)
-        return orderDate.getMonth() === date.getMonth() && orderDate.getFullYear() === date.getFullYear()
+        return orderDate.getMonth() === monthDate.getMonth() &&
+               orderDate.getFullYear() === monthDate.getFullYear()
       })
-      
+
+      // Calculate total revenue for this month
       const monthRevenue = monthOrders.reduce((sum, order) => {
-        return sum + (Number(order.total) || 0)
+        const orderTotal = Number(order.total) || 0
+        return sum + orderTotal
       }, 0)
-      
-      monthlyRevenue.push({
-        month: monthName,
+
+      // Count orders for this month
+      const orderCount = monthOrders.length
+
+      console.log(`📅 ${monthKey}: ${orderCount} orders, ${monthRevenue} TND revenue`)
+
+      monthlyData.push({
+        month: monthKey,
         revenue: monthRevenue,
-        orders: monthOrders.length
+        orders: orderCount,
+        date: monthDate.toISOString().split('T')[0] // For chart x-axis
       })
     }
+
+    console.log(`✅ Generated monthly data for ${monthlyData.length} months`)
+
+    // Use the real monthly data
+    const monthlyRevenue = monthlyData
 
     // Calculate order status distribution
     const statusCounts = orders.reduce((acc: any, order) => {
