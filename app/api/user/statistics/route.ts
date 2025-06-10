@@ -7,8 +7,8 @@ const prisma = new PrismaClient()
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
-    
-    if (!session || !session.user) {
+
+    if (!session || !session.user || !session.user.email) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
     // Fetch user's orders
     const orders = await prisma.order.findMany({
       where: {
-        customerEmail: session.user.email,
+        customerEmail: session.user.email as string,
         createdAt: {
           gte: startDate
         }
@@ -146,7 +146,7 @@ export async function GET(request: NextRequest) {
 
     // Get user creation date
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
+      where: { email: session.user.email as string },
       select: { createdAt: true }
     })
 
