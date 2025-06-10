@@ -42,102 +42,51 @@ interface UserDashboardContentProps {
   user: any
 }
 
-// Sample data for charts
-const spendingData = [
-  { month: 'Jan', amount: 400, orders: 2 },
-  { month: 'Feb', amount: 300, orders: 1 },
-  { month: 'Mar', amount: 600, orders: 4 },
-  { month: 'Apr', amount: 800, orders: 3 },
-  { month: 'May', amount: 500, orders: 2 },
-  { month: 'Jun', amount: 900, orders: 5 }
-]
-
-const orderStatusData = [
-  { name: 'Delivered', value: 65, color: '#10B981' },
-  { name: 'Shipping', value: 20, color: '#3B82F6' },
-  { name: 'Processing', value: 10, color: '#F59E0B' },
-  { name: 'Cancelled', value: 5, color: '#EF4444' }
-]
-
-const activityData = [
-  { day: 'Mon', orders: 2, views: 12 },
-  { day: 'Tue', orders: 1, views: 8 },
-  { day: 'Wed', orders: 4, views: 20 },
-  { day: 'Thu', orders: 3, views: 15 },
-  { day: 'Fri', orders: 6, views: 25 },
-  { day: 'Sat', orders: 2, views: 10 },
-  { day: 'Sun', orders: 1, views: 6 }
-]
-
-const recentOrders = [
-  {
-    id: "ORD-2024-001",
-    date: "2024-01-15",
-    status: "Delivered",
-    total: 299.990,
-    items: 3,
-    product: "Dental Scaler Pro"
-  },
-  {
-    id: "ORD-2024-002", 
-    date: "2024-01-12",
-    status: "Shipped",
-    total: 149.500,
-    items: 2,
-    product: "Ultrasonic Cleaner"
-  },
-  {
-    id: "ORD-2024-003",
-    date: "2024-01-10",
-    status: "Processing",
-    total: 89.990,
-    items: 1,
-    product: "Dental Mirror Set"
+// Interface for dashboard data
+interface DashboardData {
+  stats: {
+    totalOrders: number
+    totalSpent: number
+    pendingOrders: number
+    loyaltyPoints: number
+    savedAmount: number
+    completionRate: number
+    orderGrowth: number
+    spendingGrowth: number
+    wishlistCount: number
   }
-]
-
-const wishlistItems = [
-  {
-    id: "1",
-    name: "Professional Dental Scaler",
-    price: 199.990,
-    originalPrice: 249.990,
-    discount: 20,
-    image: "/images/dental-equipment.jpg",
-    inStock: true
-  },
-  {
-    id: "2", 
-    name: "Ultrasonic Cleaner Pro",
-    price: 299.990,
-    originalPrice: 349.990,
-    discount: 15,
-    image: "/images/dental-equipment.jpg",
-    inStock: true
-  },
-  {
-    id: "3",
-    name: "LED Dental Light",
-    price: 450.000,
-    originalPrice: 500.000,
-    discount: 10,
-    image: "/images/dental-equipment.jpg",
-    inStock: false
+  charts: {
+    monthlySpending: Array<{ month: string; amount: number; orders: number }>
+    orderStatusData: Array<{ name: string; value: number; color: string; count: number }>
   }
-]
+  recentOrders: Array<{
+    id: string
+    date: string
+    status: string
+    total: number
+    items: number
+    product: string
+  }>
+  wishlistItems: Array<{
+    id: string
+    name: string
+    price: number
+    originalPrice: number | null
+    discount: number
+    image: string
+    inStock: boolean
+  }>
+  user: {
+    memberSince: string
+    lastOrderDate: string | null
+  }
+}
 
 export function UserDashboardContent({ user }: UserDashboardContentProps) {
   const [currentTime, setCurrentTime] = React.useState(new Date())
-  const [stats, setStats] = React.useState({
-    totalOrders: 0,
-    wishlistItems: 0,
-    totalSpent: 0,
-    pendingOrders: 0,
-    loyaltyPoints: 0,
-    savedAmount: 0,
-    completionRate: 0
-  })
+  const [dashboardData, setDashboardData] = React.useState<DashboardData | null>(null)
   const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
 
   // Update time every second
   React.useEffect(() => {
@@ -148,24 +97,31 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
     return () => clearInterval(timer)
   }, [])
 
-  // Simulate loading stats with animation
+  // Load real dashboard data
   React.useEffect(() => {
-    const loadStats = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1500))
-      
-      setStats({
-        totalOrders: 24,
-        wishlistItems: 12,
-        totalSpent: 2847.50,
-        pendingOrders: 3,
-        loyaltyPoints: 1250,
-        savedAmount: 340.25,
-        completionRate: 85
-      })
-      setLoading(false)
+    const loadDashboardData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        console.log('📊 Loading dashboard data from API')
+
+        const response = await fetch('/api/user/dashboard')
+        if (response.ok) {
+          const result = await response.json()
+          console.log('✅ Dashboard data loaded:', result.data)
+          setDashboardData(result.data)
+        } else {
+          throw new Error('Failed to fetch dashboard data')
+        }
+      } catch (error) {
+        console.error('❌ Error loading dashboard data:', error)
+        setError('Failed to load dashboard data')
+      } finally {
+        setLoading(false)
+      }
     }
 
-    loadStats()
+    loadDashboardData()
   }, [])
 
   const containerVariants = {
@@ -199,6 +155,44 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
   const formatPrice = (price: number) => {
     return `${price.toFixed(3)} TND`
   }
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="space-y-8 p-6 bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 min-h-screen">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 text-lg">Loading your dashboard...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (error || !dashboardData) {
+    return (
+      <div className="space-y-8 p-6 bg-gradient-to-br from-blue-50/30 via-white to-purple-50/30 min-h-screen">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <p className="text-gray-600 text-lg">{error || 'Failed to load dashboard data'}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="mt-4"
+              variant="outline"
+            >
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // Extract data for easier access
+  const { stats, charts, recentOrders, wishlistItems } = dashboardData
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -294,13 +288,13 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
               <h3 className="text-sm font-medium opacity-90">Total Orders</h3>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold">
-                  {loading ? "..." : stats.totalOrders}
+                  {stats.totalOrders}
                 </span>
                 <span className="text-sm opacity-75">orders</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <TrendingUp className="h-4 w-4" />
-                <span>+2 from last month</span>
+                <span>{stats.orderGrowth >= 0 ? '+' : ''}{stats.orderGrowth.toFixed(1)}% from last month</span>
               </div>
             </div>
           </CardContent>
@@ -315,14 +309,14 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                 <DollarSign className="h-6 w-6" />
               </div>
               <Badge className="bg-white/20 text-white border-white/30">
-                +15.2%
+                {stats.spendingGrowth >= 0 ? '+' : ''}{stats.spendingGrowth.toFixed(1)}%
               </Badge>
             </div>
             <div className="space-y-2">
               <h3 className="text-sm font-medium opacity-90">Total Spent</h3>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold">
-                  {loading ? "..." : formatPrice(stats.totalSpent)}
+                  {formatPrice(stats.totalSpent)}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-sm">
@@ -342,14 +336,14 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                 <Heart className="h-6 w-6" />
               </div>
               <Badge className="bg-white/20 text-white border-white/30">
-                3 on sale
+                {wishlistItems.filter(item => item.discount > 0).length} on sale
               </Badge>
             </div>
             <div className="space-y-2">
               <h3 className="text-sm font-medium opacity-90">Wishlist Items</h3>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold">
-                  {loading ? "..." : stats.wishlistItems}
+                  {stats.wishlistCount}
                 </span>
                 <span className="text-sm opacity-75">items</span>
               </div>
@@ -377,13 +371,13 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
               <h3 className="text-sm font-medium opacity-90">Loyalty Points</h3>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-bold">
-                  {loading ? "..." : stats.loyaltyPoints}
+                  {stats.loyaltyPoints}
                 </span>
                 <span className="text-sm opacity-75">pts</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Zap className="h-4 w-4" />
-                <span>250 pts to next tier</span>
+                <span>{Math.max(0, 1500 - stats.loyaltyPoints)} pts to next tier</span>
               </div>
             </div>
           </CardContent>
@@ -405,7 +399,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <CardContent>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={spendingData}>
+                  <AreaChart data={charts.monthlySpending}>
                     <defs>
                       <linearGradient id="colorAmount" x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8}/>
@@ -454,7 +448,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
-                      data={orderStatusData}
+                      data={charts.orderStatusData}
                       cx="50%"
                       cy="50%"
                       innerRadius={60}
@@ -462,7 +456,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                       paddingAngle={5}
                       dataKey="value"
                     >
-                      {orderStatusData.map((entry, index) => (
+                      {charts.orderStatusData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
@@ -479,13 +473,13 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                 </ResponsiveContainer>
               </div>
               <div className="grid grid-cols-2 gap-2 mt-4">
-                {orderStatusData.map((item, index) => (
+                {charts.orderStatusData.map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <span className="text-sm text-gray-600">{item.name}</span>
+                    <span className="text-sm text-gray-600">{item.name} ({item.count})</span>
                   </div>
                 ))}
               </div>
@@ -571,7 +565,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {wishlistItems.slice(0, 3).map((item, index) => (
+                {wishlistItems.map((item, index) => (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, x: 20 }}
@@ -676,7 +670,11 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                   <span className="text-sm font-bold text-gray-900">{stats.completionRate}%</span>
                 </div>
                 <Progress value={stats.completionRate} className="h-2" />
-                <p className="text-xs text-gray-600">Excellent completion rate!</p>
+                <p className="text-xs text-gray-600">
+                  {stats.completionRate >= 90 ? 'Excellent completion rate!' :
+                   stats.completionRate >= 70 ? 'Good completion rate!' :
+                   'Keep improving your completion rate!'}
+                </p>
               </div>
 
               <div className="space-y-3">
@@ -685,7 +683,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                   <span className="text-sm font-bold text-gray-900">83%</span>
                 </div>
                 <Progress value={83} className="h-2" />
-                <p className="text-xs text-gray-600">250 points to Gold tier</p>
+                <p className="text-xs text-gray-600">{Math.max(0, 1500 - stats.loyaltyPoints)} points to Gold tier</p>
               </div>
 
               <div className="space-y-3">
