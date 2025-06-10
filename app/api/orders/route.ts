@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
 
       orders = await prisma.order.findMany({
         where: {
-          customerEmail: session.user.email
+          customerEmail: session.user.email as string
         },
         orderBy: {
           createdAt: 'desc'
@@ -103,8 +103,8 @@ export async function POST(request: NextRequest) {
     const session = await auth()
     console.log("🔐 Session:", session ? "authenticated" : "not authenticated")
 
-    if (!session) {
-      console.log("❌ No session found, returning 401")
+    if (!session || !session.user || !session.user.email) {
+      console.log("❌ No valid session found, returning 401")
       return NextResponse.json(
         { error: "Non autorisé - Veuillez vous connecter pour passer une commande" },
         { status: 401 }
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         status: 'PENDING',
         customerId: session.user.id,
         customerName: `${customer.firstName} ${customer.lastName}`.trim(),
-        customerEmail: session.user.email, // Use session email for consistency
+        customerEmail: session.user.email as string, // Type assertion safe due to validation above
         customerPhone: customer.phone || null,
         shippingAddress: shipping.address,
         shippingCity: shipping.city,
