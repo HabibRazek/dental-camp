@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, Mail, Bell, type LucideIcon } from "lucide-react"
+import { Mail, Bell, type LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -12,7 +12,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { CreateOrderDialog } from "@/components/orders/create-order-dialog"
+
 import Link from "next/link"
 
 export function NavMain({
@@ -24,7 +24,7 @@ export function NavMain({
     icon?: LucideIcon
   }[]
 }) {
-  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false)
+
   const [unreadMessages, setUnreadMessages] = useState(0)
   const [lowStockAlerts, setLowStockAlerts] = useState(0)
 
@@ -155,21 +155,8 @@ export function NavMain({
   return (
     <SidebarGroup className="px-4">
       <SidebarGroupContent className="flex flex-col gap-4">
-        {/* Action Buttons */}
+        {/* Quick Action Buttons */}
         <div className="space-y-3">
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                tooltip="Create New Order"
-                onClick={() => setIsCreateOrderOpen(true)}
-                className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white duration-300 ease-out hover:from-blue-700 hover:to-blue-800 hover:text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 rounded-xl py-3 font-bold cursor-pointer"
-              >
-                <Plus className="h-5 w-5" />
-                <span>New Order</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-
           <div className="flex gap-2">
             <Button
               size="sm"
@@ -244,11 +231,7 @@ export function NavMain({
         </div>
       </SidebarGroupContent>
 
-      {/* Create Order Dialog */}
-      <CreateOrderDialog
-        open={isCreateOrderOpen}
-        onOpenChange={setIsCreateOrderOpen}
-      />
+
     </SidebarGroup>
   )
 }

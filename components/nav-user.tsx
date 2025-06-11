@@ -1,11 +1,8 @@
 "use client"
 
 import {
-  Bell,
-  CreditCard,
   LogOut,
   MoreVertical,
-  User,
 } from "lucide-react"
 import { signOut } from "next-auth/react"
 
@@ -87,21 +84,6 @@ export function NavUser({
                 </div>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <User />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })}>
               <LogOut />

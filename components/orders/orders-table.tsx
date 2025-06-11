@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { CreateOrderDialog } from "@/components/orders/create-order-dialog"
+
 import {
   Table,
   TableBody,
@@ -58,12 +58,31 @@ import {
   Calendar,
   Plus
 } from "lucide-react"
-import { Order } from "@/app/admin/orders/page"
+import { Order } from "@/app/orders/page"
+import { Pagination, PageSizeSelector } from "@/components/ui/pagination"
+
+interface PaginationProps {
+  currentPage: number
+  totalPages: number
+  totalCount: number
+  pageSize: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
+}
+
+interface FiltersProps {
+  searchTerm: string
+  statusFilter: string
+  onSearch: (search: string) => void
+  onStatusFilter: (status: string) => void
+}
 
 interface OrdersTableProps {
   data: Order[]
   onStatusChange: (orderId: string, status: string) => void
   onRefresh: () => void
+  pagination?: PaginationProps
+  filters?: FiltersProps
 }
 
 const statusConfig = {
@@ -75,11 +94,31 @@ const statusConfig = {
   CANCELLED: { label: "Annulée", color: "bg-red-100 text-red-800", icon: XCircle },
 }
 
-export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProps) {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState<string>("all")
+export function OrdersTable({ data, onStatusChange, onRefresh, pagination, filters }: OrdersTableProps) {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isCreateOrderOpen, setIsCreateOrderOpen] = useState(false)
+
+  // Use external filters if provided, otherwise use local state
+  const [localSearchTerm, setLocalSearchTerm] = useState("")
+  const [localStatusFilter, setLocalStatusFilter] = useState<string>("all")
+
+  const searchTerm = filters?.searchTerm ?? localSearchTerm
+  const statusFilter = filters?.statusFilter ?? localStatusFilter
+
+  const handleSearchChange = (value: string) => {
+    if (filters?.onSearch) {
+      filters.onSearch(value)
+    } else {
+      setLocalSearchTerm(value)
+    }
+  }
+
+  const handleStatusChange = (value: string) => {
+    if (filters?.onStatusFilter) {
+      filters.onStatusFilter(value)
+    } else {
+      setLocalStatusFilter(value)
+    }
+  }
 
   const paymentMethodLabels = {
     cash: 'Paiement à la livraison',
@@ -104,16 +143,8 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
     })
   }
 
-  const filteredOrders = data.filter(order => {
-    const matchesSearch = 
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      `${order.customer.firstName} ${order.customer.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
-    
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter
-
-    return matchesSearch && matchesStatus
-  })
+  // Use data directly since filtering is done server-side
+  const filteredOrders = data
 
   const getStatusBadge = (status: Order['status']) => {
     const config = statusConfig[status]
@@ -140,10 +171,6 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
         </div>
         
         <div className="flex gap-2">
-          <Button onClick={() => setIsCreateOrderOpen(true)} className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="h-4 w-4 mr-2" />
-            Nouvelle Commande
-          </Button>
           <Button onClick={onRefresh} variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" />
             Actualiser
@@ -167,13 +194,13 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
                 <Input
                   placeholder="Rechercher par numéro, email ou nom..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
             
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={handleStatusChange}>
               <SelectTrigger className="w-full sm:w-48">
                 <SelectValue placeholder="Statut" />
               </SelectTrigger>
@@ -485,17 +512,28 @@ export function OrdersTable({ data, onStatusChange, onRefresh }: OrdersTableProp
         </CardContent>
       </Card>
 
-      {/* Create Order Dialog */}
-      <CreateOrderDialog
-        open={isCreateOrderOpen}
-        onOpenChange={(open) => {
-          setIsCreateOrderOpen(open)
-          if (!open) {
-            // Refresh orders when dialog closes after successful creation
-            onRefresh()
-          }
-        }}
-      />
+      {/* Pagination */}
+      {pagination && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <PageSizeSelector
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.onPageSizeChange}
+                options={[5, 10, 20, 50]}
+              />
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalCount={pagination.totalCount}
+                limit={pagination.pageSize}
+                onPageChange={pagination.onPageChange}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
     </div>
   )
 }

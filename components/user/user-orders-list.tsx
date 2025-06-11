@@ -3,11 +3,11 @@
 import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { 
-  Package, 
-  Truck, 
-  CheckCircle, 
-  Clock, 
+import {
+  Package,
+  Truck,
+  CheckCircle,
+  Clock,
   Eye,
   Calendar,
   CreditCard,
@@ -18,6 +18,7 @@ import { useSettings } from "@/contexts/settings-context"
 import { OrderDetailsModal } from "./order-details-modal"
 import { useCart } from "@/contexts/CartContext"
 import { toast } from "sonner"
+import { Pagination, PageSizeSelector } from "@/components/ui/pagination"
 
 interface Order {
   id: string
@@ -57,21 +58,54 @@ export function UserOrdersList({ userId }: UserOrdersListProps) {
   const { formatCurrency } = useSettings()
   const { addItem } = useCart()
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [pageSize, setPageSize] = React.useState(5)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalCount, setTotalCount] = React.useState(0)
+
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    fetchUserOrders(page, pageSize)
+  }
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when changing page size
+    fetchUserOrders(1, size)
+  }
+
   React.useEffect(() => {
     fetchUserOrders()
   }, [userId])
 
-  const fetchUserOrders = async () => {
+  const fetchUserOrders = async (page = currentPage, limit = pageSize) => {
     try {
       setLoading(true)
-      console.log('🔄 Fetching orders for user:', userId)
-      const response = await fetch(`/api/user/orders?userId=${userId}`)
+      console.log('🔄 Fetching orders for user:', userId, 'page:', page, 'limit:', limit)
+
+      // Build query parameters
+      const params = new URLSearchParams({
+        userId,
+        page: page.toString(),
+        limit: limit.toString()
+      })
+
+      const response = await fetch(`/api/user/orders?${params}`)
       console.log('📡 API Response status:', response.status)
 
       if (response.ok) {
         const data = await response.json()
         console.log('📦 Received orders data:', data)
         setOrders(data.orders || [])
+
+        // Update pagination state
+        if (data.pagination) {
+          setCurrentPage(data.pagination.currentPage)
+          setTotalPages(data.pagination.totalPages)
+          setTotalCount(data.pagination.totalCount)
+        }
       } else {
         console.error('Failed to fetch user orders, status:', response.status)
         const errorData = await response.text()
@@ -268,6 +302,26 @@ export function UserOrdersList({ userId }: UserOrdersListProps) {
           </div>
         )
       })}
+
+      {/* Pagination */}
+      {orders.length > 0 && totalPages > 1 && (
+        <div className="p-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <PageSizeSelector
+              pageSize={pageSize}
+              onPageSizeChange={handlePageSizeChange}
+              options={[5, 10, 20]}
+            />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalCount={totalCount}
+              limit={pageSize}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Order Details Modal */}
       <OrderDetailsModal

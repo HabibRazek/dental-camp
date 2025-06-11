@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, Menu, X, User, LogOut, ShoppingCart, MoreVertical, Settings, CreditCard, Bell } from "lucide-react";
+import { Heart, Search, Menu, X, User, LogOut, ShoppingCart, MoreVertical } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
@@ -122,18 +122,6 @@ function Header() {
                                             <User className="mr-2 h-4 w-4" />
                                             <span>Dashboard</span>
                                         </Link>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Settings className="mr-2 h-4 w-4" />
-                                        <span>Settings</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <CreditCard className="mr-2 h-4 w-4" />
-                                        <span>Billing</span>
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                        <Bell className="mr-2 h-4 w-4" />
-                                        <span>Notifications</span>
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
@@ -258,14 +246,6 @@ function Header() {
                                                     Dashboard
                                                 </Button>
                                             </Link>
-                                            <Button
-                                                variant="ghost"
-                                                className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"
-                                                onClick={() => setMenuOpen(false)}
-                                            >
-                                                <Settings className="h-4 w-4 mr-2" />
-                                                Settings
-                                            </Button>
                                             <Button
                                                 variant="ghost"
                                                 className="w-full justify-start text-red-600 text-sm hover:bg-red-100"

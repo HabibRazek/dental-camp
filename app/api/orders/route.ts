@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { prisma } from "@/lib/prisma"
 
-// GET /api/orders - Get all orders (admin only)
+// GET /api/orders - Get all orders with pagination
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
@@ -14,7 +14,18 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    let orders
+    // Get pagination parameters from URL
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const search = searchParams.get('search') || ''
+    const status = searchParams.get('status') || ''
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit
+
+    // Build where clause
+    let whereClause: any = {}
 
     // Check if user is admin
     if (session.user.role !== 'ADMIN') {
@@ -25,23 +36,37 @@ export async function GET(request: NextRequest) {
           { status: 400 }
         )
       }
-
-      orders = await prisma.order.findMany({
-        where: {
-          customerEmail: session.user.email as string
-        },
-        orderBy: {
-          createdAt: 'desc'
-        }
-      })
-    } else {
-      // For admin, return all orders
-      orders = await prisma.order.findMany({
-        orderBy: {
-          createdAt: 'desc'
-        }
-      })
+      whereClause.customerEmail = session.user.email as string
     }
+
+    // Add search filter
+    if (search) {
+      whereClause.OR = [
+        { orderNumber: { contains: search, mode: 'insensitive' } },
+        { customerName: { contains: search, mode: 'insensitive' } },
+        { customerEmail: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    // Add status filter
+    if (status && status !== 'all') {
+      whereClause.status = status
+    }
+
+    // Get total count for pagination
+    const totalCount = await prisma.order.count({
+      where: whereClause
+    })
+
+    // Get orders with pagination
+    const orders = await prisma.order.findMany({
+      where: whereClause,
+      orderBy: {
+        createdAt: 'desc'
+      },
+      skip: offset,
+      take: limit
+    })
 
     // Transform orders to match the expected format
     const transformedOrders = orders.map(order => ({
@@ -81,9 +106,22 @@ export async function GET(request: NextRequest) {
       updatedAt: order.updatedAt.toISOString()
     }))
 
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit)
+    const hasNextPage = page < totalPages
+    const hasPrevPage = page > 1
+
     return NextResponse.json({
       success: true,
-      orders: transformedOrders
+      orders: transformedOrders,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount,
+        limit,
+        hasNextPage,
+        hasPrevPage
+      }
     })
 
   } catch (error) {

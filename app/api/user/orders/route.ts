@@ -120,13 +120,20 @@ export async function GET(request: NextRequest) {
       })
     }
 
+    // Calculate pagination metadata
+    const totalPages = Math.ceil(totalCount / limit)
+    const hasNextPage = page < totalPages
+    const hasPrevPage = page > 1
+
     return NextResponse.json({
       orders: processedOrders,
       pagination: {
-        page,
+        currentPage: page,
+        totalPages,
+        totalCount,
         limit,
-        total: totalCount,
-        pages: Math.ceil(totalCount / limit)
+        hasNextPage,
+        hasPrevPage
       },
       stats
     })

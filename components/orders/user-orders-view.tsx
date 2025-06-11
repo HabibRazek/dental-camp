@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
+import { Pagination, PageSizeSelector } from "@/components/ui/pagination"
 import {
   Dialog,
   DialogContent,
@@ -35,9 +36,19 @@ import {
   FileText
 } from "lucide-react"
 
+interface PaginationProps {
+  currentPage: number
+  totalPages: number
+  totalCount: number
+  pageSize: number
+  onPageChange: (page: number) => void
+  onPageSizeChange: (size: number) => void
+}
+
 interface UserOrdersViewProps {
   data: Order[]
   onRefresh: () => void
+  pagination?: PaginationProps
 }
 
 const statusConfig = {
@@ -55,7 +66,7 @@ const paymentMethodLabels = {
   card: "Carte bancaire"
 }
 
-export function UserOrdersView({ data, onRefresh }: UserOrdersViewProps) {
+export function UserOrdersView({ data, onRefresh, pagination }: UserOrdersViewProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
@@ -77,15 +88,8 @@ export function UserOrdersView({ data, onRefresh }: UserOrdersViewProps) {
     })
   }
 
-  const filteredOrders = data.filter(order => {
-    const matchesSearch = 
-      order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.items.some(item => item.name.toLowerCase().includes(searchTerm.toLowerCase()))
-    
-    const matchesStatus = statusFilter === "all" || order.status === statusFilter
-
-    return matchesSearch && matchesStatus
-  })
+  // Use data directly since filtering is done server-side when pagination is enabled
+  const filteredOrders = data
 
   const getStatusBadge = (status: Order['status']) => {
     const config = statusConfig[status]
@@ -370,6 +374,28 @@ export function UserOrdersView({ data, onRefresh }: UserOrdersViewProps) {
             </Card>
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {pagination && filteredOrders.length > 0 && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <PageSizeSelector
+                pageSize={pagination.pageSize}
+                onPageSizeChange={pagination.onPageSizeChange}
+                options={[5, 10, 20]}
+              />
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalCount={pagination.totalCount}
+                limit={pagination.pageSize}
+                onPageChange={pagination.onPageChange}
+              />
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   )

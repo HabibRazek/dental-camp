@@ -17,8 +17,7 @@ import {
   Store, 
   Mail, 
   Bell, 
-  Palette, 
-  Globe, 
+
   CreditCard,
   Truck,
   Save,
@@ -47,12 +46,7 @@ interface NotificationSettings {
   marketingEmails: boolean
 }
 
-interface AppearanceSettings {
-  theme: string
-  primaryColor: string
-  logoUrl: string
-  faviconUrl: string
-}
+
 
 export default function SettingsPage() {
   const { language, currency, setLanguage, setCurrency } = useSettings()
@@ -77,12 +71,7 @@ export default function SettingsPage() {
     marketingEmails: false
   })
 
-  const [appearance, setAppearance] = useState<AppearanceSettings>({
-    theme: "light",
-    primaryColor: "#3b82f6",
-    logoUrl: "",
-    faviconUrl: ""
-  })
+
 
   // Load settings from API
   useEffect(() => {
@@ -93,7 +82,6 @@ export default function SettingsPage() {
           const data = await response.json()
           setStoreSettings(data.store)
           setNotifications(data.notifications)
-          setAppearance(data.appearance)
         }
       } catch (error) {
         console.error('Failed to load settings:', error)
@@ -164,34 +152,7 @@ export default function SettingsPage() {
     }
   }
 
-  const handleSaveAppearance = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: 'appearance',
-          data: appearance
-        })
-      })
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to save settings')
-      }
-
-      toast.success("Appearance settings saved successfully!")
-    } catch (error) {
-      console.error('Save appearance settings error:', error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to save appearance settings"
-      toast.error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (initialLoading) {
     return (
@@ -214,7 +175,7 @@ export default function SettingsPage() {
     >
       <div className="space-y-8">
         <Tabs defaultValue="store" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="store" className="flex items-center gap-2">
               <Store className="h-4 w-4" />
               Store
@@ -222,14 +183,6 @@ export default function SettingsPage() {
             <TabsTrigger value="notifications" className="flex items-center gap-2">
               <Bell className="h-4 w-4" />
               Notifications
-            </TabsTrigger>
-            <TabsTrigger value="appearance" className="flex items-center gap-2">
-              <Palette className="h-4 w-4" />
-              Appearance
-            </TabsTrigger>
-            <TabsTrigger value="integrations" className="flex items-center gap-2">
-              <Globe className="h-4 w-4" />
-              Integrations
             </TabsTrigger>
           </TabsList>
 

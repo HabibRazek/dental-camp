@@ -218,23 +218,6 @@ export function SiteHeader() {
                 <Home className="mr-2 h-4 w-4" />
                 <span>Mon Dashboard</span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleNavigation('/orders')}>
-                <Package className="mr-2 h-4 w-4" />
-                <span>Mes Commandes</span>
-              </DropdownMenuItem>
-              {session?.user?.role === 'ADMIN' && (
-                <>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => handleNavigation('/admin/products')}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Gestion Produits</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleNavigation('/customers')}>
-                    <Users className="mr-2 h-4 w-4" />
-                    <span>Gestion Clients</span>
-                  </DropdownMenuItem>
-                </>
-              )}
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={handleLogout}

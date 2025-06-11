@@ -67,38 +67,71 @@ export default function OrdersPage() {
     totalValue: 0
   })
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+
+  // Filter state
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+
   const isAdmin = session?.user?.role === 'ADMIN'
 
-  const fetchOrders = async () => {
+  const fetchOrders = async (page = currentPage, limit = pageSize, search = searchTerm, status = statusFilter) => {
     try {
       setLoading(true)
       setError(null)
-      
-      const response = await fetch('/api/orders')
-      
+
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        ...(search && { search }),
+        ...(status !== 'all' && { status })
+      })
+
+      const response = await fetch(`/api/orders?${params}`)
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         const fetchedOrders = data.orders || []
         setOrders(fetchedOrders)
-        
-        // Calculate stats
-        const total = fetchedOrders.length
-        const pending = fetchedOrders.filter((order: Order) => 
-          ['PENDING', 'CONFIRMED', 'PROCESSING'].includes(order.status)
-        ).length
-        const completed = fetchedOrders.filter((order: Order) => 
-          order.status === 'DELIVERED'
-        ).length
-        const totalValue = fetchedOrders.reduce((sum: number, order: Order) => 
-          sum + order.totals.total, 0
-        )
-        
-        setStats({ total, pending, completed, totalValue })
+
+        // Update pagination state
+        if (data.pagination) {
+          setCurrentPage(data.pagination.currentPage)
+          setTotalPages(data.pagination.totalPages)
+          setTotalCount(data.pagination.totalCount)
+        }
+
+        // Calculate stats from all orders (not just current page)
+        // For stats, we need to fetch all orders without pagination
+        const statsResponse = await fetch('/api/orders?limit=1000')
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json()
+          if (statsData.success) {
+            const allOrders = statsData.orders || []
+            const total = allOrders.length
+            const pending = allOrders.filter((order: Order) =>
+              ['PENDING', 'CONFIRMED', 'PROCESSING'].includes(order.status)
+            ).length
+            const completed = allOrders.filter((order: Order) =>
+              order.status === 'DELIVERED'
+            ).length
+            const totalValue = allOrders.reduce((sum: number, order: Order) =>
+              sum + order.totals.total, 0
+            )
+
+            setStats({ total, pending, completed, totalValue })
+          }
+        }
       } else {
         throw new Error(data.error || 'Failed to fetch orders')
       }
@@ -131,6 +164,30 @@ export default function OrdersPage() {
       console.error('Error updating order status:', error)
       toast.error('Failed to update order status')
     }
+  }
+
+  // Pagination handlers
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    fetchOrders(page, pageSize, searchTerm, statusFilter)
+  }
+
+  const handlePageSizeChange = (size: number) => {
+    setPageSize(size)
+    setCurrentPage(1) // Reset to first page when changing page size
+    fetchOrders(1, size, searchTerm, statusFilter)
+  }
+
+  const handleSearch = (search: string) => {
+    setSearchTerm(search)
+    setCurrentPage(1) // Reset to first page when searching
+    fetchOrders(1, pageSize, search, statusFilter)
+  }
+
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status)
+    setCurrentPage(1) // Reset to first page when filtering
+    fetchOrders(1, pageSize, searchTerm, status)
   }
 
   useEffect(() => {
@@ -286,11 +343,33 @@ export default function OrdersPage() {
               data={orders}
               onStatusChange={handleStatusChange}
               onRefresh={fetchOrders}
+              pagination={{
+                currentPage,
+                totalPages,
+                totalCount,
+                pageSize,
+                onPageChange: handlePageChange,
+                onPageSizeChange: handlePageSizeChange
+              }}
+              filters={{
+                searchTerm,
+                statusFilter,
+                onSearch: handleSearch,
+                onStatusFilter: handleStatusFilter
+              }}
             />
           ) : (
             <UserOrdersView
               data={orders}
               onRefresh={fetchOrders}
+              pagination={{
+                currentPage,
+                totalPages,
+                totalCount,
+                pageSize,
+                onPageChange: handlePageChange,
+                onPageSizeChange: handlePageSizeChange
+              }}
             />
           )}
         </CardContent>
