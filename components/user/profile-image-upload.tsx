@@ -102,7 +102,8 @@ export function ProfileImageUpload({
     }
   }
 
-  // Force refresh image by adding timestamp to avoid caching
+  // Use preview if available, otherwise use current image
+  // Add cache busting for uploaded images to ensure fresh display
   const displayImage = previewUrl || (currentImage ? `${currentImage}?t=${Date.now()}` : currentImage)
   const initials = userName ? userName.split(' ').map(n => n[0]).join('') : 'U'
 

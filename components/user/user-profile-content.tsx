@@ -92,7 +92,7 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
   const handleImageUpdate = (newImageUrl: string) => {
     console.log('🖼️ Profile image updated:', newImageUrl)
     setCurrentImage(newImageUrl) // Update the image immediately in UI
-    toast.success('Profile image updated successfully!')
+    // Note: Success toast is already shown by the upload component
   }
 
   const handleSaveProfile = async () => {
