@@ -104,7 +104,7 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <Card className="h-[450px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl flex flex-col">
+      <Card className="h-[400px] sm:h-[450px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl flex flex-col">
         {/* Image Container with Floating Elements */}
         <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-50 to-gray-100 p-2 flex items-center justify-center">
           {/* Floating Badges */}
@@ -232,7 +232,7 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
         </div>
 
         {/* Content */}
-        <CardContent className="p-4 flex flex-col flex-grow">
+        <CardContent className="p-3 sm:p-4 flex flex-col flex-grow">
           {/* Category */}
           {product.category && (
             <span className="text-xs text-blue-600 font-medium mb-2">{product.category.name}</span>
@@ -352,10 +352,10 @@ export default function CatalogPage() {
 
   const getGridColumns = () => {
     switch (gridCols) {
-      case 2: return "grid-cols-1 md:grid-cols-2";
-      case 3: return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
-      case 4: return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
-      default: return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
+      case 2: return "grid-cols-1 sm:grid-cols-2";
+      case 3: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+      case 4: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+      default: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
     }
   };
 
@@ -405,10 +405,10 @@ export default function CatalogPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-6"
             >
-              <h1 className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-blue-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-blue-600 bg-clip-text text-transparent">
                 Professional Dental Equipment
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                 Discover our comprehensive collection of high-quality dental equipment and supplies
               </p>
             </motion.div>
@@ -452,18 +452,18 @@ export default function CatalogPage() {
         </motion.section>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 pb-20">
-          <div className="flex gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Innovative Sidebar Filters */}
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className={`${showFilters ? 'block' : 'hidden'} lg:block w-80 space-y-6`}
+              className={`${showFilters ? 'block' : 'hidden'} lg:block w-full lg:w-80 space-y-6`}
             >
-              <div className="sticky top-8 space-y-6">
+              <div className="lg:sticky lg:top-8 space-y-6">
                 {/* Filter Header */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                       <SlidersHorizontal className="w-5 h-5 text-blue-600" />
@@ -623,12 +623,12 @@ export default function CatalogPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-6 mb-8"
+                className="bg-white rounded-2xl shadow-lg border border-gray-200/50 p-4 sm:p-6 mb-6 lg:mb-8"
               >
-                <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                <div className="flex flex-col sm:flex-row lg:flex-row gap-4 items-start sm:items-center justify-between">
                   {/* Results Info */}
-                  <div className="flex items-center gap-4 flex-wrap">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <div className="flex items-center gap-2 sm:gap-4 flex-wrap">
+                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center gap-2">
                       <Sparkles className="w-5 h-5 text-blue-500" />
                       {products.length} Product{products.length !== 1 ? 's' : ''} Found
                     </h2>
@@ -645,7 +645,7 @@ export default function CatalogPage() {
                   </div>
 
                   {/* Controls */}
-                  <div className="flex gap-3 flex-wrap">
+                  <div className="flex gap-2 sm:gap-3 flex-wrap w-full sm:w-auto justify-start sm:justify-end">
                     {/* Mobile Filter Toggle */}
                     <Button
                       variant="outline"
@@ -663,7 +663,7 @@ export default function CatalogPage() {
                       setSortBy(field);
                       setSortOrder(order);
                     }}>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="w-full sm:w-48">
                         <SelectValue placeholder="Sort by" />
                       </SelectTrigger>
                       <SelectContent>
@@ -675,7 +675,7 @@ export default function CatalogPage() {
                     </Select>
 
                     {/* Grid Size Control */}
-                    <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+                    <div className="hidden sm:flex border border-gray-200 rounded-lg overflow-hidden">
                       {[2, 3, 4].map((size) => (
                         <Button
                           key={size}
@@ -725,7 +725,7 @@ export default function CatalogPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.4 }}
-                    className={`grid gap-6 ${viewMode === "list"
+                    className={`grid gap-4 sm:gap-6 ${viewMode === "list"
                         ? "grid-cols-1"
                         : getGridColumns()
                       }`}
@@ -813,7 +813,7 @@ export default function CatalogPage() {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="flex justify-center mt-12"
                 >
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2 justify-center">
                     <Button
                       variant="outline"
                       onClick={() => setCurrentPage(currentPage - 1)}

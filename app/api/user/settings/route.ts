@@ -1,23 +1,29 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/auth"
-import { PrismaClient } from "@prisma/client"
-
-const prisma = new PrismaClient()
+// import { prisma } from "@/lib/prisma"
 
 // GET /api/user/settings - Get user settings
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔍 Starting settings fetch...')
     const session = await auth()
-    
+
     if (!session || !session.user) {
+      console.log('❌ No session or user found')
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log('⚙️ Fetching settings for user:', session.user.email)
+    console.log('⚙️ Fetching settings for user:', session.user.email, 'ID:', session.user.id)
 
-    // For now, return default settings since we don't have a settings table
-    // In a real app, you'd fetch from a user_settings table
-    const defaultSettings = {
+    if (!session.user.id) {
+      console.log('❌ No user ID found in session')
+      return NextResponse.json({ error: "User ID not found" }, { status: 400 })
+    }
+
+    // Temporary: Return default settings while we fix database connection
+    console.log('📝 Returning default settings for user:', session.user.id)
+
+    const settings = {
       notifications: {
         email: true,
         push: true,
@@ -27,16 +33,10 @@ export async function GET(request: NextRequest) {
         newsletter: true
       },
       privacy: {
-        profileVisibility: 'private',
+        profileVisibility: 'private' as const,
         showEmail: false,
         showPhone: false,
         dataCollection: true
-      },
-      appearance: {
-        theme: 'system',
-        language: 'en',
-        currency: 'TND',
-        timezone: 'Africa/Tunis'
       },
       security: {
         twoFactorEnabled: false,
@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      settings: defaultSettings
+      settings: settings
     })
 
   } catch (error) {
@@ -56,8 +56,6 @@ export async function GET(request: NextRequest) {
       { error: "Failed to fetch settings" },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }
 
@@ -75,11 +73,9 @@ export async function POST(request: NextRequest) {
     console.log('💾 Saving settings for user:', session.user.email)
     console.log('📋 Settings data:', settings)
 
-    // For now, we'll just simulate saving
-    // In a real app, you'd save to a user_settings table
-    
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    // Temporary: Just log the settings while we fix database connection
+    console.log('💾 Settings received for user:', session.user.id)
+    console.log('📋 Settings data:', JSON.stringify(settings, null, 2))
 
     return NextResponse.json({
       success: true,
@@ -93,7 +89,5 @@ export async function POST(request: NextRequest) {
       { error: "Failed to save settings" },
       { status: 500 }
     )
-  } finally {
-    await prisma.$disconnect()
   }
 }

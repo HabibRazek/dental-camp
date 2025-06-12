@@ -218,8 +218,8 @@ export function ChartAreaInteractive() {
     <Card className="@container/card border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
       <CardHeader className="relative border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
         <div className="flex flex-col space-y-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
               <div className="w-2 h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
               Revenue Performance
               {analytics && (
@@ -235,12 +235,12 @@ export function ChartAreaInteractive() {
             </CardTitle>
 
           </div>
-          <CardDescription className="text-gray-600 font-medium flex items-center justify-between">
+          <CardDescription className="text-gray-600 font-medium flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span>
-              <span className="@[540px]/card:block hidden">
+              <span className="hidden lg:block">
                 Real-time revenue analytics and performance insights for your dental e-commerce platform
               </span>
-              <span className="@[540px]/card:hidden">Revenue analytics dashboard</span>
+              <span className="lg:hidden">Revenue analytics dashboard</span>
             </span>
             <span className="text-xs text-gray-500">
               Last updated: {lastUpdated.toLocaleTimeString()}
@@ -248,9 +248,9 @@ export function ChartAreaInteractive() {
           </CardDescription>
         </div>
 
-        <div className="absolute right-6 top-6">
+        <div className="sm:absolute sm:right-6 sm:top-6 w-full sm:w-auto">
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-48 border-blue-200 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 shadow-sm">
+            <SelectTrigger className="w-full sm:w-48 border-blue-200 bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-200 focus:ring-2 focus:ring-blue-500/20 shadow-sm">
               <SelectValue placeholder="Select month" />
             </SelectTrigger>
             <SelectContent className="border-blue-200 bg-white/95 backdrop-blur-md">
@@ -266,30 +266,30 @@ export function ChartAreaInteractive() {
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {analytics && (
-          <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
             <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-xl sm:text-2xl font-bold text-blue-600">
                 {analytics.totalRevenue.toLocaleString()} TND
               </div>
-              <div className="text-sm text-gray-600">Total Revenue</div>
+              <div className="text-xs sm:text-sm text-gray-600">Total Revenue</div>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-xl sm:text-2xl font-bold text-green-600">
                 {analytics.totalOrders.toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">Total Orders</div>
+              <div className="text-xs sm:text-sm text-gray-600">Total Orders</div>
             </div>
             <div className="text-center p-3 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600">
+              <div className="text-xl sm:text-2xl font-bold text-purple-600">
                 {analytics.totalCustomers.toLocaleString()}
               </div>
-              <div className="text-sm text-gray-600">Total Customers</div>
+              <div className="text-xs sm:text-sm text-gray-600">Total Customers</div>
             </div>
           </div>
         )}
 
 
-        <div className="h-[350px] w-full">
+        <div className="h-[250px] sm:h-[300px] lg:h-[350px] w-full">
           {chartData.length === 0 ? (
             <div className="h-full flex items-center justify-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
               <div className="text-center">

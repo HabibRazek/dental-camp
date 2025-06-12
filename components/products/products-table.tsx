@@ -312,15 +312,15 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <CardTitle className="text-2xl font-bold">Products</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl font-bold">Products</CardTitle>
             <CardDescription>
               Manage your dental products inventory
             </CardDescription>
           </div>
           <Link href="/admin/products/add">
-            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800">
+            <Button className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 w-full sm:w-auto">
               <Plus className="mr-2 h-4 w-4" />
               Add Product
             </Button>
@@ -328,8 +328,8 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center py-4 space-x-2">
-          <div className="relative flex-1">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center py-4 gap-4 sm:gap-2">
+          <div className="relative flex-1 w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder="Search products..."
@@ -337,12 +337,12 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
               }
-              className="pl-10 max-w-sm"
+              className="pl-10 w-full sm:max-w-sm"
             />
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline" className="w-full sm:w-auto sm:ml-auto">
                 <Filter className="mr-2 h-4 w-4" />
                 Columns <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
@@ -368,7 +368,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-md border">
+        <div className="rounded-md border overflow-x-auto">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -419,7 +419,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
           </Table>
         </div>
         {/* Pagination */}
-        <div className="flex items-center justify-between space-x-2 py-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-2 py-4">
           <div className="flex-1 text-sm text-muted-foreground">
             {pagination ? (
               <>
@@ -436,7 +436,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
           </div>
 
           {pagination ? (
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <Button
                 variant="outline"
                 size="sm"
@@ -447,7 +447,7 @@ export function ProductsTable({ data, onEdit, onDelete, onStatusChange, paginati
               </Button>
 
               {/* Page numbers */}
-              <div className="flex items-center space-x-1">
+              <div className="hidden sm:flex items-center space-x-1">
                 {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                   const pageNumber = i + 1;
                   if (pagination.totalPages <= 5) {

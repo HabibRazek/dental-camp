@@ -35,15 +35,15 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
             <div className="flex flex-col gap-8 py-8 md:py-10">
               {/* Page Header */}
               {(title || description) && (
-                <div className="px-4 lg:px-6">
-                  <div className="mb-8">
+                <div className="px-4 sm:px-6 lg:px-8">
+                  <div className="mb-6 lg:mb-8">
                     {title && (
-                      <h1 className="text-4xl font-black text-gray-900 mb-3 tracking-tight">
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black text-gray-900 mb-3 tracking-tight">
                         {title}
                       </h1>
                     )}
                     {description && (
-                      <p className="text-lg text-gray-600 font-medium max-w-2xl">
+                      <p className="text-base sm:text-lg text-gray-600 font-medium max-w-2xl">
                         {description}
                       </p>
                     )}
@@ -52,7 +52,7 @@ export function DashboardLayout({ children, title, description }: DashboardLayou
               )}
 
               {/* Page Content */}
-              <div className="px-4 lg:px-6">
+              <div className="px-4 sm:px-6 lg:px-8">
                 {children}
               </div>
 

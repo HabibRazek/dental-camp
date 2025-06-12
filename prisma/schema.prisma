@@ -41,6 +41,7 @@ model User {
   // Optional for WebAuthn support
   Authenticator Authenticator[]
   verificationCodes VerificationCode[]
+  userSettings  UserSettings?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -321,4 +322,35 @@ model Setting {
   updatedAt DateTime @updatedAt
 
   @@index([key])
+}
+
+// User Settings Model for individual user preferences
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Notifications settings
+  emailNotifications    Boolean @default(true)
+  pushNotifications     Boolean @default(true)
+  smsNotifications      Boolean @default(false)
+  orderUpdates          Boolean @default(true)
+  promotions            Boolean @default(false)
+  newsletter            Boolean @default(true)
+
+  // Privacy settings
+  profileVisibility     String  @default("private") // "public" or "private"
+  showEmail             Boolean @default(false)
+  showPhone             Boolean @default(false)
+  dataCollection        Boolean @default(true)
+
+  // Security settings (stored here for user-specific settings)
+  twoFactorEnabled      Boolean @default(false)
+  loginAlerts           Boolean @default(true)
+  sessionTimeout        Int     @default(30) // minutes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }

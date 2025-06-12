@@ -9,15 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Settings, 
-  Bell, 
-  Shield, 
-  Palette,
-  Globe,
-  Moon,
-  Sun,
-  Monitor,
+import {
+  Settings,
+  Bell,
+  Shield,
   Mail,
   Smartphone,
   Lock,
@@ -27,7 +22,6 @@ import {
   RefreshCw,
   Trash2,
   Download,
-  Upload,
   AlertTriangle
 } from "lucide-react"
 import { motion } from "framer-motion"
@@ -53,12 +47,6 @@ interface UserSettings {
     showPhone: boolean
     dataCollection: boolean
   }
-  appearance: {
-    theme: 'light' | 'dark' | 'system'
-    language: string
-    currency: string
-    timezone: string
-  }
   security: {
     twoFactorEnabled: boolean
     loginAlerts: boolean
@@ -67,6 +55,7 @@ interface UserSettings {
 }
 
 export function UserSettingsContent({ userId, userEmail }: UserSettingsContentProps) {
+  console.log('🔍 UserSettingsContent initialized with:', { userId, userEmail })
   const [settings, setSettings] = React.useState<UserSettings>({
     notifications: {
       email: true,
@@ -82,12 +71,6 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
       showPhone: false,
       dataCollection: true
     },
-    appearance: {
-      theme: 'system',
-      language: 'en',
-      currency: 'TND',
-      timezone: 'Africa/Tunis'
-    },
     security: {
       twoFactorEnabled: false,
       loginAlerts: true,
@@ -98,33 +81,145 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
   const [loading, setLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(false)
   const [activeSection, setActiveSection] = React.useState('notifications')
+  const [passwordData, setPasswordData] = React.useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  })
+  const [passwordLoading, setPasswordLoading] = React.useState(false)
 
+  // Load settings from localStorage immediately on mount for better UX
   React.useEffect(() => {
-    loadUserSettings()
+    if (!userId || userId === 'undefined' || userId === 'null') {
+      console.warn('⚠️ Invalid userId, skipping localStorage load:', userId)
+      return
+    }
+
+    const savedSettings = localStorage.getItem(`userSettings_${userId}`)
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings)
+        setSettings(parsedSettings)
+        console.log('🔄 Loaded settings from localStorage:', parsedSettings)
+      } catch (error) {
+        console.error('Error parsing saved settings:', error)
+        // If parsing fails, save current default settings
+        const defaultSettings = {
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            orderUpdates: true,
+            promotions: false,
+            newsletter: true
+          },
+          privacy: {
+            profileVisibility: 'private' as const,
+            showEmail: false,
+            showPhone: false,
+            dataCollection: true
+          },
+          security: {
+            twoFactorEnabled: false,
+            loginAlerts: true,
+            sessionTimeout: 30
+          }
+        }
+        setSettings(defaultSettings)
+        localStorage.setItem(`userSettings_${userId}`, JSON.stringify(defaultSettings))
+      }
+    } else {
+      // If no saved settings, save current default settings
+      console.log('📝 No saved settings found, using defaults and saving them')
+      const defaultSettings = {
+        notifications: {
+          email: true,
+          push: true,
+          sms: false,
+          orderUpdates: true,
+          promotions: false,
+          newsletter: true
+        },
+        privacy: {
+          profileVisibility: 'private' as const,
+          showEmail: false,
+          showPhone: false,
+          dataCollection: true
+        },
+        security: {
+          twoFactorEnabled: false,
+          loginAlerts: true,
+          sessionTimeout: 30
+        }
+      }
+      setSettings(defaultSettings)
+      localStorage.setItem(`userSettings_${userId}`, JSON.stringify(defaultSettings))
+    }
   }, [userId])
+
+  // Temporarily disable API loading to prevent overriding localStorage
+  // React.useEffect(() => {
+  //   // Only load from API if we have a valid userId
+  //   if (userId && userId !== 'undefined' && userId !== 'null') {
+  //     loadUserSettings()
+  //   } else {
+  //     console.warn('⚠️ Invalid userId, skipping API call:', userId)
+  //     toast.error('User session invalid. Please sign in again.')
+  //   }
+  // }, [userId])
 
   const loadUserSettings = async () => {
     try {
-      console.log('🔄 Loading user settings from API')
-      const response = await fetch('/api/user/settings')
+      console.log('🔄 Loading user settings from API for user:', userId)
+      const response = await fetch('/api/user/settings', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include'
+      })
+
+      console.log('📡 API Response status:', response.status)
+
       if (response.ok) {
         const data = await response.json()
-        console.log('📋 Loaded settings:', data.settings)
+        console.log('📋 Loaded settings from API:', data.settings)
         setSettings(data.settings)
+        // Update localStorage with fresh data from API
+        localStorage.setItem(`userSettings_${userId}`, JSON.stringify(data.settings))
       } else {
-        console.error('Failed to load settings from API')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Failed to load settings from API:', response.status, errorData)
+
+        // Show specific error message but don't make it too intrusive
+        if (response.status === 401) {
+          console.warn('⚠️ Authentication issue - using localStorage only')
+          // For now, just use localStorage without showing error to user
+        } else if (response.status === 500) {
+          console.warn('⚠️ Server error - using localStorage only')
+          // For now, just use localStorage without showing error to user
+        } else {
+          console.warn('⚠️ API error - using localStorage only:', errorData.error)
+        }
+
         // Fallback to localStorage
         const savedSettings = localStorage.getItem(`userSettings_${userId}`)
         if (savedSettings) {
-          setSettings(JSON.parse(savedSettings))
+          const parsedSettings = JSON.parse(savedSettings)
+          setSettings(parsedSettings)
+          console.log('📋 Loaded settings from localStorage fallback:', parsedSettings)
         }
       }
     } catch (error) {
       console.error('Error loading settings:', error)
+      console.warn('⚠️ Network error - using localStorage only')
+
       // Fallback to localStorage
       const savedSettings = localStorage.getItem(`userSettings_${userId}`)
       if (savedSettings) {
-        setSettings(JSON.parse(savedSettings))
+        const parsedSettings = JSON.parse(savedSettings)
+        setSettings(parsedSettings)
+        console.log('📋 Loaded settings from localStorage fallback:', parsedSettings)
       }
     }
   }
@@ -132,26 +227,42 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
   const saveSettings = async () => {
     try {
       setLoading(true)
-      console.log('💾 Saving settings to API:', settings)
+      console.log('💾 Saving settings:', settings)
 
-      const response = await fetch('/api/user/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(settings)
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        console.log('✅ Settings saved successfully:', data)
-
-        // Also save to localStorage as backup
+      // Always save to localStorage first (immediate persistence)
+      if (userId && userId !== 'undefined' && userId !== 'null') {
         localStorage.setItem(`userSettings_${userId}`, JSON.stringify(settings))
+        console.log('✅ Settings saved to localStorage')
+        console.log('💾 Saved settings:', settings)
 
+        // Verify the save worked
+        const verification = localStorage.getItem(`userSettings_${userId}`)
+        if (verification) {
+          console.log('✅ Verification: Settings are in localStorage:', JSON.parse(verification))
+        }
+      }
+
+      // Try to save to API as well (for sync across devices) - but don't let it fail the save
+      try {
+        const response = await fetch('/api/user/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(settings)
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          console.log('✅ Settings also saved to API:', data)
+          toast.success('Settings saved successfully!')
+        } else {
+          console.warn('⚠️ API save failed, but localStorage save succeeded')
+          toast.success('Settings saved successfully!')
+        }
+      } catch (apiError) {
+        console.warn('⚠️ API save failed, but localStorage save succeeded:', apiError)
         toast.success('Settings saved successfully!')
-      } else {
-        throw new Error('Failed to save settings')
       }
     } catch (error) {
       console.error('Error saving settings:', error)
@@ -162,13 +273,23 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
   }
 
   const updateSetting = (section: keyof UserSettings, key: string, value: any) => {
-    setSettings(prev => ({
-      ...prev,
+    const newSettings = {
+      ...settings,
       [section]: {
-        ...prev[section],
+        ...settings[section],
         [key]: value
       }
-    }))
+    }
+
+    // Update state
+    setSettings(newSettings)
+
+    // Immediately save to localStorage for persistence
+    if (userId && userId !== 'undefined' && userId !== 'null') {
+      localStorage.setItem(`userSettings_${userId}`, JSON.stringify(newSettings))
+      console.log(`🔄 Auto-saved setting: ${section}.${key} = ${value}`)
+      console.log('💾 Current settings in localStorage:', newSettings)
+    }
   }
 
   const exportData = () => {
@@ -182,35 +303,125 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
     toast.success('Settings exported successfully!')
   }
 
-  const resetSettings = () => {
-    if (confirm('Are you sure you want to reset all settings to default?')) {
-      localStorage.removeItem(`userSettings_${userId}`)
-      window.location.reload()
+  const updatePassword = async () => {
+    if (!passwordData.currentPassword || !passwordData.newPassword) {
+      toast.error('Please fill in all password fields')
+      return
+    }
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error('New passwords do not match')
+      return
+    }
+
+    if (passwordData.newPassword.length < 6) {
+      toast.error('New password must be at least 6 characters long')
+      return
+    }
+
+    try {
+      setPasswordLoading(true)
+      const response = await fetch('/api/user/password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        })
+      })
+
+      if (response.ok) {
+        toast.success('Password updated successfully!')
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      } else {
+        const error = await response.json()
+        toast.error(error.message || 'Failed to update password')
+      }
+    } catch (error) {
+      console.error('Error updating password:', error)
+      toast.error('Failed to update password')
+    } finally {
+      setPasswordLoading(false)
+    }
+  }
+
+  const resetSettings = async () => {
+    if (confirm('Are you sure you want to reset all settings to default? This action cannot be undone.')) {
+      try {
+        setLoading(true)
+
+        // Reset to default settings
+        const defaultSettings = {
+          notifications: {
+            email: true,
+            push: true,
+            sms: false,
+            orderUpdates: true,
+            promotions: false,
+            newsletter: true
+          },
+          privacy: {
+            profileVisibility: 'private' as const,
+            showEmail: false,
+            showPhone: false,
+            dataCollection: true
+          },
+          security: {
+            twoFactorEnabled: false,
+            loginAlerts: true,
+            sessionTimeout: 30
+          }
+        }
+
+        setSettings(defaultSettings)
+
+        // Save to API
+        const response = await fetch('/api/user/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(defaultSettings)
+        })
+
+        if (response.ok) {
+          localStorage.setItem(`userSettings_${userId}`, JSON.stringify(defaultSettings))
+          toast.success('Settings reset to default successfully!')
+        } else {
+          throw new Error('Failed to reset settings')
+        }
+      } catch (error) {
+        console.error('Error resetting settings:', error)
+        toast.error('Failed to reset settings')
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
   const sections = [
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy', icon: Shield },
-    { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'security', label: 'Security', icon: Lock }
   ]
 
   return (
-    <div className="px-4 lg:px-6 space-y-8">
+    <div className="px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
             <Settings className="h-8 w-8 text-blue-500" />
             Settings
           </h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-2">
             Manage your account preferences and privacy settings
           </p>
         </div>
-        
-        <div className="flex gap-2">
+
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={exportData}>
             <Download className="h-4 w-4 mr-2" />
             Export
@@ -230,7 +441,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
         {/* Settings Navigation */}
         <Card className="lg:col-span-1 border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
           <CardHeader>
@@ -279,8 +490,8 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   {/* Communication Channels */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Communication Channels</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg gap-3 sm:gap-0">
                         <div className="flex items-center gap-3">
                           <Mail className="h-5 w-5 text-blue-600" />
                           <div>
@@ -447,112 +658,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
             </motion.div>
           )}
 
-          {/* Appearance Settings */}
-          {activeSection === 'appearance' && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <Card className="border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Palette className="h-5 w-5 text-purple-600" />
-                    Appearance & Localization
-                  </CardTitle>
-                  <CardDescription>
-                    Customize how the application looks and behaves
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Theme Selection */}
-                  <div>
-                    <Label className="text-base font-semibold">Theme</Label>
-                    <p className="text-sm text-gray-600 mb-3">Choose your preferred color scheme</p>
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        { value: 'light', label: 'Light', icon: Sun },
-                        { value: 'dark', label: 'Dark', icon: Moon },
-                        { value: 'system', label: 'System', icon: Monitor }
-                      ].map((theme) => (
-                        <button
-                          key={theme.value}
-                          onClick={() => updateSetting('appearance', 'theme', theme.value)}
-                          className={`p-4 border-2 rounded-lg flex flex-col items-center gap-2 transition-all ${
-                            settings.appearance.theme === theme.value
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <theme.icon className="h-6 w-6" />
-                          <span className="font-medium">{theme.label}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
 
-                  <Separator />
-
-                  {/* Localization */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <Label htmlFor="language" className="text-base font-semibold">Language</Label>
-                      <p className="text-sm text-gray-600 mb-3">Select your preferred language</p>
-                      <Select
-                        value={settings.appearance.language}
-                        onValueChange={(value) => updateSetting('appearance', 'language', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="fr">Français</SelectItem>
-                          <SelectItem value="ar">العربية</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="currency" className="text-base font-semibold">Currency</Label>
-                      <p className="text-sm text-gray-600 mb-3">Choose your preferred currency</p>
-                      <Select
-                        value={settings.appearance.currency}
-                        onValueChange={(value) => updateSetting('appearance', 'currency', value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="TND">TND - Tunisian Dinar</SelectItem>
-                          <SelectItem value="EUR">EUR - Euro</SelectItem>
-                          <SelectItem value="USD">USD - US Dollar</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="timezone" className="text-base font-semibold">Timezone</Label>
-                    <p className="text-sm text-gray-600 mb-3">Set your local timezone</p>
-                    <Select
-                      value={settings.appearance.timezone}
-                      onValueChange={(value) => updateSetting('appearance', 'timezone', value)}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Africa/Tunis">Africa/Tunis (GMT+1)</SelectItem>
-                        <SelectItem value="Europe/Paris">Europe/Paris (GMT+1)</SelectItem>
-                        <SelectItem value="America/New_York">America/New_York (GMT-5)</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
 
           {/* Security Settings */}
           {activeSection === 'security' && (
@@ -575,7 +681,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   {/* Password Change */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-4">Change Password</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="currentPassword">Current Password</Label>
                         <div className="relative">
@@ -583,6 +689,8 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                             id="currentPassword"
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Enter current password"
+                            value={passwordData.currentPassword}
+                            onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
                           />
                           <button
                             type="button"
@@ -599,10 +707,31 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                           id="newPassword"
                           type="password"
                           placeholder="Enter new password"
+                          value={passwordData.newPassword}
+                          onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          placeholder="Confirm new password"
+                          value={passwordData.confirmPassword}
+                          onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
                         />
                       </div>
                     </div>
-                    <Button className="mt-4">Update Password</Button>
+                    <Button
+                      className="mt-4"
+                      onClick={updatePassword}
+                      disabled={passwordLoading}
+                    >
+                      {passwordLoading ? (
+                        <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      ) : null}
+                      Update Password
+                    </Button>
                   </div>
 
                   <Separator />
@@ -611,7 +740,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Security Options</h3>
                     
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                       <div>
                         <p className="font-medium">Two-Factor Authentication</p>
                         <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
@@ -627,7 +756,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                       </div>
                     </div>
                     
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                       <div>
                         <p className="font-medium">Login Alerts</p>
                         <p className="text-sm text-gray-600">Get notified when someone logs into your account</p>
@@ -674,7 +803,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                 <div>
                   <p className="font-medium text-red-900">Reset All Settings</p>
                   <p className="text-sm text-red-600">Reset all settings to their default values</p>
@@ -685,7 +814,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                 </Button>
               </div>
               
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                 <div>
                   <p className="font-medium text-red-900">Delete Account</p>
                   <p className="text-sm text-red-600">Permanently delete your account and all data</p>

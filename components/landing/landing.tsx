@@ -22,7 +22,9 @@ const Landing = () => {
             <FeaturedProductsSection />
             <InnovativeFeaturesSection />
             <ModernTestimonialsSection />
-            <InnovativeContactSection />
+            <div id="contact">
+                <InnovativeContactSection />
+            </div>
             <Footer />
         </>
     )

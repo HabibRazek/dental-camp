@@ -140,7 +140,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible="offcanvas" {...props} className="border-r border-gray-200/50 bg-gradient-to-b from-white to-gray-50/30">
-      <SidebarHeader className="bg-gradient-to-r from-white to-gray-50/50 border-b border-gray-100/50 p-6">
+      <SidebarHeader className="bg-gradient-to-r from-white to-gray-50/50 border-b border-gray-100/50 p-4 sm:p-6">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -152,8 +152,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Heart className="h-6 w-6 text-white" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xl font-black text-gray-900 tracking-tight">Dental Camp</span>
-                  <span className="text-xs text-gray-500 font-medium">E-commerce Platform</span>
+                  <span className="text-lg sm:text-xl font-black text-gray-900 tracking-tight">Dental Camp</span>
+                  <span className="text-xs text-gray-500 font-medium hidden sm:block">E-commerce Platform</span>
                 </div>
               </a>
             </SidebarMenuButton>

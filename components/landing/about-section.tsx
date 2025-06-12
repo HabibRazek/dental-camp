@@ -21,16 +21,16 @@ function AboutSection() {
     ];
 
     return (
-        <section className="py-20 bg-gradient-to-br from-white to-blue-50">
+        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-white to-blue-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
                     {/* Text Content */}
                     <motion.div
                         initial={{ opacity: 0, x: -30 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
-                        className="space-y-8"
+                        className="space-y-6 lg:space-y-8"
                     >
                         <div>
                             <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-200">
@@ -38,18 +38,18 @@ function AboutSection() {
                                 À propos de nous
                             </Badge>
                             
-                            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4 lg:mb-6 leading-tight">
                                 Votre partenaire de confiance en équipements médicaux
                             </h2>
                             
-                            <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                            <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-4 lg:mb-6">
                                 Depuis plus de 15 ans, nous nous engageons à fournir aux professionnels de santé 
                                 les équipements médicaux et dentaires de la plus haute qualité. Notre expertise 
                                 et notre service client exceptionnel font de nous le choix privilégié des 
                                 praticiens en Tunisie et dans la région.
                             </p>
                             
-                            <p className="text-gray-600 leading-relaxed">
+                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
                                 Nous proposons une gamme complète d'instruments, d'équipements de diagnostic, 
                                 de solutions de stérilisation et de consommables médicaux, tous certifiés 
                                 et conformes aux normes internationales les plus strictes.
@@ -57,7 +57,7 @@ function AboutSection() {
                         </div>
 
                         {/* Stats */}
-                        <div className="grid grid-cols-3 gap-6">
+                        <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
                             {stats.map((stat, index) => (
                                 <motion.div
                                     key={index}
@@ -70,10 +70,10 @@ function AboutSection() {
                                     <div className="flex justify-center mb-2 text-blue-600">
                                         {stat.icon}
                                     </div>
-                                    <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1">
+                                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
                                         {stat.number}
                                     </div>
-                                    <div className="text-sm text-gray-600">
+                                    <div className="text-xs sm:text-sm text-gray-600">
                                         {stat.label}
                                     </div>
                                 </motion.div>
@@ -109,10 +109,10 @@ function AboutSection() {
                         className="relative"
                     >
                         <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                            <div className="w-full h-[400px] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                            <div className="w-full h-[300px] sm:h-[400px] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
                                 <div className="text-center text-white">
-                                    <Stethoscope className="h-20 w-20 mx-auto mb-4 opacity-50" />
-                                    <p className="text-lg font-semibold">Équipements Médicaux de Qualité</p>
+                                    <Stethoscope className="h-16 sm:h-20 w-16 sm:w-20 mx-auto mb-4 opacity-50" />
+                                    <p className="text-base sm:text-lg font-semibold">Équipements Médicaux de Qualité</p>
                                 </div>
                             </div>
                             <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
@@ -124,7 +124,7 @@ function AboutSection() {
                             whileInView={{ opacity: 1, scale: 1 }}
                             transition={{ duration: 0.5, delay: 0.6 }}
                             viewport={{ once: true }}
-                            className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-xl p-6 border border-gray-100"
+                            className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-white rounded-xl shadow-xl p-4 sm:p-6 border border-gray-100"
                         >
                             <div className="flex items-center space-x-4">
                                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">

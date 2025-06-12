@@ -36,17 +36,17 @@ export default async function UserOrdersPage() {
           <SiteHeader />
           <div className="flex flex-1 flex-col bg-gradient-to-br from-blue-50/30 via-white to-blue-100/20 min-h-screen">
             <div className="@container/main flex flex-1 flex-col gap-2">
-              <div className="flex flex-col gap-8 py-8 md:py-10">
-                
+              <div className="flex flex-col gap-6 lg:gap-8 py-6 sm:py-8 lg:py-10">
+
                 {/* Header */}
-                <div className="px-4 lg:px-6">
+                <div className="px-4 sm:px-6 lg:px-8">
                   <div className="flex items-center gap-4 mb-6">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                        <ShoppingBag className="h-8 w-8 text-blue-500" />
+                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+                        <ShoppingBag className="h-6 sm:h-8 w-6 sm:w-8 text-blue-500" />
                         My Orders
                       </h1>
-                      <p className="text-gray-600 mt-2">
+                      <p className="text-sm sm:text-base text-gray-600 mt-2">
                         Track and manage all your orders in one place
                       </p>
                     </div>
@@ -54,20 +54,20 @@ export default async function UserOrdersPage() {
                 </div>
 
                 {/* Orders Content */}
-                <div className="px-4 lg:px-6">
-                  <div className="grid grid-cols-1 gap-6">
+                <div className="px-4 sm:px-6 lg:px-8">
+                  <div className="grid grid-cols-1 gap-4 lg:gap-6">
                     
                     {/* Order Statistics Cards */}
                     <UserOrdersStats userId={session.user.id} />
 
                     {/* Orders List */}
                     <Card className="border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
-                        <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                          <div className="w-2 h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
+                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50 p-4 sm:p-6">
+                        <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
+                          <div className="w-2 h-6 sm:h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
                           Recent Orders
                         </CardTitle>
-                        <CardDescription className="text-gray-600 font-medium">
+                        <CardDescription className="text-sm sm:text-base text-gray-600 font-medium">
                           Your order history and current status
                         </CardDescription>
                       </CardHeader>

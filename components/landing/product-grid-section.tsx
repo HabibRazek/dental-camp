@@ -247,7 +247,7 @@ function ProductGridSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.3 }}
                         viewport={{ once: true }}
-                        className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight"
+                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 lg:mb-8 leading-tight"
                     >
                         <span className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
                             Catégories de
@@ -264,7 +264,7 @@ function ProductGridSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.4 }}
                         viewport={{ once: true }}
-                        className="text-xl md:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
+                        className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
                     >
                         Découvrez notre large gamme d'équipements médicaux et dentaires
                         de haute qualité, adaptés à tous vos besoins professionnels.
@@ -276,11 +276,11 @@ function ProductGridSection() {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
                         viewport={{ once: true }}
-                        className="flex flex-wrap justify-center gap-8 mt-12"
+                        className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 mt-8 lg:mt-12"
                     >
                         <div className="text-center">
-                            <div className="text-3xl font-bold text-blue-600">{categories.length}+</div>
-                            <div className="text-sm text-gray-500">Catégories</div>
+                            <div className="text-2xl sm:text-3xl font-bold text-blue-600">{categories.length}+</div>
+                            <div className="text-xs sm:text-sm text-gray-500">Catégories</div>
                         </div>
                         <div className="text-center">
                             <div className="text-3xl font-bold text-indigo-600">
@@ -311,7 +311,7 @@ function ProductGridSection() {
                         <p className="text-gray-600 text-xl font-medium">Aucune catégorie disponible pour le moment.</p>
                     </motion.div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
                         {categories.map((category, index) => (
                             <motion.div
                                 key={category.id}
@@ -339,7 +339,7 @@ function ProductGridSection() {
                                     />
 
                                     {/* Enhanced Image Section */}
-                                    <div className="relative h-48 overflow-hidden">
+                                    <div className="relative h-40 sm:h-48 overflow-hidden">
                                         <Image
                                             src={getImage(category.image)}
                                             alt={category.name}
@@ -355,7 +355,7 @@ function ProductGridSection() {
 
                                         {/* Enhanced Icon */}
                                         <motion.div
-                                            className="absolute top-4 left-4 w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl backdrop-blur-md border border-white/30"
+                                            className="absolute top-3 left-3 sm:top-4 sm:left-4 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl backdrop-blur-md border border-white/30"
                                             style={{
                                                 background: `linear-gradient(135deg, ${category.color || '#3B82F6'}20, ${category.color || '#3B82F6'}40)`
                                             }}
@@ -400,10 +400,10 @@ function ProductGridSection() {
                                     </div>
 
                                     {/* Enhanced Content Section */}
-                                    <div className="p-6 relative z-10 flex flex-col h-[calc(100%-12rem)]">
+                                    <div className="p-4 sm:p-6 relative z-10 flex flex-col h-[calc(100%-10rem)] sm:h-[calc(100%-12rem)]">
                                         {/* Category Name */}
                                         <motion.h3
-                                            className="text-lg font-bold mb-3 line-clamp-2 leading-tight"
+                                            className="text-base sm:text-lg font-bold mb-2 sm:mb-3 line-clamp-2 leading-tight"
                                             style={{ color: category.color || '#1F2937' }}
                                             whileHover={{ scale: 1.02 }}
                                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -412,7 +412,7 @@ function ProductGridSection() {
                                         </motion.h3>
 
                                         {/* Description */}
-                                        <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
+                                        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed flex-grow">
                                             {category.description || "Découvrez nos produits de qualité professionnelle"}
                                         </p>
 

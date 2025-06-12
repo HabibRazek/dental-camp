@@ -176,13 +176,13 @@ export default function SettingsPage() {
       <div className="space-y-8">
         <Tabs defaultValue="store" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="store" className="flex items-center gap-2">
+            <TabsTrigger value="store" className="flex items-center gap-2 text-sm">
               <Store className="h-4 w-4" />
-              Store
+              <span className="hidden sm:inline">Store</span>
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <TabsTrigger value="notifications" className="flex items-center gap-2 text-sm">
               <Bell className="h-4 w-4" />
-              Notifications
+              <span className="hidden sm:inline">Notifications</span>
             </TabsTrigger>
           </TabsList>
 
@@ -203,8 +203,8 @@ export default function SettingsPage() {
                     Basic information about your dental equipment store
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <CardContent className="space-y-4 lg:space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="storeName">Store Name</Label>
                       <Input
@@ -234,7 +234,7 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="storePhone">Phone Number</Label>
                       <Input
@@ -271,7 +271,7 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
                     <div className="space-y-2">
                       <Label htmlFor="timezone">Timezone</Label>
                       <Select value={storeSettings.timezone} onValueChange={(value) => 
@@ -308,7 +308,7 @@ export default function SettingsPage() {
                   <Separator />
 
                   <div className="flex justify-end">
-                    <Button onClick={handleSaveStoreSettings} disabled={loading}>
+                    <Button onClick={handleSaveStoreSettings} disabled={loading} className="w-full sm:w-auto">
                       {loading ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -344,9 +344,9 @@ export default function SettingsPage() {
                     Configure how and when you receive notifications
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4 lg:space-y-6">
                   <div className="space-y-4">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-0.5">
                         <Label>Email Notifications</Label>
                         <p className="text-sm text-muted-foreground">
@@ -361,7 +361,7 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-0.5">
                         <Label>Order Notifications</Label>
                         <p className="text-sm text-muted-foreground">
@@ -376,7 +376,7 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-0.5">
                         <Label>Stock Alerts</Label>
                         <p className="text-sm text-muted-foreground">
@@ -391,7 +391,7 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-0.5">
                         <Label>Customer Messages</Label>
                         <p className="text-sm text-muted-foreground">
@@ -406,7 +406,7 @@ export default function SettingsPage() {
                       />
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-0.5">
                         <Label>Marketing Emails</Label>
                         <p className="text-sm text-muted-foreground">
@@ -425,7 +425,7 @@ export default function SettingsPage() {
                   <Separator />
 
                   <div className="flex justify-end">
-                    <Button onClick={handleSaveNotifications} disabled={loading}>
+                    <Button onClick={handleSaveNotifications} disabled={loading} className="w-full sm:w-auto">
                       {loading ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />

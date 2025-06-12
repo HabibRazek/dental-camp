@@ -268,14 +268,14 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
       </motion.div>
 
       {/* Enhanced KPI Cards */}
-      <motion.div 
+      <motion.div
         variants={itemVariants}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
       >
         {/* Total Orders Card */}
         <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white group hover:scale-105 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <CardContent className="p-6 relative z-10">
+          <CardContent className="p-4 sm:p-6 relative z-10">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                 <ShoppingBag className="h-6 w-6" />
@@ -287,7 +287,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <div className="space-y-2">
               <h3 className="text-sm font-medium opacity-90">Total Orders</h3>
               <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">
+                <span className="text-2xl sm:text-3xl font-bold">
                   {stats.totalOrders}
                 </span>
                 <span className="text-sm opacity-75">orders</span>
@@ -385,7 +385,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
       </motion.div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Spending Chart */}
         <motion.div variants={itemVariants}>
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
@@ -397,7 +397,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
               <CardDescription>Your spending pattern over the last 6 months</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-48 sm:h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={charts.monthlySpending}>
                     <defs>
@@ -489,7 +489,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
       </div>
 
       {/* Recent Orders & Wishlist */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* Recent Orders */}
         <motion.div variants={itemVariants}>
           <Card className="border-0 shadow-xl bg-gradient-to-br from-white to-gray-50/50 backdrop-blur-sm">
@@ -518,7 +518,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-center justify-between p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border border-gray-100 rounded-xl hover:bg-gray-50 transition-colors gap-3 sm:gap-0"
                   >
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
@@ -619,11 +619,11 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <Link href="/products">
-                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
-                  <Plus className="h-8 w-8 text-blue-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">Browse Products</span>
+                <Button variant="outline" className="h-20 sm:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
+                  <Plus className="h-6 sm:h-8 w-6 sm:w-8 text-blue-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium">Browse Products</span>
                 </Button>
               </Link>
 
@@ -663,7 +663,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <CardDescription>Track your shopping journey and achievements</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700">Order Completion Rate</span>

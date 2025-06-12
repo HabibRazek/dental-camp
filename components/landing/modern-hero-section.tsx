@@ -128,13 +128,13 @@ function ModernHeroSection() {
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center min-h-screen py-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-screen py-12 sm:py-16 lg:py-20">
                     {/* Content */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
-                        className="text-gray-800 space-y-8"
+                        className="text-gray-800 space-y-6 lg:space-y-8"
                     >
                         {/* Badge */}
                         <motion.div
@@ -155,7 +155,7 @@ function ModernHeroSection() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4, duration: 0.8 }}
                         >
-                            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
                                 {heroSlides[currentSlide].title}
                                 <span className="block bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
                                     {heroSlides[currentSlide].subtitle}
@@ -168,7 +168,7 @@ function ModernHeroSection() {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.6, duration: 0.8 }}
-                            className="text-xl text-gray-600 leading-relaxed max-w-2xl"
+                            className="text-lg sm:text-xl text-gray-600 leading-relaxed max-w-2xl"
                         >
                             {heroSlides[currentSlide].description}
                         </motion.p>
@@ -203,7 +203,7 @@ function ModernHeroSection() {
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 1, duration: 0.8 }}
-                            className="grid grid-cols-2 lg:grid-cols-4 gap-6 pt-8"
+                            className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 pt-6 lg:pt-8"
                         >
                             {stats.map((stat, index) => (
                                 <motion.div
@@ -211,15 +211,15 @@ function ModernHeroSection() {
                                     initial={{ opacity: 0, scale: 0.8 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 1.2 + index * 0.1, duration: 0.5 }}
-                                    className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-blue-200"
+                                    className="text-center bg-white/80 backdrop-blur-sm rounded-xl p-3 lg:p-4 border border-blue-200"
                                 >
                                     <div className="flex justify-center mb-2 text-blue-400">
                                         {stat.icon}
                                     </div>
-                                    <div className="text-2xl font-bold text-gray-800 mb-1">
+                                    <div className="text-xl lg:text-2xl font-bold text-gray-800 mb-1">
                                         {stat.number}
                                     </div>
-                                    <div className="text-sm text-gray-600">
+                                    <div className="text-xs lg:text-sm text-gray-600">
                                         {stat.label}
                                     </div>
                                 </motion.div>
@@ -237,10 +237,10 @@ function ModernHeroSection() {
                         <div className="relative">
                             {/* Main Image */}
                             <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-                                <div className="w-full h-[500px] bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                                <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
                                     <div className="text-center text-blue-600">
-                                        <TbDental className="h-24 w-24 mx-auto mb-4 opacity-70" />
-                                        <p className="text-lg font-semibold">Équipements Dentaires Modernes</p>
+                                        <TbDental className="h-16 sm:h-20 lg:h-24 w-16 sm:w-20 lg:w-24 mx-auto mb-4 opacity-70" />
+                                        <p className="text-sm sm:text-base lg:text-lg font-semibold">Équipements Dentaires Modernes</p>
                                     </div>
                                 </div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-blue-200/30 to-transparent"></div>
@@ -251,7 +251,7 @@ function ModernHeroSection() {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 1.2, duration: 0.6 }}
-                                className="absolute -top-6 -left-6 bg-white rounded-2xl p-4 shadow-xl"
+                                className="absolute -top-4 -left-4 lg:-top-6 lg:-left-6 bg-white rounded-2xl p-3 lg:p-4 shadow-xl"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">
@@ -268,7 +268,7 @@ function ModernHeroSection() {
                                 initial={{ opacity: 0, scale: 0.8 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: 1.4, duration: 0.6 }}
-                                className="absolute -bottom-6 -right-6 bg-white rounded-2xl p-4 shadow-xl"
+                                className="absolute -bottom-4 -right-4 lg:-bottom-6 lg:-right-6 bg-white rounded-2xl p-3 lg:p-4 shadow-xl"
                             >
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center">

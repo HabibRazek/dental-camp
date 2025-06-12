@@ -153,7 +153,7 @@ export default function ProductPage() {
       <Header />
 
       {/* Breadcrumb */}
-      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 pt-24">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 pt-20 sm:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <Link href="/catalog">
             <Button variant="ghost" className="hover:bg-blue-50 text-blue-600">
@@ -164,8 +164,8 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Product Images */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -174,7 +174,7 @@ export default function ProductPage() {
           >
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-square rounded-2xl overflow-hidden bg-white border border-gray-200">
+              <div className="relative aspect-square rounded-xl lg:rounded-2xl overflow-hidden bg-white border border-gray-200">
                 <Image
                   src={currentImage}
                   alt={product.name}
@@ -183,13 +183,13 @@ export default function ProductPage() {
                   priority
                 />
                 {product.isFeatured && (
-                  <Badge className="absolute top-4 left-4 bg-blue-600">
+                  <Badge className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-blue-600 text-xs sm:text-sm">
                     <Star className="h-3 w-3 mr-1 fill-white" />
                     Featured
                   </Badge>
                 )}
                 {discount > 0 && (
-                  <Badge className="absolute top-4 right-4 bg-red-500">
+                  <Badge className="absolute top-2 sm:top-4 right-2 sm:right-4 bg-red-500 text-xs sm:text-sm">
                     -{discount}%
                   </Badge>
                 )}
@@ -197,7 +197,7 @@ export default function ProductPage() {
 
               {/* Thumbnail Images */}
               {images.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto">
+                <div className="flex gap-2 overflow-x-auto pb-2">
                   {images.map((image, index) => (
                     <button
                       key={index}
@@ -226,7 +226,7 @@ export default function ProductPage() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-6"
+            className="space-y-4 lg:space-y-6"
           >
             {/* Category & Title */}
             <div>
@@ -237,7 +237,7 @@ export default function ProductPage() {
                   </Badge>
                 </Link>
               )}
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
                 {product.name}
               </h1>
               
@@ -261,12 +261,12 @@ export default function ProductPage() {
 
             {/* Price */}
             <div className="space-y-2">
-              <div className="flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-gray-900">
+              <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-3">
+                <span className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {formatCurrency(product.price)}
                 </span>
                 {product.comparePrice && (
-                  <span className="text-xl text-gray-500 line-through">
+                  <span className="text-lg sm:text-xl text-gray-500 line-through">
                     {formatCurrency(product.comparePrice)}
                   </span>
                 )}
@@ -303,7 +303,7 @@ export default function ProductPage() {
 
             {/* Quantity & Actions */}
             <div className="space-y-4">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <label className="text-sm font-medium text-gray-700">Quantity:</label>
                 <div className="flex items-center border border-gray-300 rounded-lg">
                   <button
@@ -326,7 +326,7 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   onClick={handleAddToCart}
                   disabled={!isInStock}
@@ -336,22 +336,24 @@ export default function ProductPage() {
                   <ShoppingCart className="mr-2 h-5 w-5" />
                   {isInStock ? "Ajouter au panier" : "Rupture de stock"}
                 </Button>
-                <Button
-                  onClick={handleAddToWishlist}
-                  variant="outline"
-                  size="lg"
-                  className="border-gray-300 hover:bg-gray-50"
-                >
-                  <Heart className="h-5 w-5" />
-                </Button>
-                <Button
-                  onClick={handleShare}
-                  variant="outline"
-                  size="lg"
-                  className="border-gray-300 hover:bg-gray-50"
-                >
-                  <Share2 className="h-5 w-5" />
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleAddToWishlist}
+                    variant="outline"
+                    size="lg"
+                    className="border-gray-300 hover:bg-gray-50 flex-1 sm:flex-none"
+                  >
+                    <Heart className="h-5 w-5" />
+                  </Button>
+                  <Button
+                    onClick={handleShare}
+                    variant="outline"
+                    size="lg"
+                    className="border-gray-300 hover:bg-gray-50 flex-1 sm:flex-none"
+                  >
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </div>
               </div>
             </div>
 
