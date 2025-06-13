@@ -42,27 +42,27 @@ const data = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "Tableau de bord",
       url: "/dashboard",
       icon: Home,
     },
     {
-      title: "Customers",
+      title: "Clients",
       url: "/customers",
       icon: Users,
     },
     {
-      title: "Orders",
+      title: "Commandes",
       url: "/orders",
       icon: ShoppingCart,
     },
     {
-      title: "Products",
+      title: "Produits",
       url: "/admin/products",
       icon: Package,
     },
     {
-      title: "Categories",
+      title: "Catégories",
       url: "/admin/categories",
       icon: Tag,
     },
@@ -72,27 +72,27 @@ const data = {
       icon: MessageSquare,
     },
     {
-      title: "Analytics",
+      title: "Analyses",
       url: "/analytics",
       icon: BarChart3,
     },
   ],
   navClouds: [
     {
-      title: "Inventory Management",
+      title: "Gestion des stocks",
       icon: Boxes,
       url: "/inventory",
       items: [
         {
-          title: "Stock Levels",
+          title: "Niveaux de stock",
           url: "/inventory/stock",
         },
         {
-          title: "Suppliers",
+          title: "Fournisseurs",
           url: "/inventory/suppliers",
         },
         {
-          title: "Procurement",
+          title: "Approvisionnement",
           url: "/inventory/procurement",
         },
       ],
@@ -100,29 +100,29 @@ const data = {
   ],
   navSecondary: [
     {
-      title: "Settings",
+      title: "Paramètres",
       url: "/settings",
       icon: Settings,
     },
     {
-      title: "Security",
+      title: "Sécurité",
       url: "/security",
       icon: Shield,
     },
   ],
   documents: [
     {
-      name: "Order Reports",
+      name: "Rapports de commandes",
       url: "/reports/orders",
       icon: ClipboardList,
     },
     {
-      name: "Product Catalogs",
+      name: "Catalogues de produits",
       url: "/reports/products",
       icon: Package,
     },
     {
-      name: "Sales Analytics",
+      name: "Analyses des ventes",
       url: "/reports/sales",
       icon: BarChart3,
     },

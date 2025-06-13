@@ -649,12 +649,12 @@ export default function EditProductPage() {
             <div className="flex space-x-4">
               <Link href="/admin/products">
                 <Button variant="outline" type="button">
-                  Cancel
+                  Annuler
                 </Button>
               </Link>
               <Link href={`/admin/products/${productId}`}>
                 <Button variant="ghost" type="button">
-                  View Product
+                  Voir le produit
                 </Button>
               </Link>
             </div>
@@ -668,12 +668,12 @@ export default function EditProductPage() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updating...
+                    Mise à jour...
                   </>
                 ) : (
                   <>
                     <Save className="mr-2 h-4 w-4" />
-                    Update Product
+                    Mettre à jour le produit
                   </>
                 )}
               </Button>

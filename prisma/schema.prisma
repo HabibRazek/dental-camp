@@ -272,6 +272,7 @@ model Order {
   // Payment information
   paymentMethod String
   paymentStatus PaymentStatus @default(PENDING)
+  paymentProofImage String? // URL to uploaded payment proof image for bank transfers
 
   // Delivery information
   deliveryNotes String?

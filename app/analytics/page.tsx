@@ -31,8 +31,8 @@ interface AnalyticsData {
   productsGrowth: number
   monthlyRevenue: Array<{ month: string; revenue: number; orders: number }>
   topProducts: Array<{ name: string; sales: number; revenue: number }>
-  customerSegments: Array<{ name: string; value: number; color: string }>
-  orderStatus: Array<{ status: string; count: number; color: string }>
+  customerSegments: Array<{ name: string; value: number; color: string; count: number }>
+  orderStatus: Array<{ status: string; count: number; color: string; originalStatus: string }>
 }
 
 export default function AnalyticsPage() {
@@ -337,28 +337,68 @@ export default function AnalyticsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  Customer Segments
+                  Segments de clients
                 </CardTitle>
-                <CardDescription>Customer distribution by type</CardDescription>
+                <CardDescription>Répartition des clients par type d'activité</CardDescription>
               </CardHeader>
               <CardContent>
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={data.customerSegments}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}%`}
-                    >
-                      {data.customerSegments.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+                <div className="space-y-6">
+                  {/* Pie Chart without labels */}
+                  <div className="flex justify-center">
+                    <ResponsiveContainer width="100%" height={200}>
+                      <PieChart>
+                        <Pie
+                          data={data.customerSegments}
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={70}
+                          innerRadius={30}
+                          dataKey="value"
+                          label={false}
+                        >
+                          {data.customerSegments.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value, name, props) => [
+                            `${props.payload.count} clients (${value}%)`,
+                            props.payload.name
+                          ]}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* Legend with detailed info */}
+                  <div className="space-y-3">
+                    {data.customerSegments.length > 0 ? (
+                      data.customerSegments.map((segment, index) => (
+                        <div key={segment.name} className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div
+                              className="w-4 h-4 rounded-full"
+                              style={{ backgroundColor: segment.color }}
+                            />
+                            <span className="font-medium text-sm">{segment.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-gray-600">{segment.count} clients</span>
+                            <Badge variant="secondary" className="text-xs">
+                              {segment.value}%
+                            </Badge>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">
+                        <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                        <p>Aucun segment de clients</p>
+                        <p className="text-sm">Les segments apparaîtront ici une fois que vous aurez des clients</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
@@ -373,29 +413,37 @@ export default function AnalyticsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <ShoppingCart className="h-5 w-5" />
-                  Order Status
+                  Statut des commandes
                 </CardTitle>
-                <CardDescription>Current order status distribution</CardDescription>
+                <CardDescription>Répartition actuelle des statuts de commandes</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {data.orderStatus.map((status, index) => (
-                    <div key={status.status} className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-4 h-4 rounded-full"
-                          style={{ backgroundColor: status.color }}
-                        />
-                        <span className="font-medium">{status.status}</span>
+                  {data.orderStatus.length > 0 ? (
+                    data.orderStatus.map((status, index) => (
+                      <div key={status.originalStatus || status.status} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-4 h-4 rounded-full"
+                            style={{ backgroundColor: status.color }}
+                          />
+                          <span className="font-medium">{status.status}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-600">{status.count} commandes</span>
+                          <Badge variant="secondary">
+                            {data.totalOrders > 0 ? ((status.count / data.totalOrders) * 100).toFixed(1) : 0}%
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">{status.count}</span>
-                        <Badge variant="secondary">
-                          {((status.count / data.totalOrders) * 100).toFixed(1)}%
-                        </Badge>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-gray-500">
+                      <ShoppingCart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                      <p>Aucune commande trouvée</p>
+                      <p className="text-sm">Les statuts apparaîtront ici une fois que vous aurez des commandes</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </CardContent>
             </Card>

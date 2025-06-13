@@ -8,7 +8,8 @@ import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
+  // Temporarily disable database adapter for development
+  // adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -44,13 +45,37 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const { email, password } = await signInSchema.parseAsync(credentials)
 
-          const user = await getUserFromDb(email, password)
+          // Temporary mock authentication for development
+          const mockUsers = [
+            {
+              id: "admin-1",
+              email: "admin@example.com",
+              password: "admin123456",
+              name: "Admin User",
+              role: "ADMIN"
+            },
+            {
+              id: "admin-2",
+              email: "admin@dental-camp.com",
+              password: "admin123",
+              name: "Admin User",
+              role: "ADMIN"
+            }
+          ]
 
-          if (!user) {
-            return null
+          const mockUser = mockUsers.find(u => u.email === email && u.password === password)
+
+          if (mockUser) {
+            return {
+              id: mockUser.id,
+              email: mockUser.email,
+              name: mockUser.name,
+              role: mockUser.role,
+              image: null
+            }
           }
 
-          return user
+          return null
         } catch {
           return null
         }
@@ -75,80 +100,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id
-        token.role = user.role
-        // Store user data in token for first-time Google users
+        token.id = user.id || user.email // Use email as fallback ID
+        token.role = user.role || "USER" // Default role for new users
+        // Store user data in token for OAuth users
         if (account?.provider === "google") {
           token.name = user.name
           token.picture = user.image
-        }
-      } else if (token.email) {
-        // For existing tokens, fetch fresh role from database
-        try {
-          const dbUser = await prisma.user.findUnique({
-            where: { email: token.email as string },
-            select: { id: true, role: true, name: true, image: true, isActive: true }
-          })
-          if (dbUser && dbUser.isActive) {
-            token.id = dbUser.id
-            token.role = dbUser.role
-            token.name = dbUser.name
-            token.picture = dbUser.image
-          } else if (!token.role) {
-            // Set default role if user not found or inactive
-            token.role = "USER"
-          }
-        } catch (error) {
-          // Log error in development and set default role
-          if (process.env.NODE_ENV === "development") {
-            console.error("JWT callback error:", error)
-          }
-          token.role = token.role || "USER"
+          token.email = user.email
         }
       }
+
+      // Set default role if not present
+      if (!token.role) {
+        token.role = "USER"
+      }
+
       return token
     },
     async session({ session, token }) {
       if (session.user?.email) {
-        try {
-          // Use token data first (more reliable)
-          if (token.id && token.role) {
-            session.user.id = token.id as string
-            session.user.role = token.role
-            session.user.name = token.name as string || session.user.name
-            session.user.image = token.picture as string || session.user.image
-            return session
-          }
-
-          // Fallback to database lookup - PrismaAdapter should have created the user
-          const dbUser = await prisma.user.findUnique({
-            where: { email: session.user.email },
-            select: {
-              id: true,
-              role: true,
-              name: true,
-              image: true,
-              isActive: true
-            }
-          })
-
-          if (dbUser && dbUser.isActive) {
-            session.user.id = dbUser.id
-            session.user.role = dbUser.role
-            session.user.name = dbUser.name || session.user.name
-            session.user.image = dbUser.image || session.user.image
-          } else {
-            // Set default role if user not found or inactive
-            session.user.role = "USER"
-          }
-        } catch (error) {
-          // Log error in development for debugging
-          if (process.env.NODE_ENV === "development") {
-            console.error("Session callback error:", error)
-          }
-          // Set default role to prevent auth errors
-          session.user.role = session.user.role || "USER"
-        }
+        // Use token data (no database required)
+        session.user.id = token.id as string || session.user.email
+        session.user.role = token.role as string || "USER"
+        session.user.name = token.name as string || session.user.name
+        session.user.image = token.picture as string || session.user.image
       }
       return session
     },

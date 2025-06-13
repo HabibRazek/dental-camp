@@ -1,6 +1,6 @@
 "use client"
 
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react'
+import React, { createContext, useContext, useReducer, useEffect, useState, useRef } from 'react'
 import { toast } from 'sonner'
 
 export interface CartItem {
@@ -21,7 +21,7 @@ interface CartState {
 }
 
 type CartAction =
-  | { type: 'ADD_ITEM'; payload: Omit<CartItem, 'quantity'> }
+  | { type: 'ADD_ITEM'; payload: Omit<CartItem, 'quantity'>; quantity?: number }
   | { type: 'REMOVE_ITEM'; payload: string }
   | { type: 'UPDATE_QUANTITY'; payload: { id: string; quantity: number } }
   | { type: 'CLEAR_CART' }
@@ -37,21 +37,24 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case 'ADD_ITEM': {
       console.log("🛒 CartReducer: Processing ADD_ITEM")
+      const quantityToAdd = action.quantity || 1
       const existingItem = state.items.find(item => item.id === action.payload.id)
       console.log("🛒 CartReducer: Existing item found?", existingItem)
-      
+      console.log("🛒 CartReducer: Quantity to add:", quantityToAdd)
+
       if (existingItem) {
-        if (existingItem.quantity >= existingItem.stockQuantity) {
+        const newQuantity = existingItem.quantity + quantityToAdd
+        if (newQuantity > existingItem.stockQuantity) {
           toast.error('Stock insuffisant')
           return state
         }
-        
+
         const updatedItems = state.items.map(item =>
           item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: newQuantity }
             : item
         )
-        
+
         return {
           ...state,
           items: updatedItems,
@@ -60,7 +63,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         }
       } else {
         console.log("🛒 CartReducer: Creating new item")
-        const newItem = { ...action.payload, quantity: 1 }
+        const newItem = { ...action.payload, quantity: quantityToAdd }
         console.log("🛒 CartReducer: New item created:", newItem)
         const updatedItems = [...state.items, newItem]
         console.log("🛒 CartReducer: Updated items array:", updatedItems)
@@ -154,7 +157,7 @@ const calculateItemCount = (items: CartItem[]): number => {
 
 interface CartContextType {
   state: CartState
-  addItem: (item: Omit<CartItem, 'quantity'>) => void
+  addItem: (item: Omit<CartItem, 'quantity'>, quantity?: number) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
@@ -199,26 +202,43 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.setItem('dental-camp-cart', JSON.stringify(state.items))
   }, [state.items])
 
-  const addItem = (item: Omit<CartItem, 'quantity'>) => {
-    console.log("🛒 CartContext: addItem called with:", item)
+  // Toast deduplication mechanism
+  const lastToastRef = React.useRef<{ itemId: string; timestamp: number } | null>(null)
+
+  const addItem = (item: Omit<CartItem, 'quantity'>, quantity: number = 1) => {
+    console.log("🛒 CartContext: addItem called with:", item, "quantity:", quantity)
     console.log("🛒 CartContext: Current state before dispatch:", state)
+
+    // Prevent duplicate calls within 500ms for the same item
+    const now = Date.now()
+    if (lastToastRef.current &&
+        lastToastRef.current.itemId === item.id &&
+        now - lastToastRef.current.timestamp < 500) {
+      console.log("🛒 CartContext: Duplicate call detected, ignoring...")
+      return
+    }
 
     // Check if item already exists to show appropriate message
     const existingItem = state.items.find(cartItem => cartItem.id === item.id)
     const isNewItem = !existingItem
 
-    dispatch({ type: 'ADD_ITEM', payload: item })
+    dispatch({ type: 'ADD_ITEM', payload: item, quantity })
     console.log("🛒 CartContext: Dispatch called, waiting for state update...")
+
+    // Update last toast reference
+    lastToastRef.current = { itemId: item.id, timestamp: now }
 
     // Show single, informative toast
     if (isNewItem) {
-      toast.success(`✅ ${item.name} ajouté au panier`, {
+      const quantityText = quantity > 1 ? ` (${quantity})` : ''
+      toast.success(`✅ ${item.name}${quantityText} ajouté au panier`, {
         description: "Produit ajouté avec succès",
         duration: 3000,
       })
     } else {
+      const newQuantity = existingItem.quantity + quantity
       toast.success(`🔄 Quantité mise à jour`, {
-        description: `${item.name} (${existingItem.quantity + 1})`,
+        description: `${item.name} (${newQuantity})`,
         duration: 3000,
       })
     }

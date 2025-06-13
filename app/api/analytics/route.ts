@@ -134,12 +134,25 @@ export async function GET(request: Request) {
       return acc
     }, {})
 
-    const orderStatus = [
-      { status: 'Completed', count: statusCounts.COMPLETED || 0, color: '#10b981' },
-      { status: 'Pending', count: statusCounts.PENDING || 0, color: '#f59e0b' },
-      { status: 'Processing', count: statusCounts.PROCESSING || 0, color: '#3b82f6' },
-      { status: 'Cancelled', count: statusCounts.CANCELLED || 0, color: '#ef4444' },
-    ]
+    // Create order status with French labels and only show statuses that have orders
+    const orderStatusMap = {
+      'COMPLETED': { label: 'Terminées', color: '#10b981' },
+      'PENDING': { label: 'En attente', color: '#f59e0b' },
+      'PROCESSING': { label: 'En cours', color: '#3b82f6' },
+      'CANCELLED': { label: 'Annulées', color: '#ef4444' },
+      'SHIPPED': { label: 'Expédiées', color: '#8b5cf6' },
+      'DELIVERED': { label: 'Livrées', color: '#059669' }
+    }
+
+    const orderStatus = Object.entries(statusCounts)
+      .filter(([status, count]) => count > 0) // Only show statuses with orders
+      .map(([status, count]) => ({
+        status: orderStatusMap[status as keyof typeof orderStatusMap]?.label || status,
+        count: count as number,
+        color: orderStatusMap[status as keyof typeof orderStatusMap]?.color || '#6b7280',
+        originalStatus: status
+      }))
+      .sort((a, b) => b.count - a.count) // Sort by count descending
 
     // Calculate top products (based on order items)
     const productSales: { [key: string]: { name: string, sales: number, revenue: number } } = {}
@@ -180,12 +193,90 @@ export async function GET(request: Request) {
       .sort((a, b) => b.revenue - a.revenue)
       .slice(0, 5)
 
-    // Calculate customer segments (mock data for now)
-    const customerSegments = [
-      { name: 'New Customers', value: 35, color: '#3b82f6' },
-      { name: 'Returning Customers', value: 45, color: '#10b981' },
-      { name: 'VIP Customers', value: 20, color: '#f59e0b' },
+    // Calculate REAL customer segments based on order history
+    const customerOrderCounts: { [key: string]: number } = {}
+    const customerRevenue: { [key: string]: number } = {}
+
+    console.log(`👥 Analyzing ${customers.length} customers and ${orders.length} orders for segments`)
+
+    // Count orders and revenue per customer
+    orders.forEach(order => {
+      const customerId = order.customerId || order.userId
+      if (customerId) {
+        customerOrderCounts[customerId] = (customerOrderCounts[customerId] || 0) + 1
+        customerRevenue[customerId] = (customerRevenue[customerId] || 0) + (Number(order.total) || 0)
+      }
+    })
+
+    console.log(`📊 Customer order counts:`, customerOrderCounts)
+    console.log(`💰 Customer revenue:`, customerRevenue)
+
+    // Categorize customers
+    let newCustomers = 0
+    let returningCustomers = 0
+    let vipCustomers = 0
+    let inactiveCustomers = 0
+
+    customers.forEach(customer => {
+      const orderCount = customerOrderCounts[customer.id] || 0
+      const revenue = customerRevenue[customer.id] || 0
+
+      console.log(`👤 Customer ${customer.email}: ${orderCount} orders, ${revenue} TND revenue`)
+
+      if (orderCount === 0) {
+        inactiveCustomers++
+        console.log(`  → Classified as: INACTIVE`)
+      } else if (orderCount === 1) {
+        newCustomers++
+        console.log(`  → Classified as: NEW`)
+      } else if (orderCount >= 2 && orderCount <= 5) {
+        returningCustomers++
+        console.log(`  → Classified as: RETURNING`)
+      } else if (orderCount > 5 || revenue > 1000) {
+        vipCustomers++
+        console.log(`  → Classified as: VIP`)
+      }
+    })
+
+    console.log(`📈 Customer segments calculated:`)
+    console.log(`  - New customers: ${newCustomers}`)
+    console.log(`  - Returning customers: ${returningCustomers}`)
+    console.log(`  - VIP customers: ${vipCustomers}`)
+    console.log(`  - Inactive customers: ${inactiveCustomers}`)
+    console.log(`  - Total customers: ${customers.length}`)
+
+    // Calculate percentages based on total customers (not just active)
+    const totalCustomersCount = customers.length
+    const customerSegments = totalCustomersCount > 0 ? [
+      {
+        name: 'Nouveaux clients',
+        value: Math.round((newCustomers / totalCustomersCount) * 100),
+        color: '#3b82f6',
+        count: newCustomers
+      },
+      {
+        name: 'Clients fidèles',
+        value: Math.round((returningCustomers / totalCustomersCount) * 100),
+        color: '#10b981',
+        count: returningCustomers
+      },
+      {
+        name: 'Clients VIP',
+        value: Math.round((vipCustomers / totalCustomersCount) * 100),
+        color: '#f59e0b',
+        count: vipCustomers
+      },
+      {
+        name: 'Clients inactifs',
+        value: Math.round((inactiveCustomers / totalCustomersCount) * 100),
+        color: '#6b7280',
+        count: inactiveCustomers
+      }
+    ].filter(segment => segment.count > 0) : [
+      { name: 'Aucun client', value: 100, color: '#6b7280', count: 0 }
     ]
+
+    console.log(`✅ Final customer segments:`, customerSegments)
 
     // Calculate growth rates (mock for now - would need historical data)
     const revenueGrowth = Math.random() * 20 - 5

@@ -82,15 +82,7 @@ export function ProductCard({
     toast.info("Quick view coming soon!");
   };
 
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!isInStock) {
-      toast.error("Produit en rupture de stock");
-      return;
-    }
-    toast.success(`${product.name} ajouté au panier`);
-  };
+  // Removed unused handleAddToCart function - AddToCartButton handles this
 
   if (variant === "compact") {
     return (

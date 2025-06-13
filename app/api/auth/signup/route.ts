@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(
       {
-        message: "User created successfully. Please check your email for verification code.",
+        message: "Utilisateur créé avec succès. Veuillez vérifier votre email pour le code de vérification.",
         user: {
           id: user.id,
           name: user.name,
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof ZodError) {
       return NextResponse.json(
-        { error: "Invalid input data", details: error.errors },
+        { error: "Données d'entrée invalides", details: error.errors },
         { status: 400 }
       )
     }
@@ -58,14 +58,14 @@ export async function POST(request: NextRequest) {
       // Handle specific database errors
       if (error.message.includes("Unique constraint")) {
         return NextResponse.json(
-          { error: "User with this email already exists" },
+          { error: "Un utilisateur avec cet email existe déjà" },
           { status: 400 }
         )
       }
     }
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Erreur interne du serveur" },
       { status: 500 }
     )
   }

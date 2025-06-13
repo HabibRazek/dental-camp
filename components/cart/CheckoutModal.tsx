@@ -37,6 +37,7 @@ import {
 import { toast } from 'sonner'
 import { useSession } from 'next-auth/react'
 import { formatCurrency } from '@/lib/utils'
+import { PaymentProofUpload } from './PaymentProofUpload'
 
 interface CheckoutModalProps {
   isOpen: boolean
@@ -59,13 +60,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     city: '',
     postalCode: '',
     country: 'Tunisie',
-    
+
     // Delivery - handled via direct contact
     deliveryNotes: '',
-    
+
     // Payment
     paymentMethod: 'cash',
-    
+    paymentProofImage: null as string | null,
+
     // Notes
     notes: ''
   })
@@ -120,6 +122,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         return
       }
 
+      // Validate payment proof for bank transfer
+      if (formData.paymentMethod === 'transfer' && !formData.paymentProofImage) {
+        console.warn('⚠️ No payment proof image provided for bank transfer')
+        toast.error('Veuillez télécharger un justificatif de paiement pour le virement bancaire')
+        return
+      }
+
       const orderData = {
         items: state.items,
         customer: {
@@ -138,7 +147,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           notes: formData.deliveryNotes
         },
         payment: {
-          method: formData.paymentMethod
+          method: formData.paymentMethod,
+          proofImage: formData.paymentProofImage
         },
         totals: {
           subtotal,
@@ -148,6 +158,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       }
 
       console.log("🛒 Submitting order data:", orderData)
+      console.log("💳 Payment method:", formData.paymentMethod)
+      console.log("📸 Payment proof image:", formData.paymentProofImage)
 
       // First check if user is authenticated
       const sessionResponse = await fetch('/api/auth/session')
@@ -179,15 +191,18 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         toast.success('Commande passée avec succès!')
       } else {
         let errorData
+        let responseText = ''
         try {
+          responseText = await response.clone().text()
+          console.error("❌ Raw response text:", responseText)
           errorData = await response.json()
         } catch (parseError) {
           console.error("❌ Failed to parse error response:", parseError)
+          console.error("❌ Raw response was:", responseText)
           errorData = { error: `HTTP ${response.status}: ${response.statusText}` }
         }
         console.error("❌ Order creation failed:", errorData)
         console.error("❌ Response status:", response.status)
-        console.error("❌ Response text:", await response.clone().text())
         throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`)
       }
     } catch (error) {
@@ -384,6 +399,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     </div>
                   </CardContent>
                 </Card>
+              )}
+
+              {/* Payment Proof Upload for Bank Transfer */}
+              {formData.paymentMethod === 'transfer' && (
+                <div className="mt-6">
+                  <PaymentProofUpload
+                    currentImage={formData.paymentProofImage}
+                    onImageChange={(imageUrl) => handleInputChange('paymentProofImage', imageUrl || '')}
+                    disabled={loading}
+                  />
+                </div>
               )}
             </div>
 

@@ -38,6 +38,7 @@ export interface Order {
   payment: {
     method: string
     status: string
+    proofImage?: string | null
   }
   totals: {
     subtotal: number

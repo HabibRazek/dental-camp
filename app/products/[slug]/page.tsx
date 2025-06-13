@@ -100,16 +100,14 @@ export default function ProductPage() {
       stockQuantity: product.stockQuantity
     };
 
-    // Add the item multiple times based on quantity
-    for (let i = 0; i < quantity; i++) {
-      addItem(cartItem);
-    }
+    // Add the item with the specified quantity in a single call
+    addItem(cartItem, quantity);
 
     // Don't show toast here - CartContext will handle it
   };
 
   const handleAddToWishlist = () => {
-    toast.success("Added to wishlist");
+    toast.success("Ajouté à la liste de souhaits");
   };
 
   const handleShare = () => {
@@ -121,7 +119,7 @@ export default function ProductPage() {
       });
     } else {
       navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard");
+      toast.success("Lien copié dans le presse-papiers");
     }
   };
 
@@ -133,9 +131,9 @@ export default function ProductPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Product Not Found</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Produit non trouvé</h1>
           <Link href="/catalog">
-            <Button>Browse Products</Button>
+            <Button>Parcourir les produits</Button>
           </Link>
         </div>
       </div>
@@ -273,7 +271,7 @@ export default function ProductPage() {
               </div>
               {discount > 0 && (
                 <p className="text-green-600 font-medium">
-                  You save {formatCurrency(product.comparePrice! - product.price)} ({discount}% off)
+                  Vous économisez {formatCurrency(product.comparePrice! - product.price)} ({discount}% de réduction)
                 </p>
               )}
             </div>
@@ -361,18 +359,18 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
               <Card className="text-center p-4">
                 <Truck className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">Free Shipping</p>
-                <p className="text-xs text-gray-600">On orders over $500</p>
+                <p className="text-sm font-medium text-gray-900">Livraison gratuite</p>
+                <p className="text-xs text-gray-600">Pour les commandes de plus de 500€</p>
               </Card>
               <Card className="text-center p-4">
                 <Shield className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">Warranty</p>
-                <p className="text-xs text-gray-600">2 year coverage</p>
+                <p className="text-sm font-medium text-gray-900">Garantie</p>
+                <p className="text-xs text-gray-600">Couverture de 2 ans</p>
               </Card>
               <Card className="text-center p-4">
                 <Zap className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <p className="text-sm font-medium text-gray-900">Fast Delivery</p>
-                <p className="text-xs text-gray-600">2-3 business days</p>
+                <p className="text-sm font-medium text-gray-900">Livraison rapide</p>
+                <p className="text-xs text-gray-600">2-3 jours ouvrables</p>
               </Card>
             </div>
           </motion.div>

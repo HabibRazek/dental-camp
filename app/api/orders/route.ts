@@ -94,7 +94,8 @@ export async function GET(request: NextRequest) {
       },
       payment: {
         method: order.paymentMethod,
-        status: order.paymentStatus
+        status: order.paymentStatus,
+        proofImage: order.paymentProofImage
       },
       totals: {
         subtotal: Number(order.subtotal),
@@ -152,6 +153,7 @@ export async function POST(request: NextRequest) {
     console.log("✅ User authenticated:", session.user?.email)
 
     const body = await request.json()
+    console.log("📥 Received order data:", JSON.stringify(body, null, 2))
 
     // Validate required fields
     const { items, customer, shipping, delivery, payment, totals, notes } = body
@@ -167,6 +169,15 @@ export async function POST(request: NextRequest) {
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { error: "Aucun article dans la commande" },
+        { status: 400 }
+      )
+    }
+
+    // Validate payment proof for bank transfer
+    if (payment.method === 'transfer' && !payment.proofImage) {
+      console.warn("⚠️ No payment proof provided for bank transfer")
+      return NextResponse.json(
+        { error: "Justificatif de paiement requis pour le virement bancaire" },
         { status: 400 }
       )
     }
@@ -208,6 +219,7 @@ export async function POST(request: NextRequest) {
         shippingCountry: shipping.country || 'Tunisie',
         paymentMethod: payment.method,
         paymentStatus: 'PENDING',
+        paymentProofImage: payment.proofImage || null,
         deliveryNotes: delivery?.notes || null,
         subtotal: Number(totals.subtotal),
         total: Number(totals.total),
@@ -242,7 +254,8 @@ export async function POST(request: NextRequest) {
       },
       payment: {
         method: newOrder.paymentMethod,
-        status: newOrder.paymentStatus
+        status: newOrder.paymentStatus,
+        proofImage: newOrder.paymentProofImage
       },
       totals: {
         subtotal: Number(newOrder.subtotal),
@@ -266,8 +279,16 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error("❌ Error creating order:", error)
+    console.error("❌ Error details:", {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      name: error instanceof Error ? error.name : 'Unknown error type'
+    })
     return NextResponse.json(
-      { error: "Erreur lors de la création de la commande" },
+      {
+        error: "Erreur lors de la création de la commande",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      },
       { status: 500 }
     )
   }
@@ -338,7 +359,8 @@ export async function PUT(request: NextRequest) {
       },
       payment: {
         method: updatedOrder.paymentMethod,
-        status: updatedOrder.paymentStatus
+        status: updatedOrder.paymentStatus,
+        proofImage: updatedOrder.paymentProofImage
       },
       totals: {
         subtotal: Number(updatedOrder.subtotal),

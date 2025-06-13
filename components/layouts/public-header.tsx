@@ -38,9 +38,9 @@ export function PublicHeader() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const navigation = [
-    { name: "Home", href: "/" },
-    { name: "Products", href: "/catalog" },
-    { name: "About", href: "/about" },
+    { name: "Accueil", href: "/" },
+    { name: "Produits", href: "/catalog" },
+    { name: "À propos", href: "/about" },
     { name: "Contact", href: "/contact" },
   ];
 
@@ -85,9 +85,9 @@ export function PublicHeader() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="hidden sm:inline">Free shipping on orders over $500</span>
+              <span className="hidden sm:inline">Livraison gratuite pour les commandes de plus de 500€</span>
               <Link href="/auth/signin" className="hover:text-blue-200 transition-colors">
-                Sign In
+                Se connecter
               </Link>
             </div>
           </div>
@@ -249,7 +249,7 @@ export function PublicHeader() {
               {categories.length > 0 && (
                 <>
                   <div className="pt-2 border-t border-gray-200">
-                    <p className="px-3 py-2 text-sm font-medium text-gray-500">Categories</p>
+                    <p className="px-3 py-2 text-sm font-medium text-gray-500">Catégories</p>
                     {categories.map((category) => (
                       <Link
                         key={category.id}

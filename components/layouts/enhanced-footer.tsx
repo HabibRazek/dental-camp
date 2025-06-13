@@ -19,22 +19,22 @@ import { Input } from "@/components/ui/input";
 
 const footerLinks = {
   products: [
-    { name: "Dental Equipment", href: "/catalog?category=equipment" },
-    { name: "Diagnostic Tools", href: "/catalog?category=diagnostic" },
-    { name: "Sterilization", href: "/catalog?category=sterilization" },
+    { name: "Équipement dentaire", href: "/catalog?category=equipment" },
+    { name: "Outils de diagnostic", href: "/catalog?category=diagnostic" },
+    { name: "Stérilisation", href: "/catalog?category=sterilization" },
     { name: "Instruments", href: "/catalog?category=instruments" },
   ],
   company: [
-    { name: "About Us", href: "/about" },
+    { name: "À propos", href: "/about" },
     { name: "Contact", href: "/contact" },
-    { name: "Careers", href: "/careers" },
+    { name: "Carrières", href: "/careers" },
     { name: "Blog", href: "/blog" },
   ],
   support: [
-    { name: "Help Center", href: "/help" },
-    { name: "Shipping Info", href: "/shipping" },
-    { name: "Returns", href: "/returns" },
-    { name: "Warranty", href: "/warranty" },
+    { name: "Centre d'aide", href: "/help" },
+    { name: "Informations de livraison", href: "/shipping" },
+    { name: "Retours", href: "/returns" },
+    { name: "Garantie", href: "/warranty" },
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy" },

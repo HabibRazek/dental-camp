@@ -489,7 +489,7 @@ export default function SecurityPage() {
               <Alert>
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  Password must be at least 8 characters long and include uppercase, lowercase, numbers, and special characters.
+                  Le mot de passe doit contenir au moins 8 caractères et inclure des majuscules, minuscules, chiffres et caractères spéciaux.
                 </AlertDescription>
               </Alert>
 
@@ -498,12 +498,12 @@ export default function SecurityPage() {
                   {loading ? (
                     <>
                       <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Changing...
+                      Modification...
                     </>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Change Password
+                      Changer le mot de passe
                     </>
                   )}
                 </Button>

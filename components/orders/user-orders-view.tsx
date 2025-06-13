@@ -33,8 +33,10 @@ import {
   Phone,
   Mail,
   User,
-  FileText
+  FileText,
+  FileImage
 } from "lucide-react"
+import Image from "next/image"
 
 interface PaginationProps {
   currentPage: number
@@ -296,9 +298,31 @@ export function UserOrdersView({ data, onRefresh, pagination }: UserOrdersViewPr
                                   <CreditCard className="h-4 w-4" />
                                   Paiement
                                 </h4>
-                                <p className="text-sm">
+                                <p className="text-sm mb-3">
                                   {paymentMethodLabels[selectedOrder.payment.method as keyof typeof paymentMethodLabels] || selectedOrder.payment.method}
                                 </p>
+
+                                {/* Payment Proof Image for Bank Transfer */}
+                                {selectedOrder.payment.method === 'transfer' && selectedOrder.payment.proofImage && (
+                                  <div className="mt-3">
+                                    <p className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                                      <FileImage className="h-4 w-4" />
+                                      Justificatif de paiement
+                                    </p>
+                                    <div className="relative w-32 h-32 border rounded-lg overflow-hidden bg-gray-50">
+                                      <Image
+                                        src={selectedOrder.payment.proofImage}
+                                        alt="Justificatif de paiement"
+                                        fill
+                                        className="object-cover cursor-pointer hover:scale-105 transition-transform"
+                                        onClick={() => window.open(selectedOrder.payment.proofImage!, '_blank')}
+                                      />
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      Cliquez pour agrandir
+                                    </p>
+                                  </div>
+                                )}
                               </div>
 
                               <div>

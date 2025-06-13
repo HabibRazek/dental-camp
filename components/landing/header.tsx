@@ -24,11 +24,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
-    { name: "Home", href: "/" },
-    { name: "About", href: "/about" },
-    { name: "Our Products", href: "/catalog" },
+    { name: "Accueil", href: "/" },
+    { name: "À propos", href: "/about" },
+    { name: "Nos produits", href: "/catalog" },
     { name: "Contact", href: "/#contact", isScroll: true },
-    { name: "FAQs", href: "/faqs" }
+    { name: "FAQ", href: "/faqs" }
 ];
 
 function Header() {
@@ -289,7 +289,7 @@ function Header() {
                                                     onClick={() => setMenuOpen(false)}
                                                 >
                                                     <User className="h-4 w-4 mr-2" />
-                                                    Dashboard
+                                                    Tableau de bord
                                                 </Button>
                                             </Link>
                                             <Button

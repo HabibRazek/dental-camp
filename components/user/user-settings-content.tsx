@@ -424,10 +424,10 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
         <div className="flex flex-col sm:flex-row gap-2">
           <Button variant="outline" onClick={exportData}>
             <Download className="h-4 w-4 mr-2" />
-            Export
+            Exporter
           </Button>
-          <Button 
-            onClick={saveSettings} 
+          <Button
+            onClick={saveSettings}
             disabled={loading}
             className="bg-blue-600 hover:bg-blue-700"
           >
@@ -436,7 +436,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
             ) : (
               <Save className="h-4 w-4 mr-2" />
             )}
-            Save Changes
+            Enregistrer les modifications
           </Button>
         </div>
       </div>

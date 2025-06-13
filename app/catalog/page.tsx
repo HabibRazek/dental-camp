@@ -269,7 +269,7 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
             onClick={handleAddToCart}
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
-            {product.stockQuantity === 0 ? "Out of Stock" : "Ajouter au panier"}
+            {product.stockQuantity === 0 ? "Rupture de stock" : "Ajouter au panier"}
           </Button>
         </CardContent>
       </Card>
@@ -323,7 +323,7 @@ export default function CatalogPage() {
         setTotalPages(data.pagination.totalPages);
       }
     } catch {
-      toast.error("Failed to fetch products");
+      toast.error("Échec du chargement des produits");
     } finally {
       setLoading(false);
     }
@@ -406,10 +406,10 @@ export default function CatalogPage() {
               className="space-y-6"
             >
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-blue-600 bg-clip-text text-transparent">
-                Professional Dental Equipment
+                Équipements Dentaires Professionnels
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Discover our comprehensive collection of high-quality dental equipment and supplies
+                Découvrez notre collection complète d'équipements et fournitures dentaires de haute qualité
               </p>
             </motion.div>
 

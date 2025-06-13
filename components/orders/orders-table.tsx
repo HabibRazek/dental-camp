@@ -56,8 +56,10 @@ import {
   User,
   CreditCard,
   Calendar,
-  Plus
+  Plus,
+  FileImage
 } from "lucide-react"
+import Image from "next/image"
 import { Order } from "@/app/orders/page"
 import { Pagination, PageSizeSelector } from "@/components/ui/pagination"
 
@@ -440,13 +442,35 @@ export function OrdersTable({ data, onStatusChange, onRefresh, pagination, filte
                                       </CardTitle>
                                     </CardHeader>
                                     <CardContent>
-                                      <div className="space-y-2">
+                                      <div className="space-y-4">
                                         <div>
                                           <p className="text-sm text-gray-500 mb-1">Méthode de paiement</p>
                                           <p className="font-medium">
                                             {paymentMethodLabels[order.payment.method as keyof typeof paymentMethodLabels] || order.payment.method}
                                           </p>
                                         </div>
+
+                                        {/* Payment Proof Image for Bank Transfer */}
+                                        {order.payment.method === 'transfer' && order.payment.proofImage && (
+                                          <div>
+                                            <p className="text-sm text-gray-500 mb-2 flex items-center gap-2">
+                                              <FileImage className="h-4 w-4" />
+                                              Justificatif de paiement
+                                            </p>
+                                            <div className="relative w-32 h-32 border rounded-lg overflow-hidden bg-gray-50">
+                                              <Image
+                                                src={order.payment.proofImage}
+                                                alt="Justificatif de paiement"
+                                                fill
+                                                className="object-cover cursor-pointer hover:scale-105 transition-transform"
+                                                onClick={() => window.open(order.payment.proofImage!, '_blank')}
+                                              />
+                                            </div>
+                                            <p className="text-xs text-gray-500 mt-1">
+                                              Cliquez pour agrandir
+                                            </p>
+                                          </div>
+                                        )}
                                       </div>
                                     </CardContent>
                                   </Card>

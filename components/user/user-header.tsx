@@ -31,17 +31,17 @@ const getPageInfo = (pathname: string) => {
   const segments = pathname.split('/').filter(Boolean)
 
   const pageMap: Record<string, { title: string; parent?: string }> = {
-    'user': { title: 'User Portal' },
-    'dashboard': { title: 'Dashboard', parent: 'User Portal' },
-    'orders': { title: 'My Orders', parent: 'User Portal' },
-    'wishlist': { title: 'Wishlist', parent: 'User Portal' },
-    'statistics': { title: 'Statistics', parent: 'User Portal' },
-    'profile': { title: 'Profile Settings', parent: 'User Portal' },
-    'payment-methods': { title: 'Payment Methods', parent: 'User Portal' },
-    'addresses': { title: 'Addresses', parent: 'User Portal' },
-    'notifications': { title: 'Notifications', parent: 'User Portal' },
-    'settings': { title: 'Settings', parent: 'User Portal' },
-    'support': { title: 'Help & Support', parent: 'User Portal' },
+    'user': { title: 'Portail utilisateur' },
+    'dashboard': { title: 'Tableau de bord', parent: 'Portail utilisateur' },
+    'orders': { title: 'Mes commandes', parent: 'Portail utilisateur' },
+    'wishlist': { title: 'Liste de souhaits', parent: 'Portail utilisateur' },
+    'statistics': { title: 'Statistiques', parent: 'Portail utilisateur' },
+    'profile': { title: 'Paramètres du profil', parent: 'Portail utilisateur' },
+    'payment-methods': { title: 'Méthodes de paiement', parent: 'Portail utilisateur' },
+    'addresses': { title: 'Adresses', parent: 'Portail utilisateur' },
+    'notifications': { title: 'Notifications', parent: 'Portail utilisateur' },
+    'settings': { title: 'Paramètres', parent: 'Portail utilisateur' },
+    'support': { title: 'Aide et support', parent: 'Portail utilisateur' },
   }
 
   const currentPage = segments[segments.length - 1]

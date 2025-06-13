@@ -22,9 +22,9 @@ import { Badge } from "@/components/ui/badge";
 import { TbDental } from "react-icons/tb";
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Catalog", href: "/catalog" },
-  { name: "About", href: "/about" },
+  { name: "Accueil", href: "/" },
+  { name: "Catalogue", href: "/catalog" },
+  { name: "À propos", href: "/about" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -59,11 +59,11 @@ export function EnhancedHeader() {
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4" />
-              <span>Mon-Fri: 8AM-6PM</span>
+              <span>Lun-Ven: 8h-18h</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-              <span>New York, NY</span>
+              <span>Tunis, Tunisie</span>
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export function EnhancedHeader() {
               <Link href="/auth/signin">
                 <Button variant="ghost" size="sm" className="flex items-center gap-2">
                   <User className="h-4 w-4" />
-                  <span className="hidden sm:inline text-sm">My Account</span>
+                  <span className="hidden sm:inline text-sm">Mon compte</span>
                 </Button>
               </Link>
 

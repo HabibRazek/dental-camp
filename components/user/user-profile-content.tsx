@@ -290,7 +290,7 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                             </Label>
                             <Textarea
                               id="bio"
-                              placeholder="Tell us about yourself..."
+                              placeholder="Parlez-nous de vous..."
                               value={profileData.bio}
                               onChange={(e) => handleInputChange('bio', e.target.value)}
                               className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
@@ -307,12 +307,12 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                                 {saving ? (
                                   <>
                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Saving...
+                                    Enregistrement...
                                   </>
                                 ) : (
                                   <>
                                     <Save className="h-4 w-4 mr-2" />
-                                    Save Changes
+                                    Enregistrer les modifications
                                   </>
                                 )}
                               </Button>

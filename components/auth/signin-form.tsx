@@ -48,16 +48,16 @@ export function SignInForm() {
 
       if (result?.error) {
         if (result.error === "CredentialsSignin") {
-          setError("Invalid email or password")
+          setError("Email ou mot de passe invalide")
         } else {
-          setError("Unable to sign in. Please try again.")
+          setError("Impossible de se connecter. Veuillez réessayer.")
         }
       } else if (result?.ok) {
         // Redirect to success page for consistent role-based routing
         window.location.href = "/auth/success"
       }
     } catch {
-      setError("An error occurred. Please try again.")
+      setError("Une erreur s'est produite. Veuillez réessayer.")
     } finally {
       setIsLoading(false)
     }
@@ -119,12 +119,12 @@ export function SignInForm() {
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Email Address
+              Adresse email
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email address"
+              placeholder="Entrez votre adresse email"
               {...register("email")}
               className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                 errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -141,13 +141,13 @@ export function SignInForm() {
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Password
+              Mot de passe
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder="Entrez votre mot de passe"
                 {...register("password")}
                 className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                   errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -186,7 +186,7 @@ export function SignInForm() {
                 disabled={isLoading}
               >
                 {isLoading && <ButtonLoader />}
-                {isLoading ? "Signing in..." : "Sign In"}
+                {isLoading ? "Connexion..." : "Se connecter"}
               </Button>
 
               <div className="text-center">
@@ -215,7 +215,7 @@ export function SignInForm() {
                   className="h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 border-gray-200"
                 />
                 <p className="text-xs text-gray-500">
-                  Enter one of the backup codes you downloaded when setting up 2FA
+                  Entrez l'un des codes de sauvegarde que vous avez téléchargés lors de la configuration de l'authentification à deux facteurs
                 </p>
               </div>
 
@@ -226,7 +226,7 @@ export function SignInForm() {
                 disabled={isLoading || !backupCode.trim()}
               >
                 {isLoading && <ButtonLoader />}
-                {isLoading ? "Verifying..." : "Sign In with Backup Code"}
+                {isLoading ? "Vérification..." : "Se connecter avec le code de sauvegarde"}
               </Button>
 
               <div className="text-center">

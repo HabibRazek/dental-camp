@@ -54,10 +54,10 @@ export default function SettingsPage() {
   const [initialLoading, setInitialLoading] = useState(true)
   const [storeSettings, setStoreSettings] = useState<StoreSettings>({
     storeName: "Dental Camp",
-    storeDescription: "Professional dental equipment and supplies for dental professionals",
+    storeDescription: "Équipements et fournitures dentaires professionnels pour les professionnels dentaires",
     storeEmail: "contact@dentalcamp.com",
     storePhone: "+216 12 345 678",
-    storeAddress: "123 Dental Street, Tunis, Tunisia",
+    storeAddress: "123 Rue Dentaire, Tunis, Tunisie",
     currency: currency,
     timezone: "Africa/Tunis",
     language: language
@@ -243,22 +243,7 @@ export default function SettingsPage() {
                         onChange={(e) => setStoreSettings(prev => ({ ...prev, storePhone: e.target.value }))}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="currency">Currency</Label>
-                      <Select value={storeSettings.currency} onValueChange={(value) => {
-                        setStoreSettings(prev => ({ ...prev, currency: value }))
-                        setCurrency(value) // Update global context
-                      }}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="TND">TND - Tunisian Dinar</SelectItem>
-                          <SelectItem value="USD">USD - US Dollar</SelectItem>
-                          <SelectItem value="EUR">EUR - Euro</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+
                   </div>
 
                   <div className="space-y-2">
@@ -271,39 +256,7 @@ export default function SettingsPage() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="timezone">Timezone</Label>
-                      <Select value={storeSettings.timezone} onValueChange={(value) => 
-                        setStoreSettings(prev => ({ ...prev, timezone: value }))
-                      }>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Africa/Tunis">Africa/Tunis</SelectItem>
-                          <SelectItem value="Europe/Paris">Europe/Paris</SelectItem>
-                          <SelectItem value="America/New_York">America/New_York</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="language">Default Language</Label>
-                      <Select value={storeSettings.language} onValueChange={(value) => {
-                        setStoreSettings(prev => ({ ...prev, language: value }))
-                        setLanguage(value) // Update global context
-                      }}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="fr">Français</SelectItem>
-                          <SelectItem value="ar">العربية</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
+
 
                   <Separator />
 
@@ -312,12 +265,12 @@ export default function SettingsPage() {
                       {loading ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                          Saving...
+                          Enregistrement...
                         </>
                       ) : (
                         <>
                           <Save className="h-4 w-4 mr-2" />
-                          Save Changes
+                          Enregistrer les modifications
                         </>
                       )}
                     </Button>

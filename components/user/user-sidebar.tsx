@@ -32,35 +32,35 @@ import {
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Tableau de bord",
       url: "/user/dashboard",
       icon: Home,
       isActive: true,
     },
     {
-      title: "My Orders",
+      title: "Mes commandes",
       url: "/user/orders",
       icon: ShoppingBag,
     },
     {
-      title: "Wishlist",
+      title: "Liste de souhaits",
       url: "/user/wishlist",
       icon: Heart,
     },
     {
-      title: "Statistics",
+      title: "Statistiques",
       url: "/user/statistics",
       icon: BarChart3,
     },
   ],
   navSecondary: [
     {
-      title: "Profile Settings",
+      title: "Paramètres du profil",
       url: "/user/profile",
       icon: User,
     },
     {
-      title: "Settings",
+      title: "Paramètres",
       url: "/user/settings",
       icon: Settings,
     },

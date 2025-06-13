@@ -105,10 +105,10 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
 
   const addToCart = (item: WishlistItem) => {
     if (!item.inStock) {
-      toast.error('Item is out of stock')
+      toast.error('Article en rupture de stock')
       return
     }
-    
+
     try {
       addItem({
         id: item.id,
@@ -118,9 +118,9 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
         slug: item.slug,
         stockQuantity: item.stockQuantity
       })
-      toast.success('Item added to cart!')
+      // Don't show toast here - CartContext will handle it
     } catch (error) {
-      toast.error('Failed to add item to cart')
+      toast.error('Échec de l\'ajout de l\'article au panier')
     }
   }
 
@@ -413,7 +413,7 @@ function WishlistItemCard({
             className="w-full mb-3"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
-            {item.inStock ? 'Add to Cart' : 'Out of Stock'}
+            {item.inStock ? 'Ajouter au panier' : 'Rupture de stock'}
           </Button>
 
           {/* Product Rating */}

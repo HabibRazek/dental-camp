@@ -92,9 +92,9 @@ export function SignUpForm() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Compte créé !</h1>
             <p className="text-gray-600">
-              Your account has been created successfully. Please check your email for verification code...
+              Votre compte a été créé avec succès. Veuillez vérifier votre email pour le code de vérification...
             </p>
           </div>
         </div>
@@ -111,12 +111,12 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Full Name
+              Nom complet
             </Label>
             <Input
               id="name"
               type="text"
-              placeholder="Enter your full name"
+              placeholder="Entrez votre nom complet"
               {...register("name")}
               className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                 errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -133,12 +133,12 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Email Address
+              Adresse email
             </Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email address"
+              placeholder="Entrez votre adresse email"
               {...register("email")}
               className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                 errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -155,13 +155,13 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Password
+              Mot de passe
             </Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Create a strong password"
+                placeholder="Créez un mot de passe fort"
                 {...register("password")}
                 className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                   errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -187,13 +187,13 @@ export function SignUpForm() {
           <div className="space-y-2">
             <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Confirm Password
+              Confirmer le mot de passe
             </Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm your password"
+                placeholder="Confirmez votre mot de passe"
                 {...register("confirmPassword")}
                 className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
                   errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
@@ -230,7 +230,7 @@ export function SignUpForm() {
             disabled={isLoading}
           >
             {isLoading && <ButtonLoader />}
-            {isLoading ? "Creating account..." : "Create Account"}
+            {isLoading ? "Création du compte..." : "Créer un compte"}
           </Button>
         </form>
 
