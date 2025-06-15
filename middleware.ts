@@ -38,7 +38,7 @@ export async function middleware(request: NextRequest) {
       })
     }
   } catch (error) {
-    console.error("Token retrieval error:", error)
+    // Silent error handling
   }
 
   const isAuthenticated = !!token

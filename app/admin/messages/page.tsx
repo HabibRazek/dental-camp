@@ -155,12 +155,10 @@ export default function ContactMessagesPage() {
       setTotalCount(prev => prev - 1)
 
       // Dispatch custom event to update sidebar badge immediately
-      console.log('📧 Dispatching messagesUpdated event for message deletion')
       window.dispatchEvent(new CustomEvent('messagesUpdated'))
 
       toast.success('Message deleted successfully')
     } catch (err) {
-      console.error('Error deleting message:', err)
       toast.error('Failed to delete message')
     }
   }

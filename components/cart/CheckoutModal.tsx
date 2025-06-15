@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCart } from '@/contexts/CartContext'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -72,6 +72,29 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     notes: ''
   })
 
+  // Réinitialiser l'état quand le modal s'ouvre
+  useEffect(() => {
+    if (isOpen) {
+      setStep(1) // Retour à l'étape 1
+      setLoading(false) // Arrêter le loading
+      // Réinitialiser le formulaire avec les données de session
+      setFormData({
+        firstName: session?.user?.name?.split(' ')[0] || '',
+        lastName: session?.user?.name?.split(' ')[1] || '',
+        email: session?.user?.email || '',
+        phone: '',
+        address: '',
+        city: '',
+        postalCode: '',
+        country: 'Tunisie',
+        deliveryNotes: '',
+        paymentMethod: 'cash',
+        paymentProofImage: null,
+        notes: ''
+      })
+    }
+  }, [isOpen, session])
+
   const formatPrice = (price: number) => {
     return formatCurrency(price)
   }
@@ -124,7 +147,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
       // Validate payment proof for bank transfer
       if (formData.paymentMethod === 'transfer' && !formData.paymentProofImage) {
-        console.warn('⚠️ No payment proof image provided for bank transfer')
         toast.error('Veuillez télécharger un justificatif de paiement pour le virement bancaire')
         return
       }
@@ -157,14 +179,11 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         notes: formData.notes
       }
 
-      console.log("🛒 Submitting order data:", orderData)
-      console.log("💳 Payment method:", formData.paymentMethod)
-      console.log("📸 Payment proof image:", formData.paymentProofImage)
+
 
       // First check if user is authenticated
       const sessionResponse = await fetch('/api/auth/session')
       const sessionData = await sessionResponse.json()
-      console.log('🔐 Current session:', sessionData)
 
       if (!sessionData || !sessionData.user) {
         toast.error('Vous devez être connecté pour passer une commande. Redirection vers la page de connexion...')
@@ -180,33 +199,21 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         body: JSON.stringify(orderData)
       })
 
-      console.log('📡 Response status:', response.status)
-      console.log('📡 Response headers:', Object.fromEntries(response.headers.entries()))
-
       if (response.ok) {
         const result = await response.json()
-        console.log("✅ Order created successfully:", result)
         setStep(3) // Success step
         clearCart()
         toast.success('Commande passée avec succès!')
       } else {
         let errorData
-        let responseText = ''
         try {
-          responseText = await response.clone().text()
-          console.error("❌ Raw response text:", responseText)
           errorData = await response.json()
         } catch (parseError) {
-          console.error("❌ Failed to parse error response:", parseError)
-          console.error("❌ Raw response was:", responseText)
           errorData = { error: `HTTP ${response.status}: ${response.statusText}` }
         }
-        console.error("❌ Order creation failed:", errorData)
-        console.error("❌ Response status:", response.status)
         throw new Error(errorData.error || `Erreur ${response.status}: ${response.statusText}`)
       }
     } catch (error) {
-      console.error("❌ Checkout error:", error)
       toast.error(error instanceof Error ? error.message : 'Erreur lors de la commande. Veuillez réessayer.')
     } finally {
       setLoading(false)
@@ -470,7 +477,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 Votre commande a été passée avec succès. Vous recevrez un email de confirmation sous peu.
               </p>
             </div>
-            <Button onClick={onClose} className="w-full">
+            <Button
+              onClick={handleClose}
+              className="w-full"
+            >
               Fermer
             </Button>
           </div>
@@ -481,8 +491,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     }
   }
 
+  const handleClose = () => {
+    setStep(1) // Réinitialiser l'étape
+    setLoading(false) // Arrêter le loading
+    onClose()
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -502,7 +518,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           <div className="flex justify-between pt-6">
             <Button
               variant="outline"
-              onClick={() => step === 1 ? onClose() : setStep(step - 1)}
+              onClick={() => step === 1 ? handleClose() : setStep(step - 1)}
             >
               {step === 1 ? 'Annuler' : 'Précédent'}
             </Button>

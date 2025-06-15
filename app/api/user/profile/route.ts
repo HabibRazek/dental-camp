@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log('👤 Fetching profile for user:', session.user.email)
+
 
     // Get user from database - only select fields that definitely exist
     const user = await prisma.user.findUnique({
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       phone = userWithExtras?.phone || ''
       bio = userWithExtras?.bio || ''
     } catch (extraFieldsError) {
-      console.log('📝 Phone/Bio fields not available yet, using defaults')
+
       // Fields don't exist yet, use empty strings
     }
 
@@ -70,7 +70,7 @@ export async function GET(request: NextRequest) {
       emailVerified: user.emailVerified
     }
 
-    console.log('✅ Profile data fetched:', profileData)
+
 
     return NextResponse.json({
       success: true,
@@ -78,7 +78,6 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error("Error fetching user profile:", error)
     return NextResponse.json(
       { error: "Failed to fetch profile" },
       { status: 500 }
@@ -99,8 +98,7 @@ export async function PUT(request: NextRequest) {
 
     const { firstName, lastName, email, phone, bio } = await request.json()
 
-    console.log('💾 Updating profile for user:', session.user.email)
-    console.log('📋 Profile data:', { firstName, lastName, email, phone, bio })
+
 
     // Combine first and last name
     const fullName = `${firstName} ${lastName}`.trim()
@@ -123,9 +121,9 @@ export async function PUT(request: NextRequest) {
       updateData.phone = phone || null
       updateData.bio = bio || null
 
-      console.log('📝 Updating with phone/bio fields')
+      // Fields exist, can update them
     } catch (fieldError) {
-      console.log('📝 Phone/Bio fields not available, updating only name and email')
+      // Fields don't exist, skip them
     }
 
     const updatedUser = await prisma.user.update({
@@ -142,7 +140,7 @@ export async function PUT(request: NextRequest) {
       }
     })
 
-    console.log('✅ Profile updated successfully:', updatedUser)
+
 
     return NextResponse.json({
       success: true,
@@ -151,7 +149,6 @@ export async function PUT(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error("Error updating user profile:", error)
     return NextResponse.json(
       { error: "Failed to update profile" },
       { status: 500 }

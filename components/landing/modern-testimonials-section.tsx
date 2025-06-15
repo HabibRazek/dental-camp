@@ -24,55 +24,16 @@ function ModernTestimonialsSection() {
     const testimonials = [
         {
             id: 1,
-            name: "Dr. Ahmed Ben Ali",
-            title: "Chirurgien-Dentiste",
-            clinic: "Clinique Dentaire Moderne",
+            name: "DR. Mourad Bayar",
+            title: "Dentiste & Fondateur",
+            clinic: "Dental Camp",
             location: "Tunis, Tunisie",
             rating: 5,
-            testimonial: "Dental Camp a révolutionné notre pratique. Les équipements sont d'une qualité exceptionnelle et le service client est remarquable. Nous recommandons vivement leurs produits à tous nos confrères.",
+            testimonial: "En tant que fondateur de Dental Camp, je m'engage personnellement à fournir les meilleurs équipements dentaires. Notre expertise et notre passion pour l'innovation nous permettent d'accompagner chaque professionnel vers l'excellence.",
             image: "/api/placeholder/80/80",
-            speciality: "Implantologie",
+            speciality: "Chirurgie Dentaire",
             experience: "15+ ans",
-            highlight: "Équipements de qualité exceptionnelle"
-        },
-        {
-            id: 2,
-            name: "Dr. Fatima Mansouri",
-            title: "Orthodontiste",
-            clinic: "Cabinet d'Orthodontie Avancée",
-            location: "Sfax, Tunisie",
-            rating: 5,
-            testimonial: "L'accompagnement de l'équipe Dental Camp est exceptionnel. De la formation à la maintenance, tout est parfaitement organisé. Nos patients bénéficient maintenant de soins de très haute qualité.",
-            image: "/api/placeholder/80/80",
-            speciality: "Orthodontie",
-            experience: "12+ ans",
-            highlight: "Accompagnement exceptionnel"
-        },
-        {
-            id: 3,
-            name: "Dr. Mohamed Trabelsi",
-            title: "Parodontiste",
-            clinic: "Centre de Parodontologie",
-            location: "Sousse, Tunisie",
-            rating: 5,
-            testimonial: "Innovation, fiabilité et performance : Dental Camp réunit tous les critères que nous recherchons. Leurs équipements nous permettent d'offrir des traitements de pointe à nos patients.",
-            image: "/api/placeholder/80/80",
-            speciality: "Parodontologie",
-            experience: "18+ ans",
-            highlight: "Innovation et performance"
-        },
-        {
-            id: 4,
-            name: "Dr. Leila Hamdi",
-            title: "Endodontiste",
-            clinic: "Clinique Spécialisée",
-            location: "Monastir, Tunisie",
-            rating: 5,
-            testimonial: "Le support technique 24/7 est un véritable atout. Nous n'avons jamais eu de problème non résolu rapidement. C'est un partenariat de confiance qui dure depuis des années.",
-            image: "/api/placeholder/80/80",
-            speciality: "Endodontie",
-            experience: "10+ ans",
-            highlight: "Support technique 24/7"
+            highlight: "Expertise et innovation"
         }
     ];
 
@@ -273,39 +234,7 @@ function ModernTestimonialsSection() {
                         </div>
                     </Card>
 
-                    {/* Navigation */}
-                    <div className="flex items-center justify-between mt-8">
-                        <button
-                            onClick={prevTestimonial}
-                            className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300"
-                        >
-                            <ChevronLeft className="h-6 w-6" />
-                        </button>
 
-                        <div className="flex gap-3">
-                            {testimonials.map((_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => {
-                                        setCurrentTestimonial(index);
-                                        setIsAutoPlaying(false);
-                                    }}
-                                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                                        index === currentTestimonial 
-                                            ? 'bg-white scale-125' 
-                                            : 'bg-white/40 hover:bg-white/60'
-                                    }`}
-                                />
-                            ))}
-                        </div>
-
-                        <button
-                            onClick={nextTestimonial}
-                            className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all duration-300"
-                        >
-                            <ChevronRight className="h-6 w-6" />
-                        </button>
-                    </div>
                 </motion.div>
             </div>
         </section>

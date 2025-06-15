@@ -111,8 +111,6 @@ export function RealTimeNotifications() {
               read: false,
               urgent: false
             })
-          } else {
-            console.log('🚫 SKIPPED dismissed user:', notificationId)
           }
         }
       })
@@ -141,9 +139,7 @@ export function RealTimeNotifications() {
       newNotifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
 
       setNotifications(newNotifications.slice(0, 8))
-      console.log('📢 Showing notifications:', newNotifications.length)
     } catch (error) {
-      console.error('Failed to fetch notifications:', error)
     } finally {
       setLoading(false)
     }
@@ -166,15 +162,11 @@ export function RealTimeNotifications() {
   }
 
   const removeNotification = (id: string) => {
-    console.log('🗑️ REMOVING NOTIFICATION:', id)
-
     // Remove from current display
     setNotifications(prev => prev.filter(notif => notif.id !== id))
 
     // Save to localStorage permanently
     saveDismissedNotification(id)
-
-    console.log('✅ NOTIFICATION PERMANENTLY DISMISSED:', id)
   }
 
   const getIcon = (type: string) => {

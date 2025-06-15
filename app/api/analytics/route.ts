@@ -221,29 +221,16 @@ export async function GET(request: Request) {
       const orderCount = customerOrderCounts[customer.id] || 0
       const revenue = customerRevenue[customer.id] || 0
 
-      console.log(`👤 Customer ${customer.email}: ${orderCount} orders, ${revenue} TND revenue`)
-
       if (orderCount === 0) {
         inactiveCustomers++
-        console.log(`  → Classified as: INACTIVE`)
       } else if (orderCount === 1) {
         newCustomers++
-        console.log(`  → Classified as: NEW`)
       } else if (orderCount >= 2 && orderCount <= 5) {
         returningCustomers++
-        console.log(`  → Classified as: RETURNING`)
       } else if (orderCount > 5 || revenue > 1000) {
         vipCustomers++
-        console.log(`  → Classified as: VIP`)
       }
     })
-
-    console.log(`📈 Customer segments calculated:`)
-    console.log(`  - New customers: ${newCustomers}`)
-    console.log(`  - Returning customers: ${returningCustomers}`)
-    console.log(`  - VIP customers: ${vipCustomers}`)
-    console.log(`  - Inactive customers: ${inactiveCustomers}`)
-    console.log(`  - Total customers: ${customers.length}`)
 
     // Calculate percentages based on total customers (not just active)
     const totalCustomersCount = customers.length

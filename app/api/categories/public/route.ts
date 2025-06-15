@@ -110,12 +110,8 @@ export async function GET() {
           _count: cat._count
         }))
         usingDatabase = true
-        console.log(`✅ Loaded ${dbCategories.length} categories from database`)
-      } else {
-        console.log("📝 No categories found in database, using mock data")
       }
     } catch (dbError) {
-      console.log("🔄 Database not available, using mock data:", dbError instanceof Error ? dbError.message : 'Unknown error')
     }
 
     return NextResponse.json({

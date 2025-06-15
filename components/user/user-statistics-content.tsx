@@ -136,10 +136,7 @@ export function UserStatisticsContent({ userId }: UserStatisticsContentProps) {
               key={period}
               variant={selectedPeriod === period ? 'default' : 'outline'}
               size="sm"
-              onClick={() => {
-                console.log('📅 Changing period from', selectedPeriod, 'to', period)
-                setSelectedPeriod(period)
-              }}
+              onClick={() => setSelectedPeriod(period)}
               className={selectedPeriod === period ? 'bg-blue-600 text-white' : ''}
             >
               {period === '3months' ? '3M' : period === '6months' ? '6M' : '1Y'}

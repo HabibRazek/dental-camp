@@ -8,18 +8,28 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   serverExternalPackages: ['@prisma/client'],
+  logging: {
+    fetches: {
+      fullUrl: false,
+    },
+  },
+
   webpack: (config, { isServer }) => {
-    // Fix for Prisma and other server-side packages
     if (isServer) {
       config.externals.push('@prisma/client')
     }
 
-    // Handle node modules that might cause issues
     config.resolve.fallback = {
       ...config.resolve.fallback,
       fs: false,
       net: false,
       tls: false,
+    }
+
+    // Suppress webpack logs
+    config.stats = 'errors-only'
+    config.infrastructureLogging = {
+      level: 'error',
     }
 
     return config

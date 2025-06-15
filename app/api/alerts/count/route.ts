@@ -29,7 +29,6 @@ export async function GET() {
       hasAlerts: baseAlertCount > 0
     }, { status: 200 })
   } catch (error) {
-    console.error('Alerts count API error:', error)
     return NextResponse.json(
       { error: "Failed to fetch alerts count" },
       { status: 500 }

@@ -90,8 +90,6 @@ function InnovativeContactSection() {
                 source: 'landing_page'
             };
 
-            console.log('Sending contact form data:', requestData);
-
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
@@ -101,7 +99,6 @@ function InnovativeContactSection() {
             });
 
             const data = await response.json();
-            console.log('Contact API response:', { status: response.status, data });
 
             if (response.ok) {
                 setIsSubmitted(true);
@@ -131,7 +128,6 @@ function InnovativeContactSection() {
                 }
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
             toast.error("Erreur de connexion. Veuillez réessayer.");
         } finally {
             setIsSubmitting(false);
@@ -504,16 +500,16 @@ function InnovativeContactSection() {
                                     ))}
                                 </div>
                                 <blockquote className="text-lg font-medium mb-4">
-                                    "Service exceptionnel et produits de qualité. L'équipe de Dental Camp
-                                    nous accompagne depuis des années avec professionnalisme."
+                                    "En tant que dentiste à Nabeul, je recommande vivement Dental Camp pour
+                                    la qualité exceptionnelle de leurs équipements et leur service professionnel."
                                 </blockquote>
                                 <div className="flex items-center gap-3">
                                     <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
                                         <Users className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <div className="font-semibold">Dr. Ahmed Ben Ali</div>
-                                        <div className="text-blue-100">Clinique Dentaire Moderne</div>
+                                        <div className="font-semibold">DR. Mourad Bayar</div>
+                                        <div className="text-blue-100">Dentiste - Nabeul</div>
                                     </div>
                                 </div>
                             </Card>
@@ -521,41 +517,7 @@ function InnovativeContactSection() {
                     </motion.div>
                 </div>
 
-                {/* Bottom CTA */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.6 }}
-                    viewport={{ once: true }}
-                    className="text-center mt-16"
-                >
-                    <Card className="p-8 shadow-xl border-0 bg-white/80 backdrop-blur-sm rounded-3xl max-w-4xl mx-auto">
-                        <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                            Besoin d'une consultation urgente ?
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                            Notre équipe est disponible pour répondre à vos questions et vous conseiller
-                            sur le choix des équipements adaptés à votre pratique.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Button
-                                size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                                <Phone className="h-5 w-5 mr-2" />
-                                Appeler maintenant
-                            </Button>
-                            <Button
-                                size="lg"
-                                variant="outline"
-                                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-xl transition-all duration-300"
-                            >
-                                <Calendar className="h-5 w-5 mr-2" />
-                                Prendre rendez-vous
-                            </Button>
-                        </div>
-                    </Card>
-                </motion.div>
+
             </div>
         </section>
     );

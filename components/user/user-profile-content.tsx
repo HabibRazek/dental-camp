@@ -98,7 +98,6 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
   const handleSaveProfile = async () => {
     try {
       setSaving(true)
-      console.log('💾 Saving profile data to API:', profileData)
 
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
@@ -110,30 +109,20 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
 
       if (response.ok) {
         const data = await response.json()
-        console.log('✅ Profile saved successfully:', data)
         toast.success('Profile updated successfully!')
 
         // Try to reload profile data, but don't fail if it doesn't work
         try {
           await loadProfileData()
         } catch (reloadError) {
-          console.log('📝 Could not reload profile data, but save was successful')
+          // Silent error handling
         }
       } else {
         const errorData = await response.json()
-        console.error('API Error:', errorData)
-
-        // Show success anyway since the data might have been saved
-        toast.success('Profile updated successfully!')
-        console.log('📝 Assuming save was successful despite API error')
+        toast.error(`Erreur lors de la mise à jour: ${errorData.error || 'Erreur inconnue'}`)
       }
     } catch (error) {
-      console.error('Error saving profile:', error)
-
-      // For now, show success to avoid confusing the user
-      // In a real app, you'd want better error handling
-      toast.success('Profile updated successfully!')
-      console.log('📝 Showing success despite error - data saved locally')
+      toast.error('Erreur lors de la mise à jour du profil')
     } finally {
       setSaving(false)
     }

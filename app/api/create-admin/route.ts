@@ -110,7 +110,6 @@ export async function POST(request: NextRequest) {
     }, { status: 201 })
 
   } catch (error) {
-    console.error('Create admin error:', error)
     
     // Handle specific Prisma errors
     if (error instanceof Error) {

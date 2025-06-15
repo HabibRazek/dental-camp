@@ -117,12 +117,7 @@ export default function AlertsPage() {
 
       setAlerts(visibleAlerts)
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🚨 Alerts loaded:', visibleAlerts.length)
-        console.log('🚨 Dismissed alerts:', Object.keys(currentStates).filter(id => currentStates[id]?.isDismissed))
-      }
     } catch (error) {
-      console.error('Failed to fetch alerts:', error)
       toast.error('Failed to load alerts')
     }
   }
@@ -152,11 +147,7 @@ export default function AlertsPage() {
         setLowStockProducts(lowStock)
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🚨 Low Stock Products:', lowStock.length)
-      }
     } catch (error) {
-      console.error('Failed to fetch low stock products:', error)
       toast.error('Failed to load low stock products')
     } finally {
       setLoading(false)

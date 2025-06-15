@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers/session-provider";
 import { CartProvider } from "@/contexts/CartContext";
 import { SettingsProvider } from "@/contexts/settings-context";
 import { Toaster } from "sonner";
+import "@/lib/logger"; // Import silent logger
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

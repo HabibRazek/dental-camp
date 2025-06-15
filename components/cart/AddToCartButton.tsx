@@ -5,6 +5,8 @@ import { useCart } from '@/contexts/CartContext'
 import { Button } from '@/components/ui/button'
 import { ShoppingCart, Plus } from 'lucide-react'
 import { toast } from 'sonner'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 interface Product {
   id: string
@@ -24,25 +26,30 @@ interface AddToCartButtonProps {
   disabled?: boolean
 }
 
-export function AddToCartButton({ 
-  product, 
-  variant = 'default', 
+export function AddToCartButton({
+  product,
+  variant = 'default',
   size = 'default',
   className = '',
   disabled = false
 }: AddToCartButtonProps) {
   const { addItem } = useCart()
+  const { data: session } = useSession()
+  const router = useRouter()
   const isInStock = product.stockQuantity > 0
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
 
-    console.log("🛒 AddToCart button clicked!")
-    console.log("🛒 Product:", product)
+    // Vérifier l'authentification avant d'ajouter au panier
+    if (!session) {
+      toast.error("Vous devez être connecté pour ajouter des produits au panier")
+      router.push('/auth/signin')
+      return
+    }
 
     if (!isInStock || disabled) {
-      console.log("❌ Product out of stock or disabled")
       toast.error("Produit en rupture de stock")
       return
     }
@@ -56,9 +63,8 @@ export function AddToCartButton({
       stockQuantity: product.stockQuantity
     }
 
-    console.log("🛒 About to call addItem with:", cartItem)
     addItem(cartItem)
-    console.log("✅ addItem called successfully!")
+    toast.success("Produit ajouté au panier")
   }
 
   if (variant === 'icon') {

@@ -83,13 +83,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Log the incoming data for debugging
-    console.log('Contact API received data:', body)
-
     const messageData = ContactMessageSchema.parse(body)
-
-    // Log the validated data
-    console.log('Contact API validated data:', messageData)
 
     // Get client IP and user agent
     const headersList = await headers()
@@ -147,7 +141,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.error('Error creating contact message:', error)
+
     return NextResponse.json(
       { error: "Échec de l'envoi du message. Veuillez réessayer." },
       { status: 500 }

@@ -62,7 +62,6 @@ export function AdminActionsPanel() {
         }).length || 0
       })
     } catch (error) {
-      console.error('Failed to fetch quick stats:', error)
     } finally {
       setLoading(false)
     }

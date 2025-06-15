@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 import {
   Sheet,
   SheetContent,
@@ -32,6 +34,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatCurrency } from '@/lib/utils'
+import { toast } from 'sonner'
 
 interface CartSidebarProps {
   onCheckout: () => void
@@ -39,10 +42,10 @@ interface CartSidebarProps {
 
 export function CartSidebar({ onCheckout }: CartSidebarProps) {
   const { state, removeItem, updateQuantity, closeCart } = useCart()
+  const { data: session } = useSession()
+  const router = useRouter()
 
-  console.log("🛒 CartSidebar: Rendering with state:", state)
-  console.log("🛒 CartSidebar: Items count:", state.items.length)
-  console.log("🛒 CartSidebar: Items:", state.items)
+
 
   const formatPrice = (price: number) => {
     return formatCurrency(price)
@@ -71,6 +74,16 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
   }
 
   const recommendations = getRecommendations()
+
+  const handleCheckout = () => {
+    // Vérifier l'authentification avant de procéder au checkout
+    if (!session) {
+      toast.error("Vous devez être connecté pour passer commande")
+      router.push('/auth/signin')
+      return
+    }
+    onCheckout()
+  }
 
   return (
     <Sheet open={state.isOpen} onOpenChange={closeCart}>
@@ -373,7 +386,7 @@ export function CartSidebar({ onCheckout }: CartSidebarProps) {
                 <motion.div whileTap={{ scale: 0.98 }}>
                   <Button
                     className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                    onClick={onCheckout}
+                    onClick={handleCheckout}
                     size="lg"
                   >
                     <ShoppingBag className="mr-2 h-5 w-5" />

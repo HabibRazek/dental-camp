@@ -52,16 +52,13 @@ export function NavMain({
   useEffect(() => {
     const handleMessagesUpdate = async () => {
       try {
-        console.log('📧 Messages updated event received, refreshing badge...')
         const response = await fetch('/api/contact?status=UNREAD&limit=1')
         if (response.ok) {
           const data = await response.json()
           const newCount = data.pagination?.totalCount || 0
           setUnreadMessages(newCount)
-          console.log('📧 Messages badge updated:', newCount)
         }
       } catch (error) {
-        console.error('Failed to fetch unread messages:', error)
       }
     }
 
