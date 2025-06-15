@@ -129,7 +129,7 @@ export async function GET(request: Request) {
     const monthlyRevenue = monthlyData
 
     // Calculate order status distribution
-    const statusCounts = orders.reduce((acc: any, order) => {
+    const statusCounts: Record<string, number> = orders.reduce((acc: Record<string, number>, order) => {
       acc[order.status] = (acc[order.status] || 0) + 1
       return acc
     }, {})
@@ -145,10 +145,10 @@ export async function GET(request: Request) {
     }
 
     const orderStatus = Object.entries(statusCounts)
-      .filter(([status, count]) => count > 0) // Only show statuses with orders
+      .filter(([, count]) => count > 0) // Only show statuses with orders
       .map(([status, count]) => ({
         status: orderStatusMap[status as keyof typeof orderStatusMap]?.label || status,
-        count: count as number,
+        count: count,
         color: orderStatusMap[status as keyof typeof orderStatusMap]?.color || '#6b7280',
         originalStatus: status
       }))
