@@ -335,13 +335,39 @@ export async function GET(request: NextRequest) {
           source: "database"
         });
       } else {
-        console.log("📝 No products found in database, using mock data");
+        console.log("📝 No products found in database");
+        return NextResponse.json({
+          success: true,
+          products: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+          message: "No products found in database",
+          source: "database"
+        });
       }
     } catch (dbError) {
-      console.log("🔄 Database not available, using mock data:", dbError instanceof Error ? dbError.message : 'Unknown error');
+      console.error("❌ Database error:", dbError instanceof Error ? dbError.message : 'Unknown error');
+      return NextResponse.json({
+        success: false,
+        products: [],
+        pagination: {
+          currentPage: page,
+          totalPages: 0,
+          totalCount: 0,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+        error: "Database connection failed",
+        source: "error"
+      }, { status: 503 });
     }
 
-    // Use mock data with filtering
+    // This code should never be reached now
     // Filter by category
     if (category && category !== "all") {
       filteredProducts = filteredProducts.filter(p => p.category.slug === category);

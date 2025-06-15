@@ -32,7 +32,35 @@ export async function GET(request: NextRequest) {
 
     console.log('📦 Found products for wishlist:', products.length)
 
-    // Transform products to wishlist format
+    // Helper function to calculate consistent rating based on product
+    const getProductRating = (product: any) => {
+      const hash = product.id.split('').reduce((a: number, b: string) => {
+        a = ((a << 5) - a) + b.charCodeAt(0)
+        return a & a
+      }, 0)
+      return 4.2 + (Math.abs(hash) % 8) / 10 // Rating between 4.2-4.9
+    }
+
+    // Helper function to calculate review count based on product characteristics
+    const getProductReviews = (product: any) => {
+      const price = Number(product.price)
+      const stock = product.stockQuantity
+
+      let baseReviews = 0
+      if (price < 100) baseReviews = 80 + (stock * 2)
+      else if (price < 500) baseReviews = 40 + stock
+      else baseReviews = 15 + Math.floor(stock / 2)
+
+      const hash = product.id.split('').reduce((a: number, b: string) => {
+        a = ((a << 5) - a) + b.charCodeAt(0)
+        return a & a
+      }, 0)
+      const variation = Math.abs(hash) % 30
+
+      return Math.max(5, baseReviews + variation)
+    }
+
+    // Transform products to wishlist format with dynamic ratings
     const wishlistItems = products.map(product => ({
       id: product.id,
       name: product.name,
@@ -40,8 +68,8 @@ export async function GET(request: NextRequest) {
       originalPrice: product.comparePrice ? Number(product.comparePrice) : null,
       image: product.thumbnail || '/api/placeholder/300/300',
       category: product.category?.name || 'General',
-      rating: 4.5 + Math.random() * 0.5, // Random rating between 4.5-5.0
-      reviewCount: Math.floor(Math.random() * 200) + 10, // Random reviews 10-210
+      rating: getProductRating(product),
+      reviewCount: getProductReviews(product),
       inStock: product.stockQuantity > 0,
       stockQuantity: product.stockQuantity,
       addedDate: new Date().toISOString(),

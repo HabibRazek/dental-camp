@@ -182,8 +182,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate order number
-    const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+    // Generate dynamic order number with better format
+    const now = new Date()
+    const year = now.getFullYear().toString().slice(-2)
+    const month = (now.getMonth() + 1).toString().padStart(2, '0')
+    const day = now.getDate().toString().padStart(2, '0')
+
+    // Get order count for today to create sequential number
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const todayOrders = await prisma.order.count({
+      where: {
+        createdAt: {
+          gte: todayStart
+        }
+      }
+    })
+
+    const sequentialNumber = (todayOrders + 1).toString().padStart(3, '0')
+    const orderNumber = `DC${year}${month}${day}-${sequentialNumber}`
 
     // Prepare order items
     const orderItems = items.map((item: any) => ({

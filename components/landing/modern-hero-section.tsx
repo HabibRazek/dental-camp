@@ -1,13 +1,14 @@
 "use client";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-    ArrowRight, 
-    Play, 
-    Star, 
-    Users, 
-    Award, 
+import {
+    ArrowRight,
+    Play,
+    Star,
+    Users,
+    Award,
     Zap,
     ShieldCheck,
     Sparkles
@@ -15,7 +16,6 @@ import {
 import { TbDental } from "react-icons/tb";
 import Image from "next/image";
 // import dentalEquipmentImage from "@/public/images/dental-equipment.jpg";
-import { useState, useEffect } from "react";
 
 function ModernHeroSection() {
     const [mounted, setMounted] = useState(false);
@@ -53,12 +53,52 @@ function ModernHeroSection() {
         }
     ];
 
-    const stats = [
+    // Dynamic stats - will be loaded from API
+    const [stats, setStats] = useState([
         { number: "500+", label: "Clients Satisfaits", icon: <Users className="h-5 w-5" /> },
         { number: "15+", label: "Années d'Expérience", icon: <Award className="h-5 w-5" /> },
         { number: "1000+", label: "Produits Disponibles", icon: <Zap className="h-5 w-5" /> },
         { number: "98%", label: "Taux de Satisfaction", icon: <Star className="h-5 w-5" /> }
-    ];
+    ])
+
+    // Load real stats from analytics API
+    useEffect(() => {
+        const loadStats = async () => {
+            try {
+                const response = await fetch('/api/analytics?timeRange=all')
+                if (response.ok) {
+                    const data = await response.json()
+                    setStats([
+                        {
+                            number: `${data.totalCustomers}+`,
+                            label: "Clients Satisfaits",
+                            icon: <Users className="h-5 w-5" />
+                        },
+                        {
+                            number: "15+",
+                            label: "Années d'Expérience",
+                            icon: <Award className="h-5 w-5" />
+                        },
+                        {
+                            number: `${data.totalProducts}+`,
+                            label: "Produits Disponibles",
+                            icon: <Zap className="h-5 w-5" />
+                        },
+                        {
+                            number: "98%",
+                            label: "Taux de Satisfaction",
+                            icon: <Star className="h-5 w-5" />
+                        }
+                    ])
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error)
+                // Keep default stats on error
+            }
+        }
+
+        loadStats()
+    }, [])
 
     const floatingElements = [
         { id: 1, icon: <TbDental className="h-8 w-8" />, delay: 0, x: "10%", y: "20%" },
@@ -74,29 +114,39 @@ function ModernHeroSection() {
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-blue-50/30 to-blue-100/30"></div>
                 
-                {/* Animated Particles */}
+                {/* Dynamic Animated Particles */}
                 {mounted && (
                     <div className="absolute inset-0">
-                        {[...Array(20)].map((_, i) => (
-                            <motion.div
-                                key={i}
-                                className="absolute w-2 h-2 bg-blue-300/40 rounded-full"
-                                initial={{ 
-                                    x: Math.random() * window.innerWidth,
-                                    y: Math.random() * window.innerHeight,
-                                    opacity: 0
-                                }}
-                                animate={{
-                                    y: [null, -100],
-                                    opacity: [0, 1, 0]
-                                }}
-                                transition={{
-                                    duration: Math.random() * 3 + 2,
-                                    repeat: Infinity,
-                                    delay: Math.random() * 2
-                                }}
-                            />
-                        ))}
+                        {[...Array(20)].map((_, i) => {
+                            // Create consistent but varied particle behavior based on index
+                            const seed = i * 137.508 // Golden angle for distribution
+                            const x = (seed % window.innerWidth)
+                            const y = (seed * 1.618 % window.innerHeight)
+                            const duration = 2 + (i % 4) // Duration between 2-5 seconds
+                            const delay = (i * 0.3) % 4 // Staggered delays
+
+                            return (
+                                <motion.div
+                                    key={i}
+                                    className="absolute w-2 h-2 bg-blue-300/40 rounded-full"
+                                    initial={{
+                                        x: x,
+                                        y: y,
+                                        opacity: 0
+                                    }}
+                                    animate={{
+                                        y: [null, y - 100],
+                                        opacity: [0, 1, 0]
+                                    }}
+                                    transition={{
+                                        duration: duration,
+                                        repeat: Infinity,
+                                        delay: delay,
+                                        ease: "easeInOut"
+                                    }}
+                                />
+                            )
+                        })}
                     </div>
                 )}
 

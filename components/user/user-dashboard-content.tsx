@@ -54,6 +54,25 @@ interface DashboardData {
     orderGrowth: number
     spendingGrowth: number
     wishlistCount: number
+    currentMonthSpent: number
+    remainingBudget: number
+    monthlyBudget: number
+  }
+  progress: {
+    loyalty: {
+      currentTier: string
+      progress: number
+      pointsToNext: number
+      nextTier: string | null
+      totalPoints: number
+    }
+    savings: {
+      progress: number
+      spent: number
+      budget: number
+      remaining: number
+      totalSaved: number
+    }
   }
   charts: {
     monthlySpending: Array<{ month: string; amount: number; orders: number }>
@@ -192,7 +211,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
   }
 
   // Extract data for easier access
-  const { stats, charts, recentOrders, wishlistItems } = dashboardData
+  const { stats, progress, charts, recentOrders, wishlistItems } = dashboardData
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -439,9 +458,9 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <CardHeader>
               <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
                 <PieChartIcon className="h-5 w-5 text-purple-600" />
-                Order Status
+                Statut des commandes
               </CardTitle>
-              <CardDescription>Distribution of your order statuses</CardDescription>
+              <CardDescription>Répartition de vos statuts de commandes</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="h-64">
@@ -680,19 +699,43 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700">Loyalty Progress</span>
-                  <span className="text-sm font-bold text-gray-900">83%</span>
+                  <span className="text-sm font-bold text-gray-900">{progress.loyalty.progress}%</span>
                 </div>
-                <Progress value={83} className="h-2" />
-                <p className="text-xs text-gray-600">{Math.max(0, 1500 - stats.loyaltyPoints)} points to Gold tier</p>
+                <Progress value={progress.loyalty.progress} className="h-2" />
+                <p className="text-xs text-gray-600">
+                  {progress.loyalty.nextTier ? (
+                    `${progress.loyalty.pointsToNext} points to ${progress.loyalty.nextTier} tier`
+                  ) : (
+                    `Congratulations! You've reached ${progress.loyalty.currentTier} tier!`
+                  )}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                  <Badge variant="outline" className="text-xs">
+                    {progress.loyalty.currentTier} Member
+                  </Badge>
+                  <span className="text-xs text-gray-500">
+                    {progress.loyalty.totalPoints} points total
+                  </span>
+                </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Savings Goal</span>
-                  <span className="text-sm font-bold text-gray-900">68%</span>
+                  <span className="text-sm font-medium text-gray-700">Monthly Budget</span>
+                  <span className="text-sm font-bold text-gray-900">{progress.savings.progress}%</span>
                 </div>
-                <Progress value={68} className="h-2" />
-                <p className="text-xs text-gray-600">Keep going to reach your goal!</p>
+                <Progress value={progress.savings.progress} className="h-2" />
+                <p className="text-xs text-gray-600">
+                  {progress.savings.remaining > 0 ? (
+                    `${formatPrice(progress.savings.remaining)} remaining this month`
+                  ) : (
+                    'Budget exceeded! Consider reviewing your spending.'
+                  )}
+                </p>
+                <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
+                  <span>Spent: {formatPrice(progress.savings.spent)}</span>
+                  <span>Budget: {formatPrice(progress.savings.budget)}</span>
+                </div>
               </div>
             </div>
           </CardContent>

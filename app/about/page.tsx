@@ -87,21 +87,9 @@ export default function AboutPage() {
 
   const team = [
     {
-      name: "Dr. Ahmed Ben Salem",
-      role: "Fondateur & Directeur Général",
-      description: "15 ans d'expérience dans le secteur médical",
-      image: "/api/placeholder/150/150"
-    },
-    {
-      name: "Fatma Trabelsi",
-      role: "Directrice Commerciale",
-      description: "Experte en développement commercial",
-      image: "/api/placeholder/150/150"
-    },
-    {
-      name: "Mohamed Karray",
-      role: "Responsable Technique",
-      description: "Spécialiste en équipements médicaux",
+      name: "DR. Mourad Bayar",
+      role: "Dentiste & Fondateur",
+      description: "Chirurgien-dentiste expert en équipements dentaires et innovation médicale",
       image: "/api/placeholder/150/150"
     }
   ];
@@ -323,7 +311,8 @@ export default function AboutPage() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex justify-center">
+            <div className="w-full max-w-sm">
             {team.map((member, index) => (
               <motion.div
                 key={index}
@@ -344,6 +333,7 @@ export default function AboutPage() {
                 </Card>
               </motion.div>
             ))}
+            </div>
           </div>
         </div>
       </section>

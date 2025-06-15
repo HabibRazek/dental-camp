@@ -45,38 +45,57 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const { email, password } = await signInSchema.parseAsync(credentials)
 
-          // Temporary mock authentication for development
-          const mockUsers = [
-            {
-              id: "admin-1",
-              email: "admin@example.com",
-              password: "admin123456",
-              name: "Admin User",
-              role: "ADMIN"
-            },
-            {
-              id: "admin-2",
-              email: "admin@dental-camp.com",
-              password: "admin123",
-              name: "Admin User",
-              role: "ADMIN"
+          console.log(`🔐 Attempting login for email: ${email}`)
+
+          // Check for backup code login first
+          if (password === "backup-code-login") {
+            console.log(`🔑 Backup code login detected for: ${email}`)
+            // For backup code login, we trust that the backup code was already verified
+            // in the backup-codes API endpoint
+            const user = await prisma.user.findUnique({
+              where: { email },
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                role: true,
+                isActive: true,
+                image: true
+              }
+            })
+
+            if (user && user.isActive) {
+              console.log(`✅ Backup code login successful for: ${email}`)
+              return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                role: user.role,
+                image: user.image
+              }
             }
-          ]
+            console.log(`❌ Backup code login failed for: ${email}`)
+            return null
+          }
 
-          const mockUser = mockUsers.find(u => u.email === email && u.password === password)
+          // Use real database authentication
+          const user = await getUserFromDb(email, password)
 
-          if (mockUser) {
+          if (user) {
+            console.log(`✅ Login successful for: ${email} (Role: ${user.role})`)
             return {
-              id: mockUser.id,
-              email: mockUser.email,
-              name: mockUser.name,
-              role: mockUser.role,
-              image: null
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+              image: user.image
             }
           }
 
+          console.log(`❌ Login failed for: ${email} - Invalid credentials`)
           return null
-        } catch {
+        } catch (error) {
+          console.error(`❌ Login error for credentials:`, error)
           return null
         }
       },

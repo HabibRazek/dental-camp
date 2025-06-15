@@ -278,11 +278,63 @@ export async function GET(request: Request) {
 
     console.log(`✅ Final customer segments:`, customerSegments)
 
-    // Calculate growth rates (mock for now - would need historical data)
-    const revenueGrowth = Math.random() * 20 - 5
-    const ordersGrowth = Math.random() * 15 - 2
-    const customersGrowth = Math.random() * 25 - 5
-    const productsGrowth = Math.random() * 10 - 2
+    // Calculate REAL growth rates based on historical data
+    const currentMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0)
+    const twoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1)
+    const endOfTwoMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 1, 0)
+
+    // Current month data
+    const currentMonthOrders = orders.filter(order => {
+      const orderDate = new Date(order.createdAt)
+      return orderDate >= currentMonth
+    })
+    const currentMonthRevenue = currentMonthOrders.reduce((sum, order) => sum + Number(order.total), 0)
+    const currentMonthCustomers = new Set(currentMonthOrders.map(order => order.customerEmail)).size
+
+    // Last month data
+    const lastMonthOrders = orders.filter(order => {
+      const orderDate = new Date(order.createdAt)
+      return orderDate >= lastMonth && orderDate <= endOfLastMonth
+    })
+    const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + Number(order.total), 0)
+    const lastMonthCustomers = new Set(lastMonthOrders.map(order => order.customerEmail)).size
+
+    // Two months ago data (for customer growth comparison)
+    const twoMonthsAgoCustomers = customers.filter(customer => {
+      const customerDate = new Date(customer.createdAt)
+      return customerDate <= endOfTwoMonthsAgo
+    }).length
+
+    // Calculate real growth rates
+    const revenueGrowth = lastMonthRevenue > 0
+      ? ((currentMonthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100
+      : currentMonthRevenue > 0 ? 100 : 0
+
+    const ordersGrowth = lastMonthOrders.length > 0
+      ? ((currentMonthOrders.length - lastMonthOrders.length) / lastMonthOrders.length) * 100
+      : currentMonthOrders.length > 0 ? 100 : 0
+
+    const customersGrowth = twoMonthsAgoCustomers > 0
+      ? ((customers.length - twoMonthsAgoCustomers) / twoMonthsAgoCustomers) * 100
+      : customers.length > 0 ? 100 : 0
+
+    // Products growth (based on recently added products)
+    const recentProducts = products.filter(product => {
+      const productDate = new Date(product.createdAt)
+      return productDate >= lastMonth
+    })
+    const productsGrowth = products.length > 0
+      ? (recentProducts.length / products.length) * 100
+      : 0
+
+    console.log('📈 Growth rates calculated:', {
+      revenueGrowth: `${revenueGrowth.toFixed(1)}%`,
+      ordersGrowth: `${ordersGrowth.toFixed(1)}%`,
+      customersGrowth: `${customersGrowth.toFixed(1)}%`,
+      productsGrowth: `${productsGrowth.toFixed(1)}%`
+    })
 
     const analytics = {
       totalRevenue,

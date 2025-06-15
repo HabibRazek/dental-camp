@@ -113,7 +113,7 @@ const data = {
   documents: [
     {
       name: "Rapports de commandes",
-      url: "/reports/orders",
+      url: "/dashboard/reports/orders",
       icon: ClipboardList,
     },
     {
@@ -123,7 +123,7 @@ const data = {
     },
     {
       name: "Analyses des ventes",
-      url: "/reports/sales",
+      url: "/dashboard/reports/sales",
       icon: BarChart3,
     },
   ],
