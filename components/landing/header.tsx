@@ -93,6 +93,11 @@ function Header() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-1 sm:gap-2">
+                    {/* Mobile Cart - Always Visible */}
+                    <div className="sm:hidden">
+                        <Cart />
+                    </div>
+
                     {/* Desktop Icons */}
                     <div className="hidden sm:flex items-center gap-1 lg:gap-2">
                         <Button
@@ -223,6 +228,27 @@ function Header() {
                                 >
                                     <X className="h-6 w-6 text-gray-700" />
                                 </Button>
+                            </div>
+
+                            {/* Mobile Cart and Actions */}
+                            <div className="flex items-center justify-center gap-4 py-4 border-b border-gray-200">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                                    aria-label="Search"
+                                >
+                                    <Search className="h-5 w-5" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
+                                    aria-label="Favorites"
+                                >
+                                    <Heart className="h-5 w-5" />
+                                </Button>
+                                <Cart />
                             </div>
 
                             {/* Nav Items */}
