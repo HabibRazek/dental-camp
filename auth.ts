@@ -6,6 +6,7 @@ import { getToken } from "next-auth/jwt"
 import { prisma } from "./lib/prisma"
 import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
+import { UserRole } from "./types/auth"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // Temporarily disable database adapter for development
@@ -119,7 +120,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user, account }) {
       if (user) {
-        token.id = user.id || user.email // Use email as fallback ID
+        token.id = user.id || user.email || "" // Use email as fallback ID
         token.role = user.role || "USER" // Default role for new users
         // Store user data in token for OAuth users
         if (account?.provider === "google") {
@@ -140,7 +141,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (session.user?.email) {
         // Use token data (no database required)
         session.user.id = token.id as string || session.user.email
-        session.user.role = token.role as string || "USER"
+        session.user.role = (token.role as UserRole) || "USER"
         session.user.name = token.name as string || session.user.name
         session.user.image = token.picture as string || session.user.image
       }

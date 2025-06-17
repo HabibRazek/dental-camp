@@ -367,61 +367,7 @@ export async function GET(request: NextRequest) {
       }, { status: 503 });
     }
 
-    // This code should never be reached now
-    // Filter by category
-    if (category && category !== "all") {
-      filteredProducts = filteredProducts.filter(p => p.category.slug === category);
-    }
-
-    // Filter by search
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filteredProducts = filteredProducts.filter(p =>
-        p.name.toLowerCase().includes(searchLower) ||
-        p.description.toLowerCase().includes(searchLower) ||
-        p.tags.toLowerCase().includes(searchLower)
-      );
-    }
-
-    // Filter by featured
-    if (featured) {
-      filteredProducts = filteredProducts.filter(p => p.isFeatured);
-    }
-
-    // Sort products
-    filteredProducts.sort((a, b) => {
-      if (sortBy === "price") {
-        const aPrice = parseFloat(a.price);
-        const bPrice = parseFloat(b.price);
-        return sortOrder === "asc" ? aPrice - bPrice : bPrice - aPrice;
-      } else if (sortBy === "name") {
-        return sortOrder === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
-      } else {
-        return sortOrder === "asc" ?
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime() :
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      }
-    });
-
-    // Apply pagination
-    const totalCount = filteredProducts.length;
-    const totalPages = Math.ceil(totalCount / limit);
-    const skip = (page - 1) * limit;
-    const paginatedProducts = filteredProducts.slice(skip, skip + limit);
-
-    return NextResponse.json({
-      success: true,
-      products: paginatedProducts,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalCount,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
-      },
-      message: "Products retrieved successfully (using mock data)",
-      source: "mock"
-    });
+    // This code should never be reached since database section always returns
   } catch (error) {
     console.error("Error fetching public products:", error);
 

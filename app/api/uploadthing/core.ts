@@ -17,7 +17,7 @@ export const ourFileRouter = {
             // Upload completed successfully
         }),
 
-    paymentProof: f({ image: { maxFileSize: "10MB", maxFileCount: 1 } })
+    paymentProof: f({ image: { maxFileSize: "8MB", maxFileCount: 1 } })
         .middleware(() => handelAuth())
         .onUploadComplete(({ metadata, file }) => {
             console.log("Payment proof uploaded:", file.url);

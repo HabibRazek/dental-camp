@@ -159,7 +159,7 @@ export async function GET(request: NextRequest) {
     let currentTier = 'BRONZE'
     let loyaltyProgress = 0
     let pointsToNextTier = 0
-    let nextTierName = 'Silver'
+    let nextTierName: string | null = 'Silver'
 
     // Determine current tier and progress
     if (loyaltyPoints >= loyaltyTiers.PLATINUM.min) {

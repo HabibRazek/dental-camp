@@ -201,7 +201,7 @@ export async function GET(request: Request) {
 
     // Count orders and revenue per customer
     orders.forEach(order => {
-      const customerId = order.customerId || order.userId
+      const customerId = order.customerId
       if (customerId) {
         customerOrderCounts[customerId] = (customerOrderCounts[customerId] || 0) + 1
         customerRevenue[customerId] = (customerRevenue[customerId] || 0) + (Number(order.total) || 0)
