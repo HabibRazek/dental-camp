@@ -204,7 +204,18 @@ export default function EditProductPage() {
       }
 
       toast.success('Product updated successfully!')
-      router.push('/products')
+
+      // Add a small delay to ensure the toast is shown before redirect
+      setTimeout(() => {
+        console.log('🔄 Redirecting to products list...')
+        try {
+          router.push('/admin/products')
+        } catch (routerError) {
+          console.error('Router push failed, using window.location:', routerError)
+          // Fallback to window.location if router.push fails
+          window.location.href = '/admin/products'
+        }
+      }, 1000)
     } catch (error) {
       console.error('Error updating product:', error)
       toast.error(error instanceof Error ? error.message : 'Failed to update product')
