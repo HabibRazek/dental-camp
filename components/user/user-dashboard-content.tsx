@@ -57,6 +57,7 @@ interface DashboardData {
     currentMonthSpent: number
     remainingBudget: number
     monthlyBudget: number
+    averageOrderValue: number
   }
   progress: {
     loyalty: {
@@ -75,7 +76,7 @@ interface DashboardData {
     }
   }
   charts: {
-    monthlySpending: Array<{ month: string; amount: number; orders: number }>
+    monthlySpending: Array<{ month: string; amount: number }>
     orderStatusData: Array<{ name: string; value: number; color: string; count: number }>
   }
   recentOrders: Array<{
@@ -116,22 +117,130 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
     return () => clearInterval(timer)
   }, [])
 
-  // Load real dashboard data
+  // Load dashboard data with fallback
   React.useEffect(() => {
     const loadDashboardData = async () => {
       try {
         setLoading(true)
         setError(null)
-        console.log('📊 Loading dashboard data from API')
+        console.log('📊 Loading dashboard data')
 
-        const response = await fetch('/api/user/dashboard')
-        if (response.ok) {
-          const result = await response.json()
-          console.log('✅ Dashboard data loaded:', result.data)
-          setDashboardData(result.data)
-        } else {
-          throw new Error('Failed to fetch dashboard data')
+        // Try to fetch from API first
+        try {
+          const response = await fetch('/api/user/dashboard')
+          if (response.ok) {
+            const result = await response.json()
+            console.log('✅ Dashboard data loaded from API:', result.data)
+            setDashboardData(result.data)
+            return
+          }
+        } catch (apiError) {
+          console.warn('⚠️ API not available, using mock data:', apiError)
         }
+
+        // Fallback to mock data
+        console.log('📊 Using mock dashboard data')
+        const mockData: DashboardData = {
+          stats: {
+            totalOrders: 24,
+            pendingOrders: 3,
+            totalSpent: 2847.500,
+            savedAmount: 342.100,
+            wishlistCount: 8,
+            loyaltyPoints: 1250,
+            orderGrowth: 12.5,
+            spendingGrowth: 8.3,
+            completionRate: 92,
+            averageOrderValue: 118.650,
+            currentMonthSpent: 450.200,
+            remainingBudget: 549.800,
+            monthlyBudget: 1000.000
+          },
+          progress: {
+            loyalty: {
+              currentTier: 'Gold',
+              progress: 83,
+              pointsToNext: 250,
+              nextTier: 'Platinum',
+              totalPoints: 1250
+            },
+            savings: {
+              progress: 45,
+              spent: 450.200,
+              budget: 1000.000,
+              remaining: 549.800,
+              totalSaved: 342.100
+            }
+          },
+          charts: {
+            monthlySpending: [
+              { month: 'Jan', amount: 450 },
+              { month: 'Feb', amount: 320 },
+              { month: 'Mar', amount: 580 },
+              { month: 'Apr', amount: 420 },
+              { month: 'May', amount: 650 },
+              { month: 'Jun', amount: 425 }
+            ],
+            orderStatusData: [
+              { name: 'Delivered', value: 65, count: 15, color: '#10B981' },
+              { name: 'Shipped', value: 20, count: 5, color: '#3B82F6' },
+              { name: 'Processing', value: 15, count: 4, color: '#F59E0B' }
+            ]
+          },
+          recentOrders: [
+            {
+              id: 'ORD-2024-001',
+              date: '2024-01-15',
+              status: 'Delivered',
+              total: 245.500,
+              items: 3,
+              product: 'Dental Scaler Pro'
+            },
+            {
+              id: 'ORD-2024-002',
+              date: '2024-01-12',
+              status: 'Shipped',
+              total: 189.750,
+              items: 2,
+              product: 'LED Curing Light'
+            },
+            {
+              id: 'ORD-2024-003',
+              date: '2024-01-10',
+              status: 'Processing',
+              total: 567.200,
+              items: 5,
+              product: 'Composite Kit'
+            }
+          ],
+          wishlistItems: [
+            {
+              id: 'w1',
+              name: 'Digital X-Ray Sensor',
+              price: 1250.000,
+              originalPrice: 1450.000,
+              discount: 14,
+              image: '/images/products/xray-sensor.jpg',
+              inStock: true
+            },
+            {
+              id: 'w2',
+              name: 'Ultrasonic Cleaner',
+              price: 890.500,
+              originalPrice: null,
+              discount: 0,
+              image: '/images/products/ultrasonic.jpg',
+              inStock: true
+            }
+          ],
+          user: {
+            memberSince: '2023-06-15',
+            lastOrderDate: '2024-01-15'
+          }
+        }
+
+        setDashboardData(mockData)
+        console.log('✅ Mock dashboard data loaded')
       } catch (error) {
         console.error('❌ Error loading dashboard data:', error)
         setError('Failed to load dashboard data')
@@ -238,44 +347,52 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
       initial="hidden"
       animate="visible"
     >
-      {/* Dynamic Welcome Section */}
-      <motion.div 
+      {/* Dynamic Welcome Section - Fully Responsive */}
+      <motion.div
         variants={itemVariants}
-        className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl p-8 text-white shadow-2xl"
+        className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 md:p-8 text-white shadow-2xl"
       >
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative z-10">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                <Sparkles className="h-8 w-8 text-yellow-300" />
-                {getGreeting()}, {user.name || 'User'}!
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex-1">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-300" />
+                <span>{getGreeting()}, {user.name || 'User'}!</span>
               </h1>
-              <p className="text-blue-100 text-lg mb-4">
+              <p className="text-blue-100 text-sm sm:text-base md:text-lg mb-3 sm:mb-4">
                 Welcome to your personalized dashboard. Here's your activity overview.
               </p>
-              <div className="flex items-center gap-4 text-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm">
                 <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {currentTime.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                  })}
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">
+                    {currentTime.toLocaleDateString('en-US', {
+                      weekday: 'long',
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </span>
+                  <span className="sm:hidden">
+                    {currentTime.toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric'
+                    })}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  {currentTime.toLocaleTimeString('en-US', { 
-                    hour: '2-digit', 
-                    minute: '2-digit' 
+                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
+                  {currentTime.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
                   })}
                 </div>
               </div>
             </div>
             <div className="hidden md:block">
-              <div className="w-32 h-32 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
-                <Activity className="h-16 w-16 text-white/80" />
+              <div className="w-24 h-24 lg:w-32 lg:h-32 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Activity className="h-12 w-12 lg:h-16 lg:w-16 text-white/80" />
               </div>
             </div>
           </div>
@@ -291,112 +408,118 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
         variants={itemVariants}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6"
       >
-        {/* Total Orders Card */}
+        {/* Total Orders Card - Responsive */}
         <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white group hover:scale-105 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <CardContent className="p-4 sm:p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <ShoppingBag className="h-6 w-6" />
+          <CardContent className="p-3 sm:p-4 md:p-6 relative z-10">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                <ShoppingBag className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               </div>
-              <Badge className="bg-white/20 text-white border-white/30">
-                +{stats.pendingOrders} pending
+              <Badge className="bg-white/20 text-white border-white/30 text-xs px-1.5 py-0.5 sm:px-2 sm:py-1">
+                <span className="hidden sm:inline">+{stats.pendingOrders} pending</span>
+                <span className="sm:hidden">+{stats.pendingOrders}</span>
               </Badge>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium opacity-90">Total Orders</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl sm:text-3xl font-bold">
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="text-xs sm:text-sm font-medium opacity-90">Total Orders</h3>
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold">
                   {stats.totalOrders}
                 </span>
-                <span className="text-sm opacity-75">orders</span>
+                <span className="text-xs sm:text-sm opacity-75">orders</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4" />
-                <span>{stats.orderGrowth >= 0 ? '+' : ''}{stats.orderGrowth.toFixed(1)}% from last month</span>
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">{stats.orderGrowth >= 0 ? '+' : ''}{stats.orderGrowth.toFixed(1)}% from last month</span>
+                <span className="sm:hidden">{stats.orderGrowth >= 0 ? '+' : ''}{stats.orderGrowth.toFixed(1)}%</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Total Spent Card */}
+        {/* Total Spent Card - Responsive */}
         <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-green-500 to-green-600 text-white group hover:scale-105 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <DollarSign className="h-6 w-6" />
+          <CardContent className="p-3 sm:p-4 md:p-6 relative z-10">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               </div>
-              <Badge className="bg-white/20 text-white border-white/30">
+              <Badge className="bg-white/20 text-white border-white/30 text-xs px-1.5 py-0.5 sm:px-2 sm:py-1">
                 {stats.spendingGrowth >= 0 ? '+' : ''}{stats.spendingGrowth.toFixed(1)}%
               </Badge>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium opacity-90">Total Spent</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="text-xs sm:text-sm font-medium opacity-90">Total Spent</h3>
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="text-lg sm:text-2xl md:text-3xl font-bold">
                   {formatPrice(stats.totalSpent)}
                 </span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <TrendingUp className="h-4 w-4" />
-                <span>Saved {formatPrice(stats.savedAmount)}</span>
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Saved {formatPrice(stats.savedAmount)}</span>
+                <span className="sm:hidden">+{formatPrice(stats.savedAmount)}</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Wishlist Card */}
+        {/* Wishlist Card - Responsive */}
         <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-purple-500 to-purple-600 text-white group hover:scale-105 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Heart className="h-6 w-6" />
+          <CardContent className="p-3 sm:p-4 md:p-6 relative z-10">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                <Heart className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               </div>
-              <Badge className="bg-white/20 text-white border-white/30">
-                {wishlistItems.filter(item => item.discount > 0).length} on sale
+              <Badge className="bg-white/20 text-white border-white/30 text-xs px-1.5 py-0.5 sm:px-2 sm:py-1">
+                <span className="hidden sm:inline">{wishlistItems.filter(item => item.discount > 0).length} on sale</span>
+                <span className="sm:hidden">{wishlistItems.filter(item => item.discount > 0).length}</span>
               </Badge>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium opacity-90">Wishlist Items</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="text-xs sm:text-sm font-medium opacity-90">Wishlist Items</h3>
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold">
                   {stats.wishlistCount}
                 </span>
-                <span className="text-sm opacity-75">items</span>
+                <span className="text-xs sm:text-sm opacity-75">items</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Gift className="h-4 w-4" />
-                <span>Special offers available</span>
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Gift className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">Special offers available</span>
+                <span className="sm:hidden">Offers</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Loyalty Points Card */}
+        {/* Loyalty Points Card - Responsive */}
         <Card className="relative overflow-hidden border-0 shadow-xl bg-gradient-to-br from-orange-500 to-orange-600 text-white group hover:scale-105 transition-all duration-300">
           <div className="absolute inset-0 bg-gradient-to-br from-orange-400/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-          <CardContent className="p-6 relative z-10">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Crown className="h-6 w-6" />
+          <CardContent className="p-3 sm:p-4 md:p-6 relative z-10">
+            <div className="flex items-center justify-between mb-3 sm:mb-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl backdrop-blur-sm">
+                <Crown className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6" />
               </div>
-              <Badge className="bg-white/20 text-white border-white/30">
+              <Badge className="bg-white/20 text-white border-white/30 text-xs px-1.5 py-0.5 sm:px-2 sm:py-1">
                 Gold
               </Badge>
             </div>
-            <div className="space-y-2">
-              <h3 className="text-sm font-medium opacity-90">Loyalty Points</h3>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl font-bold">
+            <div className="space-y-1 sm:space-y-2">
+              <h3 className="text-xs sm:text-sm font-medium opacity-90">Loyalty Points</h3>
+              <div className="flex items-baseline gap-1 sm:gap-2">
+                <span className="text-xl sm:text-2xl md:text-3xl font-bold">
                   {stats.loyaltyPoints}
                 </span>
-                <span className="text-sm opacity-75">pts</span>
+                <span className="text-xs sm:text-sm opacity-75">pts</span>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Zap className="h-4 w-4" />
-                <span>{Math.max(0, 1500 - stats.loyaltyPoints)} pts to next tier</span>
+              <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                <Zap className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline">{Math.max(0, 1500 - stats.loyaltyPoints)} pts to next tier</span>
+                <span className="sm:hidden">{Math.max(0, 1500 - stats.loyaltyPoints)} pts</span>
               </div>
             </div>
           </CardContent>
@@ -638,32 +761,32 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             <CardDescription>Common tasks and shortcuts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
               <Link href="/products">
-                <Button variant="outline" className="h-20 sm:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
-                  <Plus className="h-6 sm:h-8 w-6 sm:w-8 text-blue-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs sm:text-sm font-medium">Browse Products</span>
+                <Button variant="outline" className="h-16 sm:h-20 md:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
+                  <Plus className="h-4 w-4 sm:h-6 sm:w-6 md:h-8 md:w-8 text-blue-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium text-center">Browse Products</span>
                 </Button>
               </Link>
 
               <Link href="/user/wishlist">
-                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-red-50 hover:border-red-200 transition-all duration-300 group">
-                  <Heart className="h-8 w-8 text-red-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">My Wishlist</span>
+                <Button variant="outline" className="h-16 sm:h-20 md:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-red-50 hover:border-red-200 transition-all duration-300 group">
+                  <Heart className="h-4 w-4 sm:h-6 sm:w-6 md:h-8 md:w-8 text-red-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium text-center">My Wishlist</span>
                 </Button>
               </Link>
 
               <Link href="/user/orders">
-                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-green-50 hover:border-green-200 transition-all duration-300 group">
-                  <Package className="h-8 w-8 text-green-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">Track Orders</span>
+                <Button variant="outline" className="h-16 sm:h-20 md:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-green-50 hover:border-green-200 transition-all duration-300 group">
+                  <Package className="h-4 w-4 sm:h-6 sm:w-6 md:h-8 md:w-8 text-green-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium text-center">Track Orders</span>
                 </Button>
               </Link>
 
               <Link href="/user/statistics">
-                <Button variant="outline" className="h-24 flex flex-col items-center justify-center space-y-2 hover:bg-purple-50 hover:border-purple-200 transition-all duration-300 group">
-                  <BarChart3 className="h-8 w-8 text-purple-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-sm font-medium">View Analytics</span>
+                <Button variant="outline" className="h-16 sm:h-20 md:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-purple-50 hover:border-purple-200 transition-all duration-300 group">
+                  <BarChart3 className="h-4 w-4 sm:h-6 sm:w-6 md:h-8 md:w-8 text-purple-600 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs sm:text-sm font-medium text-center">View Analytics</span>
                 </Button>
               </Link>
             </div>

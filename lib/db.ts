@@ -9,7 +9,7 @@ import { saltAndHashPassword } from "./password"
  */
 export async function getUserFromDb(email: string, plainPassword: string) {
   try {
-    let user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email },
       select: {
         id: true,
@@ -23,81 +23,21 @@ export async function getUserFromDb(email: string, plainPassword: string) {
       },
     })
 
-    // If user doesn't exist, create a new one automatically
+    // If user doesn't exist, return null (don't create automatically)
     if (!user) {
-      // Import bcrypt here to avoid issues with edge runtime
-      const bcrypt = await import("bcryptjs")
-      const hashedPassword = await bcrypt.hash(plainPassword, 12)
-
-      user = await prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          name: email.split('@')[0], // Use part before @ as name
-          isActive: true,
-          emailVerified: new Date(), // Auto-verify new users
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          password: true,
-          image: true,
-          role: true,
-          isActive: true,
-          createdAt: true,
-        },
-      })
-
-      console.log(`✅ New user created successfully: ${email}`)
-
-      // Return user without password
-      return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        image: user.image,
-        role: user.role,
-        createdAt: user.createdAt,
-      }
-    }
-
-    // If user exists but has no password (OAuth user), set password
-    if (!user.password) {
-      console.log(`🔑 Setting password for existing OAuth user: ${email}`)
-
-      const bcrypt = await import("bcryptjs")
-      const hashedPassword = await bcrypt.hash(plainPassword, 12)
-
-      user = await prisma.user.update({
-        where: { email },
-        data: { password: hashedPassword },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          password: true,
-          image: true,
-          role: true,
-          isActive: true,
-          createdAt: true,
-        },
-      })
-
-    }
-
-    // Check if user exists after potential update
-    if (!user) {
+      console.log(`❌ User not found in database: ${email}`)
       return null
     }
 
     // Check if user account is disabled
     if (!user.isActive) {
+      console.log(`❌ User account is disabled: ${email}`)
       return null
     }
 
     // Check if user has a password
     if (!user.password) {
+      console.log(`❌ User has no password set: ${email}`)
       return null
     }
 
@@ -106,8 +46,11 @@ export async function getUserFromDb(email: string, plainPassword: string) {
     const isValidPassword = await bcrypt.compare(plainPassword, user.password)
 
     if (!isValidPassword) {
+      console.log(`❌ Invalid password for user: ${email}`)
       return null
     }
+
+    console.log(`✅ Login successful for user: ${email}`)
 
     // Return user without password
     return {
@@ -119,6 +62,7 @@ export async function getUserFromDb(email: string, plainPassword: string) {
       createdAt: user.createdAt,
     }
   } catch (error) {
+    console.error(`❌ Database error during authentication:`, error)
     return null
   }
 }

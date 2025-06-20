@@ -311,7 +311,7 @@ function ProductGridSection() {
                         <p className="text-gray-600 text-xl font-medium">Aucune catégorie disponible pour le moment.</p>
                     </motion.div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 xl:gap-8">
                         {categories.map((category, index) => (
                             <motion.div
                                 key={category.id}
@@ -329,7 +329,7 @@ function ProductGridSection() {
                                 whileHover={{ y: -8, scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
-                                <Card className="relative bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden border-0 h-full group-hover:bg-white/90">
+                                <Card className="relative bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden border-0 h-full group-hover:bg-white/90">
                                     {/* Animated Gradient Background */}
                                     <div
                                         className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-all duration-700"
@@ -339,7 +339,7 @@ function ProductGridSection() {
                                     />
 
                                     {/* Enhanced Image Section */}
-                                    <div className="relative h-40 sm:h-48 overflow-hidden">
+                                    <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
                                         <Image
                                             src={getImage(category.image)}
                                             alt={category.name}
@@ -355,7 +355,7 @@ function ProductGridSection() {
 
                                         {/* Enhanced Icon */}
                                         <motion.div
-                                            className="absolute top-3 left-3 sm:top-4 sm:left-4 w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl backdrop-blur-md border border-white/30"
+                                            className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg sm:shadow-2xl backdrop-blur-md border border-white/30"
                                             style={{
                                                 background: `linear-gradient(135deg, ${category.color || '#3B82F6'}20, ${category.color || '#3B82F6'}40)`
                                             }}
@@ -369,7 +369,7 @@ function ProductGridSection() {
 
                                         {/* Enhanced Product Count Badge */}
                                         <motion.div
-                                            className="absolute top-4 right-4 px-3 py-2 rounded-xl text-sm font-bold text-white shadow-2xl backdrop-blur-md border border-white/30"
+                                            className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 px-2 py-1 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-white shadow-lg sm:shadow-2xl backdrop-blur-md border border-white/30"
                                             style={{
                                                 background: `linear-gradient(135deg, ${category.color || '#3B82F6'}, ${category.color || '#3B82F6'}DD)`
                                             }}
@@ -400,10 +400,10 @@ function ProductGridSection() {
                                     </div>
 
                                     {/* Enhanced Content Section */}
-                                    <div className="p-4 sm:p-6 relative z-10 flex flex-col h-[calc(100%-10rem)] sm:h-[calc(100%-12rem)]">
+                                    <div className="p-3 sm:p-4 md:p-6 relative z-10 flex flex-col h-[calc(100%-8rem)] sm:h-[calc(100%-10rem)] md:h-[calc(100%-12rem)]">
                                         {/* Category Name */}
                                         <motion.h3
-                                            className="text-base sm:text-lg font-bold mb-2 sm:mb-3 line-clamp-2 leading-tight"
+                                            className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2 md:mb-3 line-clamp-1 sm:line-clamp-2 leading-tight"
                                             style={{ color: category.color || '#1F2937' }}
                                             whileHover={{ scale: 1.02 }}
                                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
@@ -412,7 +412,7 @@ function ProductGridSection() {
                                         </motion.h3>
 
                                         {/* Description */}
-                                        <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 line-clamp-2 sm:line-clamp-3 leading-relaxed flex-grow">
+                                        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 md:mb-4 line-clamp-1 sm:line-clamp-2 md:line-clamp-3 leading-relaxed flex-grow">
                                             {category.description || "Découvrez nos produits de qualité professionnelle"}
                                         </p>
 
@@ -424,7 +424,7 @@ function ProductGridSection() {
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                className="w-full justify-between text-sm font-semibold rounded-xl p-3 h-auto group-hover:shadow-lg transition-all duration-300"
+                                                className="w-full justify-between text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl p-2 sm:p-3 h-auto group-hover:shadow-lg transition-all duration-300"
                                                 style={{
                                                     color: category.color || '#3B82F6',
                                                     background: `linear-gradient(135deg, ${category.color || '#3B82F6'}10, ${category.color || '#3B82F6'}05)`
@@ -432,11 +432,12 @@ function ProductGridSection() {
                                                 asChild
                                             >
                                                 <Link href={`/catalog?category=${category.slug}`}>
-                                                    <div className="flex items-center gap-2">
-                                                        <Eye className="w-4 h-4" />
-                                                        Voir produits
+                                                    <div className="flex items-center gap-1 sm:gap-2">
+                                                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                        <span className="hidden sm:inline">Voir produits</span>
+                                                        <span className="sm:hidden">Voir</span>
                                                     </div>
-                                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                                                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" />
                                                 </Link>
                                             </Button>
                                         </motion.div>

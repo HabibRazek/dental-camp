@@ -5,7 +5,7 @@ import { getToken } from "next-auth/jwt"
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Skip middleware for public routes
+  // Skip middleware for public routes and API routes
   if (
     pathname.startsWith('/api') ||
     pathname.startsWith('/_next') ||
@@ -23,9 +23,10 @@ export async function middleware(request: NextRequest) {
   // Get authentication token
   let token = null
   try {
+    const secret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
     token = await getToken({
       req: request,
-      secret: process.env.AUTH_SECRET,
+      secret: secret,
       secureCookie: process.env.NODE_ENV === "production",
     })
 
@@ -33,12 +34,12 @@ export async function middleware(request: NextRequest) {
     if (!token) {
       token = await getToken({
         req: request,
-        secret: process.env.AUTH_SECRET,
+        secret: secret,
         secureCookie: false,
       })
     }
   } catch (error) {
-    // Silent error handling
+    // Silent error handling - continue without token
   }
 
   const isAuthenticated = !!token

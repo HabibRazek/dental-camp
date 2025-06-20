@@ -228,18 +228,16 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Update last toast reference
     lastToastRef.current = { itemId: item.id, timestamp: now }
 
-    // Show single, informative toast
+    // Show simple, brief toast
     if (isNewItem) {
       const quantityText = quantity > 1 ? ` (${quantity})` : ''
-      toast.success(`✅ ${item.name}${quantityText} ajouté au panier`, {
-        description: "Produit ajouté avec succès",
-        duration: 3000,
+      toast.success(`${item.name}${quantityText} ajouté au panier`, {
+        duration: 2000,
       })
     } else {
       const newQuantity = existingItem.quantity + quantity
-      toast.success(`🔄 Quantité mise à jour`, {
-        description: `${item.name} (${newQuantity})`,
-        duration: 3000,
+      toast.success(`Quantité mise à jour (${newQuantity})`, {
+        duration: 2000,
       })
     }
   }

@@ -10,26 +10,20 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
-import { 
-  Shield, 
-  Key, 
-  Smartphone, 
-  Eye, 
-  EyeOff, 
+import {
+  Shield,
+  Smartphone,
+  Eye,
+  EyeOff,
   AlertTriangle,
-  CheckCircle,
   Lock,
-  Unlock,
   RefreshCw,
-  Save,
-  Download,
-  Trash2
+  Save
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
 
 interface SecuritySettings {
-  twoFactorEnabled: boolean
   loginNotifications: boolean
   sessionTimeout: number
   passwordExpiry: number
@@ -59,7 +53,6 @@ export default function SecurityPage() {
   })
 
   const [securitySettings, setSecuritySettings] = useState<SecuritySettings>({
-    twoFactorEnabled: false,
     loginNotifications: true,
     sessionTimeout: 30,
     passwordExpiry: 90,
@@ -191,128 +184,13 @@ export default function SecurityPage() {
     }
   }
 
-  const handleEnable2FA = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/security', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: '2fa',
-          data: { enabled: true }
-        })
-      })
 
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to enable 2FA')
-      }
-
-      setSecuritySettings(prev => ({ ...prev, twoFactorEnabled: true }))
-      toast.success("Two-factor authentication enabled!")
-    } catch (error) {
-      console.error('Enable 2FA error:', error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to enable two-factor authentication"
-      toast.error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleDisable2FA = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/security', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          type: '2fa',
-          data: { enabled: false }
-        })
-      })
-
-      if (!response.ok) {
-        const error = await response.json()
-        throw new Error(error.error || 'Failed to disable 2FA')
-      }
-
-      setSecuritySettings(prev => ({ ...prev, twoFactorEnabled: false }))
-      toast.success("Two-factor authentication disabled!")
-    } catch (error) {
-      console.error('Disable 2FA error:', error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to disable two-factor authentication"
-      toast.error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleTerminateSession = (sessionId: string) => {
     toast.success("Session terminated successfully")
   }
 
-  const handleDownloadBackupCodes = async () => {
-    setLoading(true)
-    try {
-      const response = await fetch('/api/auth/backup-codes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
 
-      if (!response.ok) {
-        const error = await response.json()
-
-        // Handle specific error cases
-        if (error.error?.includes('Two-factor authentication must be enabled')) {
-          toast.error("Please enable Two-Factor Authentication first before generating backup codes")
-          return
-        }
-
-        if (error.error?.includes('Database schema needs to be updated')) {
-          toast.warning("Database is being updated automatically. Please try again in a moment.")
-          return
-        }
-
-        throw new Error(error.error || 'Failed to generate backup codes')
-      }
-
-      const data = await response.json()
-
-      // Create downloadable file
-      const codesText = [
-        'Dental Camp - Backup Codes',
-        '================================',
-        'Generated: ' + new Date().toLocaleString(),
-        '',
-        'IMPORTANT: Store these codes in a safe place.',
-        'Each code can only be used once.',
-        '',
-        ...data.codes.map((code: string, index: number) => `${index + 1}. ${code}`)
-      ].join('\n')
-
-      const blob = new Blob([codesText], { type: 'text/plain' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `dental-camp-backup-codes-${new Date().toISOString().split('T')[0]}.txt`
-      a.click()
-      URL.revokeObjectURL(url)
-
-      toast.success("Backup codes generated and downloaded successfully!")
-    } catch (error) {
-      console.error('Generate backup codes error:', error)
-      const errorMessage = error instanceof Error ? error.message : "Failed to generate backup codes"
-      toast.error(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (initialLoading) {
     return (
@@ -370,26 +248,7 @@ export default function SecurityPage() {
             </Card>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <Card className="border-l-4 border-l-orange-500">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Two-Factor Auth</CardTitle>
-                <Key className="h-4 w-4 text-orange-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-orange-600">
-                  {securitySettings.twoFactorEnabled ? "Enabled" : "Disabled"}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  {securitySettings.twoFactorEnabled ? "Extra security active" : "Consider enabling"}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
+
         </div>
 
         {/* Change Password */}
@@ -512,70 +371,7 @@ export default function SecurityPage() {
           </Card>
         </motion.div>
 
-        {/* Two-Factor Authentication */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-        >
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Smartphone className="h-5 w-5" />
-                Two-Factor Authentication
-              </CardTitle>
-              <CardDescription>
-                Add an extra layer of security to your account
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">Two-Factor Authentication</span>
-                    <Badge variant={securitySettings.twoFactorEnabled ? "default" : "secondary"}>
-                      {securitySettings.twoFactorEnabled ? "Enabled" : "Disabled"}
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {securitySettings.twoFactorEnabled 
-                      ? "Your account is protected with 2FA" 
-                      : "Secure your account with an authenticator app"
-                    }
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  {securitySettings.twoFactorEnabled ? (
-                    <>
-                      <Button variant="outline" onClick={handleDownloadBackupCodes}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Backup Codes
-                      </Button>
-                      <Button variant="destructive" onClick={handleDisable2FA} disabled={loading}>
-                        <Unlock className="h-4 w-4 mr-2" />
-                        Disable
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={handleEnable2FA} disabled={loading}>
-                      <Lock className="h-4 w-4 mr-2" />
-                      Enable 2FA
-                    </Button>
-                  )}
-                </div>
-              </div>
 
-              {securitySettings.twoFactorEnabled && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertDescription>
-                    Two-factor authentication is active. Make sure to keep your backup codes in a safe place.
-                  </AlertDescription>
-                </Alert>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </DashboardLayout>
   )

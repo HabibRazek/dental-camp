@@ -103,13 +103,14 @@ export function UserHeader() {
         <Button
           variant="ghost"
           size="sm"
-          className="relative hover:bg-blue-50 rounded-xl transition-all duration-200"
+          className="relative hover:bg-blue-50 rounded-xl transition-all duration-200 min-h-[40px] min-w-[40px] p-2"
           onClick={openCart}
+          aria-label={`Panier (${state.itemCount} article${state.itemCount !== 1 ? 's' : ''})`}
         >
-          <ShoppingCart className="h-5 w-5 text-gray-600" />
+          <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
           {state.itemCount > 0 && (
-            <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg animate-pulse">
-              {state.itemCount}
+            <Badge className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg animate-pulse border-2 border-white">
+              {state.itemCount > 99 ? '99+' : state.itemCount}
             </Badge>
           )}
         </Button>

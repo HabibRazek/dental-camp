@@ -249,42 +249,7 @@ function InnovativeFeaturesSection() {
                     })}
                 </div>
 
-                {/* Bottom CTA */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.8 }}
-                    viewport={{ once: true }}
-                    className="text-center mt-16"
-                >
-                    <Card className="p-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl shadow-2xl max-w-4xl mx-auto">
-                        <div className="flex items-center justify-center gap-4 mb-6">
-                            <Clock className="h-8 w-8" />
-                            <h3 className="text-2xl font-bold">
-                                Prêt à transformer votre pratique ?
-                            </h3>
-                        </div>
-                        <p className="text-blue-100 mb-6 text-lg">
-                            Rejoignez plus de 500 professionnels qui nous font confiance pour leurs équipements dentaires.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-                            >
-                                Demander un Devis
-                            </motion.button>
-                            <motion.button
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                className="border-2 border-white/30 text-white px-8 py-3 rounded-xl font-semibold hover:bg-white/10 transition-all duration-300"
-                            >
-                                Voir le Catalogue
-                            </motion.button>
-                        </div>
-                    </Card>
-                </motion.div>
+
             </div>
         </section>
     );

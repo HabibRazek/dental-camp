@@ -85,12 +85,14 @@ export function AddToCartButton({
     return (
       <Button
         size={size}
-        className={`w-full ${className}`}
+        className={`w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium min-h-[32px] sm:min-h-[36px] py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${className}`}
         onClick={handleAddToCart}
         disabled={!isInStock || disabled}
       >
-        <ShoppingCart className="h-4 w-4 mr-2" />
-        {isInStock ? 'Ajouter' : 'Rupture'}
+        <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 flex-shrink-0" />
+        <span className="text-xs sm:text-sm font-medium truncate">
+          {isInStock ? 'Ajouter au panier' : 'Rupture de stock'}
+        </span>
       </Button>
     )
   }
@@ -98,12 +100,14 @@ export function AddToCartButton({
   return (
     <Button
       size={size}
-      className={`w-full ${className}`}
+      className={`w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium min-h-[32px] sm:min-h-[36px] py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md ${className}`}
       onClick={handleAddToCart}
       disabled={!isInStock || disabled}
     >
-      <ShoppingCart className="h-4 w-4 mr-2" />
-      {isInStock ? 'Ajouter au panier' : 'Rupture de stock'}
+      <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2 flex-shrink-0" />
+      <span className="text-xs sm:text-sm font-medium">
+        {isInStock ? 'Ajouter au panier' : 'Rupture de stock'}
+      </span>
     </Button>
   )
 }

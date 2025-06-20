@@ -272,7 +272,7 @@ export function ProductCard({
       whileHover={{ y: -5 }}
       className={`group ${className}`}
     >
-      <Card className="h-full overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl bg-white">
+      <Card className="h-[380px] sm:h-[420px] lg:h-[460px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-xl bg-white">
         <div className="relative aspect-[4/3] overflow-hidden">
           <Image
             src={product.thumbnail || product.images?.[0] || "/images/dental-equipment.jpg"}
@@ -284,36 +284,44 @@ export function ProductCard({
           {/* Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
           
-          {/* Action Buttons */}
+          {/* Quick Action Icons - Top right corner, small and unobtrusive */}
           {showQuickActions && (
-            <div className="absolute bottom-4 left-4 right-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-              <div className="flex gap-2">
-                <Button
-                  className="flex-1 shadow-md"
-                  size="sm"
-                  asChild
-                >
-                  <Link href={`/products/${product.slug}`}>
-                    View Details
-                  </Link>
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="shadow-md"
-                  onClick={handleQuickView}
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="shadow-md"
-                  onClick={handleAddToWishlist}
-                >
-                  <Heart className="h-4 w-4" />
-                </Button>
-              </div>
+            <div className="absolute top-2 right-2 flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+              <Button
+                variant="secondary"
+                size="sm"
+                className="rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border-0 h-6 w-6 sm:h-7 sm:w-7 p-0 flex items-center justify-center"
+                onClick={handleAddToWishlist}
+              >
+                <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-600" />
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border-0 h-6 w-6 sm:h-7 sm:w-7 p-0 flex items-center justify-center"
+                asChild
+              >
+                <Link href={`/products/${product.slug}`}>
+                  <Eye className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-600" />
+                </Link>
+              </Button>
+            </div>
+          )}
+
+          {/* Main Action Button - Bottom overlay */}
+          {showQuickActions && (
+            <div className="absolute bottom-3 left-3 right-3 transform translate-y-0 sm:translate-y-full sm:group-hover:translate-y-0 transition-transform duration-300">
+              <Button
+                className="w-full shadow-md bg-white/95 backdrop-blur-sm hover:bg-white text-gray-900 text-xs sm:text-sm flex items-center justify-center py-2"
+                size="sm"
+                asChild
+              >
+                <Link href={`/products/${product.slug}`}>
+                  <Eye className="mr-1.5 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">View Details</span>
+                  <span className="sm:hidden">Voir</span>
+                </Link>
+              </Button>
             </div>
           )}
 
@@ -343,58 +351,58 @@ export function ProductCard({
           </div>
         </div>
 
-        <CardContent className="p-5">
-          <div className="space-y-3">
+        <CardContent className="p-3 sm:p-4 lg:p-5">
+          <div className="space-y-2 sm:space-y-3">
             {/* Category */}
             {product.category && (
-              <div className="flex items-center gap-1 text-sm text-blue-600">
+              <div className="flex items-center gap-1 text-xs sm:text-sm text-blue-600">
                 {getCategoryIcon(product.category.slug)}
                 <span className="font-medium">{product.category.name}</span>
               </div>
             )}
 
             {/* Title */}
-            <h3 className="font-bold text-lg text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
+            <h3 className="font-bold text-sm sm:text-base lg:text-lg text-gray-900 group-hover:text-blue-600 transition-colors duration-300 line-clamp-2">
               {product.name}
             </h3>
 
-            {/* Description */}
+            {/* Description - Hidden on mobile */}
             {product.description && (
-              <p className="text-sm text-gray-600 line-clamp-2">
+              <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 hidden sm:block">
                 {product.description}
               </p>
             )}
 
             {/* Price */}
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-1 sm:pt-2 border-t border-gray-100">
               <div className="space-y-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="text-xl font-bold text-gray-900">
+                <div className="flex items-baseline gap-1 sm:gap-2">
+                  <span className="text-sm sm:text-lg lg:text-xl font-bold text-gray-900">
                     {formatCurrency(product.price)}
                   </span>
                   {product.comparePrice && (
-                    <span className="text-sm text-gray-500 line-through">
+                    <span className="text-xs sm:text-sm text-gray-500 line-through">
                       {formatCurrency(product.comparePrice)}
                     </span>
                   )}
                 </div>
                 {discount > 0 && (
-                  <p className="text-xs text-green-600 font-medium">
+                  <p className="text-xs text-green-600 font-medium hidden sm:block">
                     Save {formatCurrency(product.comparePrice! - product.price)}
                   </p>
                 )}
               </div>
-              
-              <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-lg">
-                <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium text-gray-700">
+
+              <div className="flex items-center gap-1 bg-gray-50 px-1.5 sm:px-2 py-1 rounded-lg">
+                <Star className="h-3 w-3 sm:h-4 sm:w-4 fill-yellow-400 text-yellow-400" />
+                <span className="text-xs sm:text-sm font-medium text-gray-700">
                   {rating.toFixed(1)}
                 </span>
               </div>
             </div>
 
             {/* Add to Cart Button */}
-            <div className="pt-3">
+            <div className="pt-2 sm:pt-3">
               <AddToCartButton
                 product={{
                   id: product.id,

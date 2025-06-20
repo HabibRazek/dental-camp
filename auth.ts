@@ -8,6 +8,9 @@ import { signInSchema } from "./lib/zod"
 import { getUserFromDb } from "./lib/db"
 import { UserRole } from "./types/auth"
 
+// Ensure we have a secret
+const authSecret = process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   // Temporarily disable database adapter for development
   // adapter: PrismaAdapter(prisma),
@@ -19,11 +22,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/auth/signin",
     error: "/auth/signin",
   },
-  secret: process.env.AUTH_SECRET,
+  secret: authSecret,
   trustHost: true,
   debug: process.env.NODE_ENV === "development",
-  basePath: "/api/auth",
-  useSecureCookies: process.env.NODE_ENV === "production",
   providers: [
     Google({
       clientId: process.env.AUTH_GOOGLE_ID!,
@@ -93,7 +94,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             }
           }
 
-          console.log(`❌ Login failed for: ${email} - Invalid credentials`)
+          console.log(`❌ Login failed for: ${email} - User not found or invalid credentials`)
           return null
         } catch (error) {
           console.error(`❌ Login error for credentials:`, error)
@@ -119,33 +120,43 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return true
     },
     async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id || user.email || "" // Use email as fallback ID
-        token.role = user.role || "USER" // Default role for new users
-        // Store user data in token for OAuth users
-        if (account?.provider === "google") {
-          token.name = user.name
-          token.picture = user.image
-          token.email = user.email
+      try {
+        if (user) {
+          token.id = user.id || user.email || "" // Use email as fallback ID
+          token.role = user.role || "USER" // Default role for new users
+          // Store user data in token for OAuth users
+          if (account?.provider === "google") {
+            token.name = user.name
+            token.picture = user.image
+            token.email = user.email
+          }
         }
-      }
 
-      // Set default role if not present
-      if (!token.role) {
-        token.role = "USER"
-      }
+        // Set default role if not present
+        if (!token.role) {
+          token.role = "USER"
+        }
 
-      return token
+        return token
+      } catch (error) {
+        console.error("JWT callback error:", error)
+        return token
+      }
     },
     async session({ session, token }) {
-      if (session.user?.email) {
-        // Use token data (no database required)
-        session.user.id = token.id as string || session.user.email
-        session.user.role = (token.role as UserRole) || "USER"
-        session.user.name = token.name as string || session.user.name
-        session.user.image = token.picture as string || session.user.image
+      try {
+        if (session.user?.email) {
+          // Use token data (no database required)
+          session.user.id = token.id as string || session.user.email
+          session.user.role = (token.role as UserRole) || "USER"
+          session.user.name = token.name as string || session.user.name
+          session.user.image = token.picture as string || session.user.image
+        }
+        return session
+      } catch (error) {
+        console.error("Session callback error:", error)
+        return session
       }
-      return session
     },
     async redirect({ url, baseUrl }) {
       // Use environment variable or fallback to baseUrl

@@ -56,12 +56,13 @@ function Header() {
 
     return (
         <>
-            <header className="fixed top-3 sm:top-6 left-1/2 transform -translate-x-1/2 z-50 bg-white/80 backdrop-blur-md rounded-full shadow-lg px-3 sm:px-4 lg:px-6 py-2 sm:py-3 flex items-center justify-between w-[95%] sm:w-[90%] max-w-5xl transition-all duration-300">
+            <header className="fixed top-2 sm:top-3 md:top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white/95 backdrop-blur-md rounded-full shadow-lg px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 flex items-center justify-between w-[96%] sm:w-[94%] md:w-[90%] max-w-5xl transition-all duration-300">
                 {/* Logo Section */}
-                <Link href="/" className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity">
-                    <TbDental className="h-5 sm:h-6 w-5 sm:w-6 text-blue-600" />
-                    <span className="font-bold text-sm sm:text-base lg:text-lg tracking-wide text-gray-800">
-                        Dental Camp
+                <Link href="/" className="flex items-center gap-1 sm:gap-2 md:gap-3 hover:opacity-80 transition-opacity">
+                    <TbDental className="h-4 sm:h-5 md:h-6 w-4 sm:w-5 md:w-6 text-blue-600" />
+                    <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg tracking-wide text-gray-800">
+                        <span className="hidden xs:inline">Dental Camp</span>
+                        <span className="xs:hidden">DC</span>
                     </span>
                 </Link>
 
@@ -93,7 +94,7 @@ function Header() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-1 sm:gap-2">
-                    {/* Mobile Cart - Always Visible */}
+                    {/* Mobile-First Cart - Always Visible */}
                     <div className="sm:hidden">
                         <Cart />
                     </div>
@@ -103,18 +104,18 @@ function Header() {
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
                             aria-label="Search"
                         >
-                            <Search className="h-5 w-5" />
+                            <Search className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
+                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
                             aria-label="Favorites"
                         >
-                            <Heart className="h-5 w-5" />
+                            <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
                         </Button>
                         <Cart />
                     </div>
@@ -212,7 +213,7 @@ function Header() {
 
                         {/* Slide-in Menu */}
                         <motion.div
-                            className="fixed top-0 right-0 w-72 sm:w-80 h-full bg-white z-50 shadow-lg p-4 sm:p-6 flex flex-col gap-4"
+                            className="fixed top-0 right-0 w-64 sm:w-72 md:w-80 h-full bg-white z-50 shadow-lg p-3 sm:p-4 md:p-6 flex flex-col gap-3 sm:gap-4"
                             initial={{ x: "100%" }}
                             animate={{ x: 0 }}
                             exit={{ x: "100%" }}

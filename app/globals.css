@@ -134,6 +134,15 @@
     min-width: 44px;
   }
 
+  /* Mobile-specific button improvements */
+  @media (max-width: 640px) {
+    .mobile-cart-button {
+      font-size: 0.75rem;
+      padding: 0.5rem;
+      min-height: 36px;
+    }
+  }
+
   /* Responsive images by default */
   img {
     max-width: 100%;
@@ -204,6 +213,24 @@
 
   .grid-responsive-1-2-4 {
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4;
+  }
+
+  /* Mobile-first grid utilities */
+  .grid-mobile-2 {
+    @apply grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  .grid-mobile-2-compact {
+    @apply grid grid-cols-2 gap-1.5 sm:gap-3 lg:gap-4 xl:gap-6;
+  }
+
+  /* Compact mobile card utilities */
+  .mobile-card-compact {
+    @apply h-80 sm:h-96 lg:h-[420px];
+  }
+
+  .mobile-content-compact {
+    @apply p-2 sm:p-3 lg:p-4;
   }
 
   /* Responsive flex utilities */

@@ -178,7 +178,7 @@ function ModernHeroSection() {
             </div>
 
             <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-screen py-12 sm:py-16 lg:py-20">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-screen pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 lg:pb-20">
                     {/* Content */}
                     <motion.div
                         initial={{ opacity: 0, x: -50 }}

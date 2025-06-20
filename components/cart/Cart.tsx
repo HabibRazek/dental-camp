@@ -20,9 +20,9 @@ export function Cart() {
     <>
       <CartIcon />
       <CartSidebar onCheckout={handleCheckout} />
-      <CheckoutModal 
-        isOpen={showCheckout} 
-        onClose={handleCloseCheckout} 
+      <CheckoutModal
+        isOpen={showCheckout}
+        onClose={handleCloseCheckout}
       />
     </>
   )

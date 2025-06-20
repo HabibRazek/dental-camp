@@ -145,34 +145,34 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-8 py-8 md:py-10">
                 
-                {/* Header */}
-                <div className="px-4 lg:px-6">
-                  <div className="flex items-center gap-4 mb-6">
+                {/* Header - Responsive */}
+                <div className="px-4 sm:px-6 lg:px-6">
+                  <div className="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
                     <div>
-                      <h1 className="text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                        <User className="h-8 w-8 text-blue-500" />
-                        My Profile
+                      <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                        <User className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500" />
+                        <span>My Profile</span>
                       </h1>
-                      <p className="text-gray-600 mt-2">
+                      <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
                         Manage your personal information and account settings
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Profile Content */}
-                <div className="px-4 lg:px-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Profile Content - Responsive */}
+                <div className="px-4 sm:px-6 lg:px-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
                     
-                    {/* Profile Picture Card */}
+                    {/* Profile Picture Card - Responsive */}
                     <Card className="border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                      <CardHeader className="text-center">
-                        <CardTitle className="text-xl font-bold text-gray-900">Profile Picture</CardTitle>
+                      <CardHeader className="text-center p-4 sm:p-6">
+                        <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">Profile Picture</CardTitle>
                       </CardHeader>
-                      <CardContent className="flex flex-col items-center space-y-4">
+                      <CardContent className="flex flex-col items-center space-y-3 sm:space-y-4 p-4 sm:p-6">
                         {loading ? (
-                          <div className="flex items-center justify-center h-32">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                          <div className="flex items-center justify-center h-24 sm:h-32">
+                            <div className="animate-spin rounded-full h-6 w-6 sm:h-8 sm:w-8 border-b-2 border-blue-600"></div>
                           </div>
                         ) : (
                           <ProfileImageUpload
@@ -183,11 +183,11 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                         )}
                         {!loading && (
                           <div className="text-center">
-                            <h3 className="text-lg font-semibold text-gray-900">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900">
                               {`${profileData.firstName} ${profileData.lastName}`.trim() || session.user.name || 'User'}
                             </h3>
-                            <p className="text-gray-600">{profileData.email || session.user.email}</p>
-                            <Badge variant="secondary" className="mt-2">
+                            <p className="text-sm sm:text-base text-gray-600 break-all">{profileData.email || session.user.email}</p>
+                            <Badge variant="secondary" className="mt-2 text-xs sm:text-sm">
                               {session.user.role || 'Customer'}
                             </Badge>
                           </div>
@@ -195,23 +195,23 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                       </CardContent>
                     </Card>
 
-                    {/* Personal Information Card */}
+                    {/* Personal Information Card - Responsive */}
                     <Card className="lg:col-span-2 border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
+                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50 p-4 sm:p-6">
                         <div className="flex items-center justify-between">
                           <div>
-                            <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                              <div className="w-2 h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
-                              Personal Information
+                            <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 tracking-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                              <div className="w-2 h-6 sm:h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
+                              <span>Personal Information</span>
                             </CardTitle>
-                            <CardDescription className="text-gray-600 font-medium">
+                            <CardDescription className="text-sm sm:text-base text-gray-600 font-medium mt-1 sm:mt-0">
                               Update your personal details and contact information
                             </CardDescription>
                           </div>
                         </div>
                       </CardHeader>
-                      
-                      <CardContent className="p-6">
+
+                      <CardContent className="p-4 sm:p-6">
                         {loading ? (
                           <div className="flex items-center justify-center h-64">
                             <div className="text-center">
@@ -221,7 +221,7 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                           </div>
                         ) : (
                           <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                           <div className="space-y-2">
                             <Label htmlFor="firstName" className="text-sm font-semibold text-gray-700">
                               First Name
@@ -230,10 +230,10 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                               id="firstName"
                               value={profileData.firstName}
                               onChange={(e) => handleInputChange('firstName', e.target.value)}
-                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
                             />
                           </div>
-                          
+
                           <div className="space-y-2">
                             <Label htmlFor="lastName" className="text-sm font-semibold text-gray-700">
                               Last Name
@@ -242,10 +242,10 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                               id="lastName"
                               value={profileData.lastName}
                               onChange={(e) => handleInputChange('lastName', e.target.value)}
-                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
                             />
                           </div>
-                          
+
                           <div className="space-y-2">
                             <Label htmlFor="email" className="text-sm font-semibold text-gray-700">
                               Email Address
@@ -255,10 +255,10 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                               type="email"
                               value={profileData.email}
                               onChange={(e) => handleInputChange('email', e.target.value)}
-                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
                             />
                           </div>
-                          
+
                           <div className="space-y-2">
                             <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">
                               Phone Number
@@ -269,11 +269,11 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                               placeholder="+216 XX XXX XXX"
                               value={profileData.phone}
                               onChange={(e) => handleInputChange('phone', e.target.value)}
-                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500"
+                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 text-sm sm:text-base"
                             />
                           </div>
-                          
-                          <div className="space-y-2 md:col-span-2">
+
+                          <div className="space-y-2 sm:col-span-2">
                             <Label htmlFor="bio" className="text-sm font-semibold text-gray-700">
                               Bio
                             </Label>
@@ -282,26 +282,28 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                               placeholder="Parlez-nous de vous..."
                               value={profileData.bio}
                               onChange={(e) => handleInputChange('bio', e.target.value)}
-                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 min-h-[100px]"
+                              className="border-gray-200 focus:border-blue-500 focus:ring-blue-500 min-h-[80px] sm:min-h-[100px] text-sm sm:text-base"
                             />
                           </div>
                         </div>
                         
-                            <div className="flex justify-end mt-6">
+                            <div className="flex flex-col sm:flex-row justify-end mt-4 sm:mt-6">
                               <Button
                                 onClick={handleSaveProfile}
                                 disabled={saving || loading}
-                                className="bg-blue-600 hover:bg-blue-700"
+                                className="bg-blue-600 hover:bg-blue-700 w-full sm:w-auto text-sm sm:text-base"
                               >
                                 {saving ? (
                                   <>
-                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                    Enregistrement...
+                                    <div className="animate-spin rounded-full h-3 w-3 sm:h-4 sm:w-4 border-b-2 border-white mr-2"></div>
+                                    <span className="hidden sm:inline">Enregistrement...</span>
+                                    <span className="sm:hidden">Saving...</span>
                                   </>
                                 ) : (
                                   <>
-                                    <Save className="h-4 w-4 mr-2" />
-                                    Enregistrer les modifications
+                                    <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+                                    <span className="hidden sm:inline">Enregistrer les modifications</span>
+                                    <span className="sm:hidden">Save Changes</span>
                                   </>
                                 )}
                               </Button>
@@ -311,52 +313,52 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
                       </CardContent>
                     </Card>
 
-                    {/* Account Information Card */}
+                    {/* Account Information Card - Responsive */}
                     <Card className="lg:col-span-3 border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50">
-                        <CardTitle className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-                          <div className="w-2 h-8 bg-gradient-to-b from-green-600 to-green-500 rounded-full"></div>
-                          Account Information
+                      <CardHeader className="border-b border-gray-100/50 bg-gradient-to-r from-white to-gray-50/50 p-4 sm:p-6">
+                        <CardTitle className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 tracking-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                          <div className="w-2 h-6 sm:h-8 bg-gradient-to-b from-green-600 to-green-500 rounded-full"></div>
+                          <span>Account Information</span>
                         </CardTitle>
-                        <CardDescription className="text-gray-600 font-medium">
+                        <CardDescription className="text-sm sm:text-base text-gray-600 font-medium mt-1 sm:mt-0">
                           View your account details and membership information
                         </CardDescription>
                       </CardHeader>
-                      
-                      <CardContent className="p-6">
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                          <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-lg">
-                            <div className="p-3 bg-blue-100 rounded-full">
-                              <Calendar className="h-6 w-6 text-blue-600" />
+
+                      <CardContent className="p-4 sm:p-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-blue-50 rounded-lg">
+                            <div className="p-2 sm:p-3 bg-blue-100 rounded-full flex-shrink-0">
+                              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-600" />
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Member Since</p>
-                              <p className="text-lg font-bold text-gray-900">
-                                {new Date(session.user.createdAt || Date.now()).toLocaleDateString('en-US', { 
-                                  month: 'long', 
-                                  year: 'numeric' 
+                            <div className="min-w-0">
+                              <p className="text-xs sm:text-sm font-medium text-gray-600">Member Since</p>
+                              <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900 truncate">
+                                {new Date(session.user.createdAt || Date.now()).toLocaleDateString('en-US', {
+                                  month: 'long',
+                                  year: 'numeric'
                                 })}
                               </p>
                             </div>
                           </div>
-                          
-                          <div className="flex items-center gap-4 p-4 bg-green-50 rounded-lg">
-                            <div className="p-3 bg-green-100 rounded-full">
-                              <User className="h-6 w-6 text-green-600" />
+
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-green-50 rounded-lg">
+                            <div className="p-2 sm:p-3 bg-green-100 rounded-full flex-shrink-0">
+                              <User className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-600" />
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Account Type</p>
-                              <p className="text-lg font-bold text-gray-900">{session.user.role || 'Customer'}</p>
+                            <div className="min-w-0">
+                              <p className="text-xs sm:text-sm font-medium text-gray-600">Account Type</p>
+                              <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900 truncate">{session.user.role || 'Customer'}</p>
                             </div>
                           </div>
-                          
-                          <div className="flex items-center gap-4 p-4 bg-purple-50 rounded-lg">
-                            <div className="p-3 bg-purple-100 rounded-full">
-                              <Mail className="h-6 w-6 text-purple-600" />
+
+                          <div className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-purple-50 rounded-lg sm:col-span-2 lg:col-span-1">
+                            <div className="p-2 sm:p-3 bg-purple-100 rounded-full flex-shrink-0">
+                              <Mail className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-600" />
                             </div>
-                            <div>
-                              <p className="text-sm font-medium text-gray-600">Email Status</p>
-                              <p className="text-lg font-bold text-gray-900">
+                            <div className="min-w-0">
+                              <p className="text-xs sm:text-sm font-medium text-gray-600">Email Status</p>
+                              <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900 truncate">
                                 {session.user.emailVerified ? 'Verified' : 'Unverified'}
                               </p>
                             </div>

@@ -408,44 +408,46 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
   ]
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 space-y-6 lg:space-y-8">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="px-3 sm:px-4 md:px-6 lg:px-8 space-y-4 sm:space-y-6 lg:space-y-8">
+      {/* Header - Fully Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-            <Settings className="h-8 w-8 text-blue-500" />
-            Settings
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 tracking-tight flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+            <Settings className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-blue-500" />
+            <span>Settings</span>
           </h1>
-          <p className="text-sm sm:text-base text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">
             Manage your account preferences and privacy settings
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-2">
-          <Button variant="outline" onClick={exportData}>
-            <Download className="h-4 w-4 mr-2" />
-            Exporter
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button variant="outline" onClick={exportData} className="text-sm sm:text-base">
+            <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
+            <span className="hidden sm:inline">Exporter</span>
+            <span className="sm:hidden">Export</span>
           </Button>
           <Button
             onClick={saveSettings}
             disabled={loading}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-blue-600 hover:bg-blue-700 text-sm sm:text-base"
           >
             {loading ? (
-              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+              <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 mr-2 animate-spin" />
             ) : (
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-3 w-3 sm:h-4 sm:w-4 mr-2" />
             )}
-            Enregistrer les modifications
+            <span className="hidden sm:inline">Enregistrer les modifications</span>
+            <span className="sm:hidden">Save</span>
           </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
-        {/* Settings Navigation */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+        {/* Settings Navigation - Responsive */}
         <Card className="lg:col-span-1 border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-gray-900">Categories</CardTitle>
+          <CardHeader className="p-3 sm:p-4 md:p-6">
+            <CardTitle className="text-base sm:text-lg font-bold text-gray-900">Categories</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <div className="space-y-1">
@@ -453,14 +455,14 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                 <button
                   key={section.id}
                   onClick={() => setActiveSection(section.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-all duration-200 ${
+                  className={`w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 text-left transition-all duration-200 text-sm sm:text-base ${
                     activeSection === section.id
                       ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`}
                 >
-                  <section.icon className="h-5 w-5" />
-                  {section.label}
+                  <section.icon className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
+                  <span>{section.label}</span>
                 </button>
               ))}
             </div>
@@ -477,26 +479,26 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
               transition={{ duration: 0.3 }}
             >
               <Card className="border border-gray-200/50 shadow-xl bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                    <Bell className="h-5 w-5 text-blue-600" />
-                    Notification Preferences
+                <CardHeader className="p-3 sm:p-4 md:p-6">
+                  <CardTitle className="text-lg sm:text-xl font-bold text-gray-900 flex flex-col sm:flex-row sm:items-center gap-2">
+                    <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                    <span>Notification Preferences</span>
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-sm sm:text-base">
                     Choose how you want to be notified about updates and activities
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4 sm:space-y-6 p-3 sm:p-4 md:p-6">
                   {/* Communication Channels */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Communication Channels</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Communication Channels</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg gap-3 sm:gap-0">
-                        <div className="flex items-center gap-3">
-                          <Mail className="h-5 w-5 text-blue-600" />
-                          <div>
-                            <p className="font-medium">Email</p>
-                            <p className="text-sm text-gray-600">Receive notifications via email</p>
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm sm:text-base">Email</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Receive notifications via email</p>
                           </div>
                         </div>
                         <Switch
@@ -740,21 +742,7 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Security Options</h3>
                     
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
-                      <div>
-                        <p className="font-medium">Two-Factor Authentication</p>
-                        <p className="text-sm text-gray-600">Add an extra layer of security to your account</p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Switch
-                          checked={settings.security.twoFactorEnabled}
-                          onCheckedChange={(checked) => updateSetting('security', 'twoFactorEnabled', checked)}
-                        />
-                        {settings.security.twoFactorEnabled && (
-                          <Badge variant="secondary" className="bg-green-100 text-green-800">Enabled</Badge>
-                        )}
-                      </div>
-                    </div>
+
                     
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
                       <div>

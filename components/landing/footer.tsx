@@ -53,26 +53,26 @@ function Footer() {
 
 
             {/* Main Footer */}
-            <footer className="bg-white py-16 border-t border-gray-100">
-                <div className="max-w-7xl mx-auto px-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8">
+            <footer className="bg-white py-8 sm:py-12 lg:py-16 border-t border-gray-100">
+                <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8">
                         {/* Brand column */}
-                        <div className="lg:col-span-4">
+                        <div className="sm:col-span-2 lg:col-span-4">
                             <motion.div
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.6 }}
                                 viewport={{ once: true }}
                             >
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg">
-                                        <TbDental className="h-6 w-6 text-white" />
+                                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                                    <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg">
+                                        <TbDental className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                                     </div>
-                                    <span className="font-bold text-2xl text-gray-800">
+                                    <span className="font-bold text-lg sm:text-xl lg:text-2xl text-gray-800">
                                         Dental Camp
                                     </span>
                                 </div>
-                                <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                                <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base lg:text-lg leading-relaxed">
                                     Empowering dental professionals with premium equipment and innovative solutions since 2010.
                                 </p>
 
@@ -116,19 +116,19 @@ function Footer() {
 
                                 {/* Social Media */}
                                 <div>
-                                    <p className="text-gray-800 font-semibold mb-4">Follow Us</p>
-                                    <div className="flex gap-3">
+                                    <p className="text-gray-800 font-semibold mb-3 sm:mb-4 text-sm sm:text-base">Follow Us</p>
+                                    <div className="flex gap-2 sm:gap-3">
                                         {[
-                                            { icon: <Facebook className="h-5 w-5" />, href: "#" },
-                                            { icon: <Twitter className="h-5 w-5" />, href: "#" },
-                                            { icon: <Instagram className="h-5 w-5" />, href: "#" },
-                                            { icon: <Linkedin className="h-5 w-5" />, href: "#" },
-                                            { icon: <Youtube className="h-5 w-5" />, href: "#" }
+                                            { icon: <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />, href: "#" },
+                                            { icon: <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />, href: "#" },
+                                            { icon: <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />, href: "#" },
+                                            { icon: <Linkedin className="h-4 w-4 sm:h-5 sm:w-5" />, href: "#" },
+                                            { icon: <Youtube className="h-4 w-4 sm:h-5 sm:w-5" />, href: "#" }
                                         ].map((social, idx) => (
                                             <Link
                                                 key={idx}
                                                 href={social.href}
-                                                className="bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-600 p-3 rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                                                className="bg-blue-50 hover:bg-blue-500 hover:text-white text-blue-600 p-2 sm:p-3 rounded-lg sm:rounded-xl transition-all duration-300 hover:scale-110 hover:shadow-lg"
                                             >
                                                 {social.icon}
                                             </Link>
@@ -244,12 +244,12 @@ function Footer() {
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.6 }}
                         viewport={{ once: true }}
-                        className="border-t border-gray-100 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"
+                        className="border-t border-gray-100 mt-8 sm:mt-10 lg:mt-12 pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0"
                     >
-                        <p className="text-gray-500 text-sm mb-4 md:mb-0">
+                        <p className="text-gray-500 text-xs sm:text-sm text-center sm:text-left">
                             © {new Date().getFullYear()} Dental Camp Inc. All rights reserved.
                         </p>
-                        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+                        <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2">
                             {[
                                 { name: "Terms of Service", href: "/terms" },
                                 { name: "Privacy Policy", href: "/privacy" },

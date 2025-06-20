@@ -297,7 +297,7 @@ function FeaturedProductsSection() {
                         <p className="text-gray-600 text-lg">Aucun produit vedette disponible pour le moment.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                         {featuredProducts.slice(0, 4).map((product, index) => {
                             const badge = getBadge(product, index);
                             const rating = getProductRating(product);
@@ -313,22 +313,11 @@ function FeaturedProductsSection() {
                                     viewport={{ once: true }}
                                     className="group"
                                 >
-                                    <Card className="h-full overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 group-hover:scale-[1.02] bg-white relative">
-                                        {/* Floating Badge */}
-                                        {badge && (
-                                            <div className="absolute top-3 left-3 z-10">
-                                                <Badge className={`text-xs px-2 py-1 ${
-                                                    badge === 'Bestseller' ? 'bg-orange-500 text-white' :
-                                                    badge === 'Nouveau' ? 'bg-blue-500 text-white' :
-                                                    'bg-red-500 text-white'
-                                                }`}>
-                                                    {badge}
-                                                </Badge>
-                                            </div>
-                                        )}
+                                    <Card className="h-full overflow-hidden border-0 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-700 group-hover:scale-[1.02] bg-white/80 backdrop-blur-sm relative rounded-2xl sm:rounded-3xl flex flex-col group-hover:bg-white/90">
 
-                                        {/* Compact Image Section */}
-                                        <div className="relative h-40 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
+
+                                        {/* Compact Small Image Section */}
+                                        <div className="relative h-24 sm:h-28 md:h-32 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
                                             <Image
                                                 src={getProductImage(product)}
                                                 alt={product.name}
@@ -339,71 +328,70 @@ function FeaturedProductsSection() {
                                             {/* Gradient Overlay */}
                                             <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
 
-                                            {/* Quick Action Button */}
-                                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                                                <Button size="sm" variant="secondary" className="h-7 w-7 p-0 bg-white/90 hover:bg-white rounded-full">
-                                                    <Eye className="h-3 w-3" />
+                                            {/* Small Badge */}
+                                            <div className="absolute top-1 left-1 z-10">
+                                                {index === 0 && (
+                                                    <Badge className="bg-orange-500 text-white px-1 py-0.5 text-xs font-medium rounded-sm">
+                                                        Best
+                                                    </Badge>
+                                                )}
+                                                {index === 1 && (
+                                                    <Badge className="bg-blue-500 text-white px-1 py-0.5 text-xs font-medium rounded-sm">
+                                                        New
+                                                    </Badge>
+                                                )}
+                                            </div>
+
+                                            {/* Small Action Icons */}
+                                            <div className="absolute top-1 right-1 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                <Button size="sm" variant="secondary" className="h-4 w-4 p-0 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center">
+                                                    <Heart className="h-1.5 w-1.5 text-gray-600" />
+                                                </Button>
+                                                <Button size="sm" variant="secondary" className="h-4 w-4 p-0 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center">
+                                                    <Eye className="h-1.5 w-1.5 text-gray-600" />
                                                 </Button>
                                             </div>
 
-                                            {/* Price Tag - Floating */}
-                                            <div className="absolute bottom-3 right-3 bg-white/95 backdrop-blur-sm rounded-lg px-2 py-1 shadow-sm">
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-lg font-bold text-gray-900">
-                                                        {formatPrice(product.price)}
-                                                    </span>
-                                                    {product.comparePrice && (
-                                                        <span className="text-xs text-gray-500 line-through">
-                                                            {formatPrice(product.comparePrice)}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                            {/* Small Price */}
+                                            <div className="absolute bottom-1 left-1 bg-white/95 backdrop-blur-sm rounded-sm px-1 py-0.5 shadow-sm">
+                                                <span className="text-xs font-bold text-gray-900">
+                                                    {formatPrice(product.price)}
+                                                </span>
                                             </div>
                                         </div>
 
-                                        {/* Compact Content */}
-                                        <div className="p-4">
-                                            {/* Category & Rating */}
-                                            <div className="flex items-center justify-between mb-2">
-                                                <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 px-2 py-0.5">
-                                                    {product.category?.name}
+                                        {/* Compact Small Content */}
+                                        <div className="p-2 sm:p-3 md:p-3 flex flex-col h-full">
+                                            {/* Small Category & Rating */}
+                                            <div className="flex items-center justify-between mb-1 gap-1">
+                                                <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 px-1 py-0.5 flex-shrink-0">
+                                                    {product.category?.name.split(' ')[0]}
                                                 </Badge>
-                                                <div className="flex items-center gap-1">
+                                                <div className="flex items-center gap-0.5 flex-shrink-0">
                                                     {[...Array(5)].map((_, i) => (
                                                         <Star
                                                             key={i}
-                                                            className={`h-3 w-3 ${i < Math.floor(parseFloat(rating)) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                                            className={`h-2 w-2 ${i < Math.floor(parseFloat(rating)) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
                                                         />
                                                     ))}
-                                                    <span className="text-xs text-gray-500 ml-1">({reviews})</span>
+                                                    <span className="text-xs text-gray-500 ml-0.5 hidden xl:inline">({reviews})</span>
                                                 </div>
                                             </div>
 
-                                            {/* Title - Compact */}
-                                            <h3 className="font-bold text-base text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight">
+                                            {/* Compact Small Title */}
+                                            <h3 className="text-xs sm:text-sm md:text-sm font-semibold mb-1 line-clamp-2 leading-tight text-blue-600 group-hover:text-blue-700 transition-colors">
                                                 {product.name}
                                             </h3>
 
-                                            {/* Description - Single Line */}
-                                            <p className="text-gray-600 text-sm mb-3 line-clamp-1">
-                                                {product.description}
+                                            {/* Minimal Description */}
+                                            <p className="text-gray-600 text-xs mb-1 sm:mb-2 line-clamp-1 leading-relaxed flex-grow hidden sm:block">
+                                                {product.description ? product.description.split(' ').slice(0, 3).join(' ') + '...' : 'Équipement professionnel'}
                                             </p>
 
-                                            {/* Key Features - Compact Icons */}
-                                            <div className="flex items-center gap-3 mb-4 text-xs text-gray-500">
-                                                <div className="flex items-center gap-1">
-                                                    <CheckCircle className="h-3 w-3 text-green-500" />
-                                                    <span>Certifié</span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <ShieldCheck className="h-3 w-3 text-blue-500" />
-                                                    <span>Garantie</span>
-                                                </div>
-                                                <div className="flex items-center gap-1">
-                                                    <Truck className="h-3 w-3 text-purple-500" />
-                                                    <span>Livraison</span>
-                                                </div>
-                                            </div>
+
+
+                                            {/* Spacer to push button down */}
+                                            <div className="flex-grow"></div>
 
                                             {/* Action Button - Full Width */}
                                             <Button
@@ -423,10 +411,13 @@ function FeaturedProductsSection() {
                                                     addItem(cartItem);
                                                     toast.success(`${product.name} ajouté au panier!`);
                                                 }}
-                                                className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-sm py-2 rounded-lg transition-all duration-300 group-hover:shadow-lg flex items-center justify-center gap-2"
+                                                className="w-full justify-center text-xs font-medium rounded-md p-1.5 sm:p-2 h-auto group-hover:shadow-md transition-all duration-300 bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 hover:from-blue-500/20 hover:to-blue-600/20 border-0"
                                             >
-                                                <ShoppingCart className="h-4 w-4" />
-                                                Ajouter au panier
+                                                <div className="flex items-center gap-1">
+                                                    <ShoppingCart className="w-3 h-3" />
+                                                    <span className="hidden sm:inline">Ajouter</span>
+                                                    <span className="sm:hidden">+</span>
+                                                </div>
                                             </Button>
                                         </div>
 

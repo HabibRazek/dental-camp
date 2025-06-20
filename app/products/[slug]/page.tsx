@@ -162,7 +162,7 @@ export default function ProductPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pb-24 lg:pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Product Images */}
           <motion.div
@@ -303,10 +303,10 @@ export default function ProductPage() {
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <label className="text-sm font-medium text-gray-700">Quantity:</label>
-                <div className="flex items-center border border-gray-300 rounded-lg">
+                <div className="flex items-center border border-gray-300 rounded-lg w-fit">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="px-3 py-2 hover:bg-gray-50 transition-colors"
+                    className="px-3 py-2 hover:bg-gray-50 transition-colors min-h-[44px] min-w-[44px]"
                     disabled={!isInStock}
                   >
                     -
@@ -316,7 +316,7 @@ export default function ProductPage() {
                   </span>
                   <button
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3 py-2 hover:bg-gray-50 transition-colors"
+                    className="px-3 py-2 hover:bg-gray-50 transition-colors min-h-[44px] min-w-[44px]"
                     disabled={!isInStock}
                   >
                     +
@@ -324,32 +324,39 @@ export default function ProductPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
+              {/* Mobile-First Button Layout */}
+              <div className="space-y-3">
+                {/* Primary Add to Cart Button - Compact like home page */}
                 <Button
                   onClick={handleAddToCart}
                   disabled={!isInStock}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700"
-                  size="lg"
+                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-1.5 sm:py-2 rounded-lg transition-all duration-300 shadow-sm hover:shadow-md min-h-[32px] sm:min-h-[36px]"
                 >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  {isInStock ? "Ajouter au panier" : "Rupture de stock"}
+                  <ShoppingCart className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="text-xs sm:text-sm">
+                    {isInStock ? "Ajouter au panier" : "Rupture de stock"}
+                  </span>
                 </Button>
+
+                {/* Secondary Actions - Side by side on mobile */}
                 <div className="flex gap-3">
                   <Button
                     onClick={handleAddToWishlist}
                     variant="outline"
                     size="lg"
-                    className="border-gray-300 hover:bg-gray-50 flex-1 sm:flex-none"
+                    className="flex-1 border-gray-300 hover:bg-gray-50"
                   >
-                    <Heart className="h-5 w-5" />
+                    <Heart className="h-5 w-5 mr-2 sm:mr-0" />
+                    <span className="sm:hidden">Favoris</span>
                   </Button>
                   <Button
                     onClick={handleShare}
                     variant="outline"
                     size="lg"
-                    className="border-gray-300 hover:bg-gray-50 flex-1 sm:flex-none"
+                    className="flex-1 border-gray-300 hover:bg-gray-50"
                   >
-                    <Share2 className="h-5 w-5" />
+                    <Share2 className="h-5 w-5 mr-2 sm:mr-0" />
+                    <span className="sm:hidden">Partager</span>
                   </Button>
                 </div>
               </div>
@@ -376,6 +383,44 @@ export default function ProductPage() {
           </motion.div>
         </div>
       </div>
+
+      {/* Mobile Sticky Bottom Bar */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg lg:hidden z-50">
+        <div className="flex gap-3 max-w-md mx-auto">
+          <div className="flex items-center border border-gray-300 rounded-lg">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="px-3 py-2 hover:bg-gray-50 transition-colors min-h-[44px] min-w-[44px]"
+              disabled={!isInStock}
+            >
+              -
+            </button>
+            <span className="px-3 py-2 border-x border-gray-300 min-w-[50px] text-center text-sm">
+              {quantity}
+            </span>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="px-3 py-2 hover:bg-gray-50 transition-colors min-h-[44px] min-w-[44px]"
+              disabled={!isInStock}
+            >
+              +
+            </button>
+          </div>
+          <Button
+            onClick={handleAddToCart}
+            disabled={!isInStock}
+            className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium shadow-sm hover:shadow-md min-h-[36px] py-2 rounded-lg transition-all duration-300"
+          >
+            <ShoppingCart className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+            <span className="truncate text-xs sm:text-sm">
+              {isInStock ? "Ajouter au panier" : "Rupture de stock"}
+            </span>
+          </Button>
+        </div>
+      </div>
+
+      {/* Add bottom padding to prevent content from being hidden behind sticky bar on mobile */}
+      <div className="h-20 lg:hidden"></div>
     </div>
   );
 }

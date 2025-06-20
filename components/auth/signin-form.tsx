@@ -48,7 +48,7 @@ export function SignInForm() {
 
       if (result?.error) {
         if (result.error === "CredentialsSignin") {
-          setError("Email ou mot de passe invalide")
+          setError("Email ou mot de passe invalide. Veuillez vérifier vos informations ou créer un compte si vous n'en avez pas.")
         } else {
           setError("Impossible de se connecter. Veuillez réessayer.")
         }
@@ -189,15 +189,7 @@ export function SignInForm() {
                 {isLoading ? "Connexion..." : "Se connecter"}
               </Button>
 
-              <div className="text-center">
-                <button
-                  type="button"
-                  onClick={() => setShowBackupCode(true)}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  Use backup code instead
-                </button>
-              </div>
+
             </>
           ) : (
             <>

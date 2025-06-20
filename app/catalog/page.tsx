@@ -101,12 +101,11 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
       whileHover={{ y: -12 }}
       transition={{ duration: 0.4, type: "spring", stiffness: 300 }}
       className="group relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+
     >
-      <Card className="h-[400px] sm:h-[450px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl flex flex-col">
+      <Card className="h-[380px] sm:h-[420px] lg:h-[460px] overflow-hidden border border-gray-200 hover:border-blue-300 transition-all duration-300 hover:shadow-lg bg-white rounded-xl flex flex-col">
         {/* Image Container with Floating Elements */}
-        <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-50 to-gray-100 p-2 flex items-center justify-center">
+        <div className="relative aspect-[4/3] bg-gradient-to-br from-blue-50 to-gray-100 p-2 sm:p-3 flex items-center justify-center">
           {/* Floating Badges */}
           <AnimatePresence>
             {product.featured && (
@@ -148,75 +147,46 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
               onLoad={() => setImageLoaded(true)}
             />
 
-            {/* Gradient Overlay */}
-            <div className={`absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent transition-opacity duration-300 ${isHovered ? "opacity-100" : "opacity-0"
-              }`} />
+
           </div>
 
-          {/* Floating Action Buttons */}
-          <AnimatePresence>
-            {isHovered && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
-                className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm"
+          {/* Floating Action Buttons - Positioned to not block image */}
+          <div className="absolute bottom-2 right-2 flex items-center gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-7 w-7 sm:h-8 sm:w-8 p-0 flex items-center justify-center"
+                onClick={() => {
+                  setIsWishlisted(!isWishlisted);
+                  toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
+                }}
               >
-                <div className="flex gap-2">
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-10 w-10 p-0"
-                      onClick={() => {
-                        setIsWishlisted(!isWishlisted);
-                        toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
-                      }}
-                    >
-                      <Heart className={`w-4 h-4 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
-                    </Button>
-                  </motion.div>
+                <Heart className={`w-3 h-3 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
+              </Button>
+            </motion.div>
 
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
-                    <Button
-                      size="sm"
-                      className="rounded-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg border-0 h-10 w-10 p-0"
-                      onClick={handleAddToCart}
-                      disabled={product.stockQuantity === 0}
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                    </Button>
-                  </motion.div>
-
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
-                    transition={{ type: "spring", stiffness: 400 }}
-                  >
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-10 w-10 p-0"
-                      asChild
-                    >
-                      <Link href={`/products/${product.slug}`}>
-                        <Eye className="w-4 h-4 text-gray-600" />
-                      </Link>
-                    </Button>
-                  </motion.div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+            <motion.div
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400 }}
+            >
+              <Button
+                size="sm"
+                variant="secondary"
+                className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-7 w-7 sm:h-8 sm:w-8 p-0 flex items-center justify-center"
+                asChild
+              >
+                <Link href={`/products/${product.slug}`}>
+                  <Eye className="w-3 h-3 text-gray-600" />
+                </Link>
+              </Button>
+            </motion.div>
+          </div>
 
           {/* Stock Indicator */}
           <div className="absolute bottom-2 left-2">
@@ -235,18 +205,18 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
         <CardContent className="p-3 sm:p-4 flex flex-col flex-grow">
           {/* Category */}
           {product.category && (
-            <span className="text-xs text-blue-600 font-medium mb-2">{product.category.name}</span>
+            <span className="text-xs sm:text-sm text-blue-600 font-medium mb-2">{product.category.name}</span>
           )}
 
           {/* Title */}
-          <h3 className="font-semibold text-sm text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight mb-3">
+          <h3 className="font-semibold text-sm sm:text-base text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors leading-tight mb-3">
             {product.name}
           </h3>
 
           {/* Price */}
           <div className="mb-4 flex-grow">
             <div className="flex items-baseline gap-2">
-              <span className="text-lg font-bold text-gray-900">
+              <span className="text-lg sm:text-xl font-bold text-gray-900">
                 {formatCurrency(product.price)}
               </span>
               {product.comparePrice && (
@@ -256,20 +226,22 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
               )}
             </div>
             {product.comparePrice && (
-              <p className="text-green-600 font-medium text-xs mt-1">
+              <p className="text-green-600 font-medium text-sm mt-1">
                 Save {formatCurrency(product.comparePrice - product.price)}
               </p>
             )}
           </div>
 
-          {/* Quick Add Button */}
+          {/* Quick Add Button - Compact like home page */}
           <Button
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 text-sm mt-auto"
+            className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-medium py-1.5 sm:py-2 px-2 sm:px-3 rounded-lg transition-all duration-300 text-xs sm:text-sm mt-auto min-h-[32px] sm:min-h-[36px] shadow-sm hover:shadow-md"
             disabled={product.stockQuantity === 0}
             onClick={handleAddToCart}
           >
-            <ShoppingCart className="w-4 h-4 mr-2" />
-            {product.stockQuantity === 0 ? "Rupture de stock" : "Ajouter au panier"}
+            <ShoppingCart className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 flex-shrink-0" />
+            <span className="font-medium">
+              {product.stockQuantity === 0 ? "Rupture de stock" : "Ajouter au panier"}
+            </span>
           </Button>
         </CardContent>
       </Card>
@@ -352,10 +324,10 @@ export default function CatalogPage() {
 
   const getGridColumns = () => {
     switch (gridCols) {
-      case 2: return "grid-cols-1 sm:grid-cols-2";
-      case 3: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
-      case 4: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
-      default: return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
+      case 2: return "grid-cols-2 sm:grid-cols-2";
+      case 3: return "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3";
+      case 4: return "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4";
+      default: return "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3";
     }
   };
 
@@ -725,7 +697,7 @@ export default function CatalogPage() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.4 }}
-                    className={`grid gap-4 sm:gap-6 ${viewMode === "list"
+                    className={`grid gap-4 sm:gap-5 lg:gap-6 xl:gap-8 ${viewMode === "list"
                         ? "grid-cols-1"
                         : getGridColumns()
                       }`}
@@ -854,6 +826,10 @@ export default function CatalogPage() {
 
 
       </div>
+
+      {/* Mobile Bottom Padding to prevent content from being hidden */}
+      <div className="h-4 sm:hidden"></div>
+
       <Footer />
     </>
   );
