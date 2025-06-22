@@ -259,6 +259,7 @@ export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filterLoading, setFilterLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
@@ -273,8 +274,13 @@ export default function CatalogPage() {
   const [featuredOnly, setFeaturedOnly] = useState(false);
 
   // Fetch products function
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
+  const fetchProducts = useCallback(async (isFilterChange = false) => {
+    if (isFilterChange) {
+      setFilterLoading(true);
+    } else {
+      setLoading(true);
+    }
+
     try {
       const params = new URLSearchParams({
         page: currentPage.toString(),
@@ -300,14 +306,27 @@ export default function CatalogPage() {
       toast.error("Échec du chargement des produits");
     } finally {
       setLoading(false);
+      setFilterLoading(false);
     }
   }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
 
-  // Fetch data
+  // Immediate filter loading + debounced fetch
+  useEffect(() => {
+    // Show loading immediately
+    setFilterLoading(true);
+
+    const timeoutId = setTimeout(() => {
+      fetchProducts(true); // Mark as filter change
+    }, 300); // 300ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
+
+  // Initial data fetch
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [fetchProducts]);
+  }, [currentPage]); // Only refetch on page change
 
   const fetchCategories = async () => {
     try {
@@ -517,7 +536,10 @@ export default function CatalogPage() {
                     <div className="space-y-4">
                       <Slider
                         value={priceRange}
-                        onValueChange={(value) => setPriceRange(value as [number, number])}
+                        onValueChange={(value) => {
+                          setPriceRange(value as [number, number]);
+                          setFilterLoading(true);
+                        }}
                         max={50000}
                         min={0}
                         step={100}
@@ -561,7 +583,10 @@ export default function CatalogPage() {
                       >
                         <Checkbox
                           checked={inStockOnly}
-                          onCheckedChange={(checked) => setInStockOnly(checked === true)}
+                          onCheckedChange={(checked) => {
+                            setInStockOnly(checked === true);
+                            setFilterLoading(true);
+                          }}
                           className="mr-1 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">
@@ -577,7 +602,10 @@ export default function CatalogPage() {
                       >
                         <Checkbox
                           checked={featuredOnly}
-                          onCheckedChange={(checked) => setFeaturedOnly(checked === true)}
+                          onCheckedChange={(checked) => {
+                            setFeaturedOnly(checked === true);
+                            setFilterLoading(true);
+                          }}
                           className="mr-1 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">
@@ -691,9 +719,27 @@ export default function CatalogPage() {
               </motion.div>
 
               {/* Products Grid */}
-              {loading ? (
-                <SectionLoader size="lg" />
-              ) : products.length > 0 ? (
+              <div className="relative">
+                {/* Filter Loading Overlay */}
+                {filterLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute inset-0 bg-white/95 backdrop-blur-md z-50 flex items-center justify-center rounded-2xl border border-gray-200"
+                    style={{ minHeight: '400px' }}
+                  >
+                    <div className="text-center">
+                      <SectionLoader size="lg" />
+                      <p className="mt-4 text-sm font-medium text-gray-700">Updating filters...</p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {loading ? (
+                  <SectionLoader size="lg" />
+                ) : products.length > 0 ? (
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={`${viewMode}-${gridCols}`}
@@ -780,6 +826,7 @@ export default function CatalogPage() {
                   </div>
                 </motion.div>
               )}
+              </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
