@@ -22,7 +22,10 @@ import {
   RefreshCw,
   Trash2,
   Download,
-  AlertTriangle
+  AlertTriangle,
+  Package,
+  Gift,
+  BookOpen
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { toast } from "sonner"
@@ -493,46 +496,58 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Communication Channels</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 sm:p-4 border border-gray-200 rounded-lg gap-3 sm:gap-0">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 flex-shrink-0" />
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm sm:text-base">Email</p>
-                            <p className="text-xs sm:text-sm text-gray-600">Receive notifications via email</p>
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-blue-100 group-hover:bg-blue-200 transition-colors duration-200 flex-shrink-0">
+                            <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">Email Notifications</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Receive important updates via email</p>
                           </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.email}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'email', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.email}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'email', checked)}
+                          />
+                        </div>
                       </div>
                       
-                      <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Bell className="h-5 w-5 text-green-600" />
-                          <div>
-                            <p className="font-medium">Push</p>
-                            <p className="text-sm text-gray-600">Browser push notifications</p>
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-green-300 hover:bg-green-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-green-100 group-hover:bg-green-200 transition-colors duration-200 flex-shrink-0">
+                            <Bell className="h-4 w-4 sm:h-5 sm:w-5 text-green-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">Push Notifications</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Real-time browser notifications</p>
                           </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.push}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'push', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.push}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'push', checked)}
+                          />
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div className="flex items-center gap-3">
-                          <Smartphone className="h-5 w-5 text-purple-600" />
-                          <div>
-                            <p className="font-medium">SMS</p>
-                            <p className="text-sm text-gray-600">Text message notifications</p>
+
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-purple-300 hover:bg-purple-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-purple-100 group-hover:bg-purple-200 transition-colors duration-200 flex-shrink-0">
+                            <Smartphone className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">SMS Notifications</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Text message alerts to your phone</p>
                           </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.sms}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'sms', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.sms}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'sms', checked)}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -541,39 +556,60 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
 
                   {/* Notification Types */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Notification Types</h3>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Order Updates</p>
-                          <p className="text-sm text-gray-600">Get notified about order status changes</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4 sm:mb-6">Notification Types</h3>
+                    <div className="space-y-3 sm:space-y-4">
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-orange-300 hover:bg-orange-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-orange-100 group-hover:bg-orange-200 transition-colors duration-200 flex-shrink-0">
+                            <Package className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">Order Updates</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Track your order status and delivery</p>
+                          </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.orderUpdates}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'orderUpdates', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.orderUpdates}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'orderUpdates', checked)}
+                          />
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Promotions & Offers</p>
-                          <p className="text-sm text-gray-600">Receive special offers and discounts</p>
+
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-pink-300 hover:bg-pink-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-pink-100 group-hover:bg-pink-200 transition-colors duration-200 flex-shrink-0">
+                            <Gift className="h-4 w-4 sm:h-5 sm:w-5 text-pink-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">Promotions & Offers</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Exclusive deals and special discounts</p>
+                          </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.promotions}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'promotions', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.promotions}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'promotions', checked)}
+                          />
+                        </div>
                       </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium">Newsletter</p>
-                          <p className="text-sm text-gray-600">Monthly newsletter with updates and tips</p>
+
+                      <div className="group flex items-center justify-between p-4 sm:p-5 border border-gray-200/60 rounded-xl hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-200">
+                        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                          <div className="p-2 rounded-lg bg-indigo-100 group-hover:bg-indigo-200 transition-colors duration-200 flex-shrink-0">
+                            <BookOpen className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="font-semibold text-sm sm:text-base text-gray-900">Newsletter</p>
+                            <p className="text-xs sm:text-sm text-gray-600">Monthly updates and expert tips</p>
+                          </div>
                         </div>
-                        <Switch
-                          checked={settings.notifications.newsletter}
-                          onCheckedChange={(checked) => updateSetting('notifications', 'newsletter', checked)}
-                        />
+                        <div className="flex-shrink-0 ml-3">
+                          <Switch
+                            checked={settings.notifications.newsletter}
+                            onCheckedChange={(checked) => updateSetting('notifications', 'newsletter', checked)}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

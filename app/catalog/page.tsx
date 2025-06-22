@@ -152,15 +152,17 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
 
           {/* Floating Action Buttons - Positioned to not block image */}
           <div className="absolute bottom-2 right-2 flex items-center gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+            {/* Heart icon hidden on mobile, visible on desktop */}
             <motion.div
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               transition={{ type: "spring", stiffness: 400 }}
+              className="hidden sm:block"
             >
               <Button
                 size="sm"
                 variant="secondary"
-                className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-7 w-7 sm:h-8 sm:w-8 p-0 flex items-center justify-center"
+                className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-8 w-8 p-0 flex items-center justify-center"
                 onClick={() => {
                   setIsWishlisted(!isWishlisted);
                   toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
@@ -551,34 +553,36 @@ export default function CatalogPage() {
                       <Zap className="w-4 h-4 text-blue-500" />
                       Quick Filters
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-1">
                       <motion.label
-                        className="flex items-center cursor-pointer group"
-                        whileHover={{ scale: 1.02 }}
+                        className="flex items-center cursor-pointer group py-1 px-1 rounded-md hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200"
+                        whileHover={{ scale: 1.01, x: 2 }}
+                        whileTap={{ scale: 0.99 }}
                       >
                         <Checkbox
                           checked={inStockOnly}
                           onCheckedChange={(checked) => setInStockOnly(checked === true)}
-                          className="mr-3"
+                          className="mr-1 flex-shrink-0"
                         />
-                        <div className="flex items-center gap-2">
-                          <Package className="w-4 h-4 text-green-600" />
-                          <span className="text-sm group-hover:text-blue-600 transition-colors">In Stock Only</span>
+                        <div className="flex items-center gap-1 min-w-0">
+                          <Package className="w-2 h-2 text-green-600 flex-shrink-0" />
+                          <span className="text-xs font-semibold text-gray-700 group-hover:text-green-700 transition-colors">In Stock Only</span>
                         </div>
                       </motion.label>
 
                       <motion.label
-                        className="flex items-center cursor-pointer group"
-                        whileHover={{ scale: 1.02 }}
+                        className="flex items-center cursor-pointer group py-1 px-1 rounded-md hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-50 transition-all duration-200"
+                        whileHover={{ scale: 1.01, x: 2 }}
+                        whileTap={{ scale: 0.99 }}
                       >
                         <Checkbox
                           checked={featuredOnly}
                           onCheckedChange={(checked) => setFeaturedOnly(checked === true)}
-                          className="mr-3"
+                          className="mr-1 flex-shrink-0"
                         />
-                        <div className="flex items-center gap-2 mb-4">
-                          <Award className="w-4 h-4 text-yellow-600" />
-                          <span className="text-sm group-hover:text-blue-600 transition-colors">Featured Products</span>
+                        <div className="flex items-center gap-1 min-w-0">
+                          <Award className="w-2 h-2 text-yellow-600 flex-shrink-0" />
+                          <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-700 transition-colors">Featured Products</span>
                         </div>
                       </motion.label>
                     </div>

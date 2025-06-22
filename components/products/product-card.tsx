@@ -287,13 +287,14 @@ export function ProductCard({
           {/* Quick Action Icons - Top right corner, small and unobtrusive */}
           {showQuickActions && (
             <div className="absolute top-2 right-2 flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
+              {/* Heart icon hidden on mobile, visible on desktop */}
               <Button
                 variant="secondary"
                 size="sm"
-                className="rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border-0 h-6 w-6 sm:h-7 sm:w-7 p-0 flex items-center justify-center"
+                className="hidden sm:flex rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border-0 h-7 w-7 p-0 items-center justify-center"
                 onClick={handleAddToWishlist}
               >
-                <Heart className="h-2.5 w-2.5 sm:h-3 sm:w-3 text-gray-600" />
+                <Heart className="h-3 w-3 text-gray-600" />
               </Button>
               <Button
                 variant="secondary"

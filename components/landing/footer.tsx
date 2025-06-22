@@ -156,10 +156,6 @@ function Footer() {
                                         title: "Company",
                                         links: [
                                             { name: "About Us", href: "/about" },
-                                            { name: "Our Mission", href: "/mission" },
-                                            { name: "Leadership", href: "/leadership" },
-                                            { name: "Careers", href: "/careers" },
-                                            { name: "Newsroom", href: "/news" },
                                             { name: "Contact", href: "/contact" }
                                         ],
                                     },
@@ -167,9 +163,6 @@ function Footer() {
                                         title: "Resources",
                                         links: [
                                             { name: "Learning Center", href: "/resources/learning" },
-                                            { name: "Product Guides", href: "/resources/guides" },
-                                            { name: "Case Studies", href: "/resources/case-studies" },
-                                            { name: "Webinars", href: "/resources/webinars" },
                                             { name: "FAQs", href: "/faqs" },
                                             { name: "Support", href: "/support" }
                                         ],

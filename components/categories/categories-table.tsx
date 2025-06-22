@@ -17,7 +17,6 @@ import { ArrowUpDown, ChevronDown, MoreHorizontal, Plus, Search, Eye, Edit, Tras
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -64,32 +63,8 @@ export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: Cate
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [rowSelection, setRowSelection] = React.useState({})
 
   const columns: ColumnDef<Category>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-
     {
       accessorKey: "name",
       header: ({ column }) => {
@@ -168,25 +143,7 @@ export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: Cate
         )
       },
     },
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="hover:bg-blue-50 transition-colors"
-          >
-            Created
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => {
-        const date = new Date(row.getValue("createdAt"))
-        return <div className="text-sm text-gray-600">{date.toLocaleDateString()}</div>
-      },
-    },
+
     {
       id: "actions",
       enableHiding: false,
@@ -247,12 +204,10 @@ export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: Cate
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
     state: {
       sorting,
       columnFilters,
       columnVisibility,
-      rowSelection,
     },
   })
 
@@ -337,10 +292,7 @@ export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: Cate
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
+                  <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
                         {flexRender(
@@ -365,10 +317,6 @@ export function CategoriesTable({ data, onEdit, onDelete, onStatusChange }: Cate
           </Table>
         </div>
         <div className="flex items-center justify-end space-x-2 py-4">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {table.getFilteredSelectedRowModel().rows.length} of{" "}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
-          </div>
           <div className="space-x-2">
             <Button
               variant="outline"
