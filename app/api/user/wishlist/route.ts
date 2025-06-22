@@ -4,30 +4,76 @@ import { PrismaClient } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-// GET /api/user/wishlist - Get user's wishlist
+// GET /api/user/wishlist - Get user's wishlist with pagination and search
 export async function GET(request: NextRequest) {
   try {
     const session = await auth()
-    
+
     if (!session || !session.user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    console.log('🔍 Fetching wishlist for user:', session.user.email)
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '12')
+    const search = searchParams.get('search') || ''
+    const category = searchParams.get('category') || 'all'
+    const sortBy = searchParams.get('sortBy') || 'newest'
 
-    // For now, we'll get products and simulate wishlist
-    // In a real app, you'd have a wishlist table
+    console.log('🔍 Fetching wishlist for user:', session.user.email, { page, limit, search, category, sortBy })
+
+    // Build where clause
+    const where: any = {
+      isActive: true
+    }
+
+    // Add search filter
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } }
+      ]
+    }
+
+    // Add category filter
+    if (category !== 'all') {
+      where.category = {
+        slug: category
+      }
+    }
+
+    // Build orderBy clause
+    let orderBy: any = { createdAt: 'desc' }
+    switch (sortBy) {
+      case 'oldest':
+        orderBy = { createdAt: 'asc' }
+        break
+      case 'price-low':
+        orderBy = { price: 'asc' }
+        break
+      case 'price-high':
+        orderBy = { price: 'desc' }
+        break
+      case 'name':
+        orderBy = { name: 'asc' }
+        break
+      default:
+        orderBy = { createdAt: 'desc' }
+    }
+
+    // Get total count for pagination
+    const totalItems = await prisma.product.count({ where })
+    const totalPages = Math.ceil(totalItems / limit)
+
+    // Get products with pagination
     const products = await prisma.product.findMany({
-      where: {
-        isActive: true
-      },
+      where,
       include: {
         category: true
       },
-      take: 8, // Limit to 8 products for demo
-      orderBy: {
-        createdAt: 'desc'
-      }
+      skip: (page - 1) * limit,
+      take: limit,
+      orderBy
     })
 
     console.log('📦 Found products for wishlist:', products.length)
@@ -83,7 +129,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       items: wishlistItems,
-      total: wishlistItems.length
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems,
+        itemsPerPage: limit
+      }
     })
 
   } catch (error) {

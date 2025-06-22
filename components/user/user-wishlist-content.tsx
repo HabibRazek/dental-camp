@@ -5,15 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { 
-  Heart, 
-  ShoppingCart, 
+import {
+  Heart,
+  ShoppingCart,
   Search,
   Filter,
   Star,
   Eye,
   Trash2,
-  Share2,
   Grid3X3,
   List,
   SortAsc,
@@ -21,6 +20,7 @@ import {
   TrendingUp,
   Clock
 } from "lucide-react"
+import { SectionLoader } from "@/components/ui/loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSettings } from "@/contexts/settings-context"
 import { useCart } from "@/contexts/CartContext"
@@ -50,28 +50,44 @@ interface UserWishlistContentProps {
 
 export function UserWishlistContent({ userId }: UserWishlistContentProps) {
   const [wishlistItems, setWishlistItems] = React.useState<WishlistItem[]>([])
+  const [categories, setCategories] = React.useState<{id: string, name: string, slug: string}[]>([])
   const [loading, setLoading] = React.useState(true)
   const [searchTerm, setSearchTerm] = React.useState('')
   const [selectedCategory, setSelectedCategory] = React.useState('all')
   const [sortBy, setSortBy] = React.useState('newest')
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid')
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalItems, setTotalItems] = React.useState(0)
+  const itemsPerPage = 12
   const { formatCurrency } = useSettings()
   const { addItem } = useCart()
 
   React.useEffect(() => {
     fetchWishlistItems()
-  }, [userId])
+    fetchCategories()
+  }, [userId, currentPage, searchTerm, selectedCategory, sortBy])
 
   const fetchWishlistItems = async () => {
     try {
       setLoading(true)
-      console.log('🔄 Fetching real wishlist items for user:', userId)
+      console.log('🔄 Fetching wishlist items for user:', userId)
 
-      const response = await fetch('/api/user/wishlist')
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: itemsPerPage.toString(),
+        search: searchTerm,
+        category: selectedCategory,
+        sortBy: sortBy
+      })
+
+      const response = await fetch(`/api/user/wishlist?${params}`)
       if (response.ok) {
         const data = await response.json()
         console.log('📦 Received wishlist data:', data)
         setWishlistItems(data.items || [])
+        setTotalPages(data.pagination?.totalPages || 1)
+        setTotalItems(data.pagination?.totalItems || 0)
       } else {
         console.error('Failed to fetch wishlist items')
         setWishlistItems([])
@@ -81,6 +97,18 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
       setWishlistItems([])
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories?includeProducts=false')
+      if (response.ok) {
+        const data = await response.json()
+        setCategories(data.categories || [])
+      }
+    } catch (error) {
+      console.error('Error fetching categories:', error)
     }
   }
 
@@ -124,42 +152,11 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
     }
   }
 
-  const filteredItems = wishlistItems
-    .filter(item => 
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedCategory === 'all' || item.category === selectedCategory)
-    )
-    .sort((a, b) => {
-      switch (sortBy) {
-        case 'newest':
-          return new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
-        case 'oldest':
-          return new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime()
-        case 'price-low':
-          return a.price - b.price
-        case 'price-high':
-          return b.price - a.price
-        case 'name':
-          return a.name.localeCompare(b.name)
-        default:
-          return 0
-      }
-    })
 
-  const categories = ['all', ...Array.from(new Set(wishlistItems.map(item => item.category)))]
 
-  if (loading) {
-    return (
-      <div className="px-4 lg:px-6">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading your wishlist...</p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+
+
+
 
   return (
     <div className="px-4 lg:px-6 space-y-8">
@@ -171,27 +168,31 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
             My Wishlist
           </h1>
           <p className="text-gray-600 mt-2">
-            {wishlistItems.length} item{wishlistItems.length !== 1 ? 's' : ''} saved for later
+            {totalItems} item{totalItems !== 1 ? 's' : ''} saved for later • Page {currentPage} of {totalPages}
           </p>
         </div>
-        
+
         {/* Quick Stats */}
-        <div className="flex gap-4">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-gray-900">{wishlistItems.length}</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-gray-900">{totalItems}</p>
             <p className="text-xs text-gray-600">Total Items</p>
           </div>
-          <div className="text-center">
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <p className="text-2xl font-bold text-green-600">
               {wishlistItems.filter(item => item.inStock).length}
             </p>
             <p className="text-xs text-gray-600">In Stock</p>
           </div>
-          <div className="text-center">
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
             <p className="text-2xl font-bold text-blue-600">
               {formatCurrency(wishlistItems.reduce((sum, item) => sum + item.price, 0))}
             </p>
-            <p className="text-xs text-gray-600">Total Value</p>
+            <p className="text-xs text-gray-600">Page Value</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+            <p className="text-2xl font-bold text-purple-600">{currentPage}</p>
+            <p className="text-xs text-gray-600">Current Page</p>
           </div>
         </div>
       </div>
@@ -206,23 +207,33 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
               <Input
                 placeholder="Search your wishlist..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setCurrentPage(1)
+                }}
                 className="pl-10"
               />
             </div>
             
             {/* Category Filter */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {categories.map(category => (
-                <option key={category} value={category}>
-                  {category === 'all' ? 'All Categories' : category}
-                </option>
-              ))}
-            </select>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 z-10" />
+              <select
+                value={selectedCategory}
+                onChange={(e) => {
+                  setSelectedCategory(e.target.value)
+                  setCurrentPage(1)
+                }}
+                className="pl-10 pr-8 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white min-w-[160px]"
+              >
+                <option value="all">All Categories</option>
+                {categories.map(category => (
+                  <option key={category.id} value={category.slug}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            </div>
             
             {/* Sort */}
             <select
@@ -261,7 +272,9 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
       </Card>
 
       {/* Wishlist Items */}
-      {filteredItems.length === 0 ? (
+      {loading ? (
+        <SectionLoader size="lg" />
+      ) : wishlistItems.length === 0 ? (
         <div className="text-center py-12">
           <Heart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -279,12 +292,12 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
         </div>
       ) : (
         <AnimatePresence>
-          <div className={`grid gap-6 ${
-            viewMode === 'grid' 
-              ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+          <div className={`grid gap-4 sm:gap-6 ${
+            viewMode === 'grid'
+              ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4'
               : 'grid-cols-1'
           }`}>
-            {filteredItems.map((item, index) => (
+            {wishlistItems.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -294,15 +307,15 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
                 layout
               >
                 {viewMode === 'grid' ? (
-                  <WishlistItemCard 
-                    item={item} 
+                  <WishlistItemCard
+                    item={item}
                     onRemove={removeFromWishlist}
                     onAddToCart={addToCart}
                     formatCurrency={formatCurrency}
                   />
                 ) : (
-                  <WishlistItemRow 
-                    item={item} 
+                  <WishlistItemRow
+                    item={item}
                     onRemove={removeFromWishlist}
                     onAddToCart={addToCart}
                     formatCurrency={formatCurrency}
@@ -312,6 +325,47 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
             ))}
           </div>
         </AnimatePresence>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+            disabled={currentPage === 1}
+            className="flex items-center gap-2"
+          >
+            <TrendingUp className="h-4 w-4 rotate-180" />
+            Previous
+          </Button>
+
+          <div className="flex items-center gap-2">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const page = i + 1;
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? "default" : "outline"}
+                  onClick={() => setCurrentPage(page)}
+                  className={`w-10 h-10 ${currentPage === page ? 'bg-blue-600 text-white' : ''}`}
+                >
+                  {page}
+                </Button>
+              );
+            })}
+          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+            disabled={currentPage === totalPages}
+            className="flex items-center gap-2"
+          >
+            Next
+            <TrendingUp className="h-4 w-4" />
+          </Button>
+        </div>
       )}
     </div>
   )
@@ -330,12 +384,12 @@ function WishlistItemCard({
   formatCurrency: (amount: number) => string
 }) {
   return (
-    <Card className="group border border-gray-200/50 shadow-lg bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 overflow-hidden">
+    <Card className="group border border-gray-200/50 shadow-lg bg-gradient-to-br from-white to-gray-50/30 backdrop-blur-sm hover:shadow-2xl transition-all duration-300 overflow-hidden h-full flex flex-col">
       <div className="relative">
-        <img 
-          src={item.image} 
+        <img
+          src={item.image}
           alt={item.name}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-32 sm:h-40 md:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
         />
         
         {/* Badges */}
@@ -349,40 +403,33 @@ function WishlistItemCard({
         </div>
         
         {/* Actions */}
-        <div className="absolute top-2 right-2 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <div className="absolute top-1 right-1 sm:top-2 sm:right-2">
           <Button
             size="sm"
             variant="secondary"
-            className="h-8 w-8 p-0 bg-white/80 hover:bg-white"
+            className="h-6 w-6 sm:h-8 sm:w-8 p-0 bg-white/80 hover:bg-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300"
             onClick={() => onRemove(item.id)}
           >
-            <Trash2 className="h-4 w-4 text-red-500" />
-          </Button>
-          <Button
-            size="sm"
-            variant="secondary"
-            className="h-8 w-8 p-0 bg-white/80 hover:bg-white"
-          >
-            <Share2 className="h-4 w-4" />
+            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
           </Button>
         </div>
       </div>
       
-      <CardContent className="p-4">
-        <div className="space-y-3">
+      <CardContent className="p-2 sm:p-3 md:p-4 flex-1 flex flex-col">
+        <div className="space-y-2 sm:space-y-3 flex-1 flex flex-col">
           <div>
-            <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+            <h3 className="font-semibold text-gray-900 line-clamp-2 group-hover:text-blue-600 transition-colors text-sm sm:text-base min-h-[2.5rem] sm:min-h-[3rem]">
               {item.name}
             </h3>
-            <p className="text-sm text-gray-600 mt-1">{item.category}</p>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">{item.category}</p>
           </div>
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <div className="flex items-center">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
-                  className={`h-4 w-4 ${
+                  className={`h-3 w-3 sm:h-4 sm:w-4 ${
                     star <= Math.floor(item.rating)
                       ? 'fill-yellow-400 text-yellow-400'
                       : star <= item.rating
@@ -391,40 +438,43 @@ function WishlistItemCard({
                   }`}
                 />
               ))}
-              <span className="text-sm font-medium ml-1">{item.rating.toFixed(1)}</span>
+              <span className="text-xs sm:text-sm font-medium ml-1">{item.rating.toFixed(1)}</span>
             </div>
-            <span className="text-sm text-gray-500">({item.reviewCount})</span>
+            <span className="text-xs sm:text-sm text-gray-500">({item.reviewCount})</span>
           </div>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-gray-900">
+
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="text-sm sm:text-lg font-bold text-gray-900">
               {formatCurrency(item.price)}
             </span>
             {item.originalPrice && (
-              <span className="text-sm text-gray-500 line-through">
+              <span className="text-xs sm:text-sm text-gray-500 line-through">
                 {formatCurrency(item.originalPrice)}
               </span>
             )}
           </div>
           
-          <Button
-            onClick={() => onAddToCart(item)}
-            disabled={!item.inStock}
-            className="w-full mb-3"
-          >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            {item.inStock ? 'Ajouter au panier' : 'Rupture de stock'}
-          </Button>
+          <div className="mt-auto pt-2 sm:pt-4">
+            <Button
+              onClick={() => onAddToCart(item)}
+              disabled={!item.inStock}
+              className="w-full mb-2 sm:mb-3 text-xs sm:text-sm py-1.5 sm:py-2"
+            >
+              <ShoppingCart className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+              <span className="hidden sm:inline">{item.inStock ? 'Ajouter au panier' : 'Rupture de stock'}</span>
+              <span className="sm:hidden">{item.inStock ? 'Ajouter' : 'Rupture'}</span>
+            </Button>
 
-          {/* Product Rating */}
-          <ProductRating
-            productId={item.id}
-            productName={item.name}
-            onRatingSubmitted={(rating) => {
-              console.log('Rating submitted:', rating, 'for product:', item.name)
-              toast.success(`Thank you for rating ${item.name}!`)
-            }}
-          />
+            {/* Product Rating */}
+            <ProductRating
+              productId={item.id}
+              productName={item.name}
+              onRatingSubmitted={(rating) => {
+                console.log('Rating submitted:', rating, 'for product:', item.name)
+                toast.success(`Thank you for rating ${item.name}!`)
+              }}
+            />
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -260,6 +260,7 @@ export default function CatalogPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterLoading, setFilterLoading] = useState(false);
+  const [paginationLoading, setPaginationLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
@@ -274,8 +275,10 @@ export default function CatalogPage() {
   const [featuredOnly, setFeaturedOnly] = useState(false);
 
   // Fetch products function
-  const fetchProducts = useCallback(async (isFilterChange = false) => {
-    if (isFilterChange) {
+  const fetchProducts = useCallback(async (isFilterChange = false, isPaginationChange = false) => {
+    if (isPaginationChange) {
+      setPaginationLoading(true);
+    } else if (isFilterChange) {
       setFilterLoading(true);
     } else {
       setLoading(true);
@@ -307,6 +310,7 @@ export default function CatalogPage() {
     } finally {
       setLoading(false);
       setFilterLoading(false);
+      setPaginationLoading(false);
     }
   }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
 
@@ -326,7 +330,14 @@ export default function CatalogPage() {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [currentPage]); // Only refetch on page change
+  }, []); // Initial load only
+
+  // Page change effect
+  useEffect(() => {
+    if (currentPage > 1) { // Don't trigger on initial load
+      fetchProducts(false, true); // Mark as pagination change
+    }
+  }, [currentPage]);
 
   const fetchCategories = async () => {
     try {
@@ -737,6 +748,23 @@ export default function CatalogPage() {
                   </motion.div>
                 )}
 
+                {/* Pagination Loading Overlay */}
+                {paginationLoading && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute inset-0 bg-white/95 backdrop-blur-md z-50 flex items-center justify-center rounded-2xl border border-gray-200"
+                    style={{ minHeight: '400px' }}
+                  >
+                    <div className="text-center">
+                      <SectionLoader size="lg" />
+                      <p className="mt-4 text-sm font-medium text-gray-700">Loading page...</p>
+                    </div>
+                  </motion.div>
+                )}
+
                 {loading ? (
                   <SectionLoader size="lg" />
                 ) : products.length > 0 ? (
@@ -836,37 +864,65 @@ export default function CatalogPage() {
                   transition={{ duration: 0.5, delay: 0.4 }}
                   className="flex justify-center mt-12"
                 >
-                  <div className="flex flex-wrap gap-2 justify-center">
+                  <div className="flex items-center gap-1 sm:gap-2 justify-center overflow-x-auto pb-2">
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentPage(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="hover:bg-blue-50"
+                      onClick={() => {
+                        setPaginationLoading(true);
+                        setCurrentPage(currentPage - 1);
+                      }}
+                      disabled={currentPage === 1 || paginationLoading}
+                      className="hover:bg-blue-50 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4"
                     >
-                      Previous
+                      <span className="hidden sm:inline">Previous</span>
+                      <span className="sm:hidden">Prev</span>
                     </Button>
 
-                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                      const page = i + 1;
-                      return (
-                        <Button
-                          key={page}
-                          variant={currentPage === page ? "default" : "outline"}
-                          onClick={() => setCurrentPage(page)}
-                          className={currentPage === page ? "bg-gradient-to-r from-blue-500 to-blue-600" : "hover:bg-blue-50"}
-                        >
-                          {page}
-                        </Button>
-                      );
-                    })}
+                    {(() => {
+                      const maxVisiblePages = 5;
+                      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                      // Adjust startPage if we're near the end
+                      if (endPage - startPage + 1 < maxVisiblePages) {
+                        startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                      }
+
+                      const pages = [];
+                      for (let i = startPage; i <= endPage; i++) {
+                        pages.push(
+                          <Button
+                            key={i}
+                            variant={currentPage === i ? "default" : "outline"}
+                            onClick={() => {
+                              if (i !== currentPage) {
+                                setPaginationLoading(true);
+                                setCurrentPage(i);
+                              }
+                            }}
+                            disabled={paginationLoading}
+                            className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 p-0 text-xs sm:text-sm ${
+                              currentPage === i ? "bg-gradient-to-r from-blue-500 to-blue-600" : "hover:bg-blue-50"
+                            }`}
+                          >
+                            {i}
+                          </Button>
+                        );
+                      }
+                      return pages;
+                    })()}
 
                     <Button
                       variant="outline"
-                      onClick={() => setCurrentPage(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="hover:bg-blue-50"
+                      onClick={() => {
+                        setPaginationLoading(true);
+                        setCurrentPage(currentPage + 1);
+                      }}
+                      disabled={currentPage === totalPages || paginationLoading}
+                      className="hover:bg-blue-50 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4"
                     >
-                      Next
+                      <span className="hidden sm:inline">Next</span>
+                      <span className="sm:hidden">Next</span>
                     </Button>
                   </div>
                 </motion.div>
