@@ -16,10 +16,11 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const timeRange = searchParams.get('timeRange') || '30d'
     const status = searchParams.get('status') || 'all'
+    const search = searchParams.get('search') || ''
     const page = parseInt(searchParams.get('page') || '1')
-    const limit = parseInt(searchParams.get('limit') || '50')
+    const limit = parseInt(searchParams.get('limit') || '8')
 
-    console.log('📊 Fetching order reports:', { timeRange, status, page, limit })
+    console.log('📊 Fetching order reports:', { timeRange, status, search, page, limit })
 
     // Calculate date filter
     let dateFilter: Date | undefined
@@ -53,6 +54,23 @@ export async function GET(request: NextRequest) {
 
     if (status !== 'all') {
       where.status = status.toUpperCase()
+    }
+
+    if (search) {
+      where.OR = [
+        {
+          orderNumber: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        },
+        {
+          customerEmail: {
+            contains: search,
+            mode: 'insensitive'
+          }
+        }
+      ]
     }
 
     // Get orders with pagination

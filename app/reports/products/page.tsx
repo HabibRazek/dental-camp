@@ -855,13 +855,6 @@ export default function ProductCatalogsPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b">
-                      <th className="text-left p-2 font-medium w-12">
-                        <Checkbox
-                          checked={selectedProducts.length === filteredProducts.length && filteredProducts.length > 0}
-                          onCheckedChange={handleSelectAll}
-                          aria-label="Select all products"
-                        />
-                      </th>
                       <th className="text-left p-2 font-medium">Product</th>
                       <th className="text-left p-2 font-medium">SKU</th>
                       <th className="text-left p-2 font-medium">Category</th>
@@ -874,7 +867,7 @@ export default function ProductCatalogsPage() {
                   <tbody>
                     {filteredProducts.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="text-center py-8 text-gray-500">
+                        <td colSpan={7} className="text-center py-8 text-gray-500">
                           {searchTerm ? (
                             <div>
                               <p>No products found matching "{searchTerm}"</p>
@@ -888,13 +881,6 @@ export default function ProductCatalogsPage() {
                     ) : (
                       filteredProducts.map((product) => (
                         <tr key={product.id} className="border-b hover:bg-gray-50">
-                          <td className="p-2">
-                            <Checkbox
-                              checked={selectedProducts.includes(product.id)}
-                              onCheckedChange={() => handleSelectProduct(product.id)}
-                              aria-label={`Select ${product.name}`}
-                            />
-                          </td>
                           <td className="p-2">
                             <div className="flex items-center gap-3">
                               {product.thumbnail ? (
@@ -949,14 +935,10 @@ export default function ProductCatalogsPage() {
                                 variant="outline"
                                 onClick={() => handleViewDetails(product)}
                                 title="View Details"
+                                className="hover:bg-blue-50 hover:border-blue-300"
                               >
                                 <Eye className="h-3 w-3" />
                               </Button>
-                              <Link href={`/admin/products/${product.id}/edit`}>
-                                <Button size="sm" variant="outline" title="Edit Product">
-                                  <Edit className="h-3 w-3" />
-                                </Button>
-                              </Link>
                             </div>
                           </td>
                         </tr>

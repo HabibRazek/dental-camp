@@ -762,10 +762,10 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
-              <Link href="/products">
+              <Link href="/catalog">
                 <Button variant="outline" className="h-16 sm:h-20 md:h-24 flex flex-col items-center justify-center space-y-1 sm:space-y-2 hover:bg-blue-50 hover:border-blue-200 transition-all duration-300 group">
                   <Plus className="h-4 w-4 sm:h-6 sm:w-6 md:h-8 md:w-8 text-blue-600 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs sm:text-sm font-medium text-center">Browse Products</span>
+                  <span className="text-xs sm:text-sm font-medium text-center">Nos Produits</span>
                 </Button>
               </Link>
 

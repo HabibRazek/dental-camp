@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Heart, Search, Menu, X, User, LogOut, ShoppingCart, MoreVertical } from "lucide-react";
+import { Menu, X, User, LogOut, ShoppingCart, MoreVertical } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
@@ -101,22 +101,6 @@ function Header() {
 
                     {/* Desktop Icons */}
                     <div className="hidden sm:flex items-center gap-1 lg:gap-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
-                            aria-label="Search"
-                        >
-                            <Search className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
-                            aria-label="Favorites"
-                        >
-                            <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
-                        </Button>
                         <Cart />
                     </div>
 
@@ -233,22 +217,6 @@ function Header() {
 
                             {/* Mobile Cart and Actions */}
                             <div className="flex items-center justify-center gap-4 py-4 border-b border-gray-200">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
-                                    aria-label="Search"
-                                >
-                                    <Search className="h-5 w-5" />
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="rounded-full hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out relative"
-                                    aria-label="Favorites"
-                                >
-                                    <Heart className="h-5 w-5" />
-                                </Button>
                                 <Cart />
                             </div>
 

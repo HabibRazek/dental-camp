@@ -141,7 +141,7 @@ export default function FAQsPage() {
             
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Comment pouvons-nous
-              <span className="block bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="block text-blue-600 font-extrabold">
                 vous aider ?
               </span>
             </h1>
@@ -216,11 +216,11 @@ export default function FAQsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: index * 0.1 }}
                 >
-                  <Card className="border-2 border-gray-100 hover:border-blue-200 transition-all duration-300">
+                  <Card className="border border-gray-200/60 shadow-sm bg-white hover:shadow-lg hover:border-blue-300/50 transition-all duration-300 rounded-xl overflow-hidden">
                     <CardContent className="p-0">
                       <button
                         onClick={() => toggleItem(faq.id)}
-                        className="w-full p-4 sm:p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
+                        className="w-full p-4 sm:p-6 text-left flex items-center justify-between hover:bg-gradient-to-r hover:from-blue-50/50 hover:to-blue-100/30 transition-all duration-300"
                       >
                         <h3 className="text-base sm:text-lg font-semibold text-gray-900 pr-4">
                           {faq.question}
@@ -242,8 +242,8 @@ export default function FAQsPage() {
                             className="overflow-hidden"
                           >
                             <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
-                              <div className="border-t border-gray-100 pt-4">
-                                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                              <div className="border-t border-blue-100/50 pt-4 bg-gradient-to-r from-blue-50/30 to-blue-100/20 rounded-b-lg -mx-4 sm:-mx-6 px-4 sm:px-6">
+                                <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
                                   {faq.answer}
                                 </p>
                               </div>
@@ -320,8 +320,7 @@ export default function FAQsPage() {
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base"
                 asChild
               >
                 <Link href="/about">

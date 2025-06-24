@@ -261,6 +261,7 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [filterLoading, setFilterLoading] = useState(false);
   const [paginationLoading, setPaginationLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
@@ -328,8 +329,11 @@ export default function CatalogPage() {
 
   // Initial data fetch
   useEffect(() => {
+    setPageLoading(true);
     fetchProducts();
     fetchCategories();
+    // Simulate minimum loading time for better UX
+    setTimeout(() => setPageLoading(false), 800);
   }, []); // Initial load only
 
   // Page change effect
@@ -365,6 +369,17 @@ export default function CatalogPage() {
 
   return (
     <>
+      {/* Page Loading Overlay */}
+      {pageLoading && (
+        <div className="fixed inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="text-center">
+            <SectionLoader size="lg" />
+            <p className="mt-4 text-lg font-medium text-gray-700">Loading products...</p>
+            <p className="text-sm text-gray-500">Please wait while we fetch the latest products</p>
+          </div>
+        </div>
+      )}
+
       <Header />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50/30 pt-24">
         {/* Hero Section with Search */}
@@ -598,7 +613,7 @@ export default function CatalogPage() {
                             setInStockOnly(checked === true);
                             setFilterLoading(true);
                           }}
-                          className="mr-1 flex-shrink-0"
+                          className="mr-2 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">
                           <Package className="w-2 h-2 text-green-600 flex-shrink-0" />
@@ -617,7 +632,7 @@ export default function CatalogPage() {
                             setFeaturedOnly(checked === true);
                             setFilterLoading(true);
                           }}
-                          className="mr-1 flex-shrink-0"
+                          className="mr-2 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">
                           <Award className="w-2 h-2 text-yellow-600 flex-shrink-0" />

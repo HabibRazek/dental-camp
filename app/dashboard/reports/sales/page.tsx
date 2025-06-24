@@ -35,13 +35,7 @@ interface SalesMetrics {
   returningCustomers: number
 }
 
-interface TopProduct {
-  id: string
-  name: string
-  sales: number
-  revenue: number
-  category: string
-}
+
 
 interface CategorySales {
   name: string
@@ -63,7 +57,6 @@ interface PaymentDistribution {
 
 export default function SalesAnalyticsPage() {
   const [metrics, setMetrics] = useState<SalesMetrics | null>(null)
-  const [topProducts, setTopProducts] = useState<TopProduct[]>([])
   const [salesByCategory, setSalesByCategory] = useState<CategorySales[]>([])
   const [monthlyTrends, setMonthlyTrends] = useState<MonthlyTrend[]>([])
   const [paymentDistribution, setPaymentDistribution] = useState<PaymentDistribution[]>([])
@@ -72,32 +65,34 @@ export default function SalesAnalyticsPage() {
 
   useEffect(() => {
     fetchSalesAnalytics()
+    // Auto-refresh every 30 seconds for dynamic updates
+    const interval = setInterval(fetchSalesAnalytics, 30000)
+    return () => clearInterval(interval)
   }, [timeRange])
 
   const fetchSalesAnalytics = async () => {
     setLoading(true)
     try {
       const response = await fetch(`/api/admin/reports/sales?timeRange=${timeRange}`)
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch analytics: ${response.status}`)
       }
 
       const data = await response.json()
-      
+
       if (data.success) {
         setMetrics(data.metrics)
-        setTopProducts(data.topProducts)
         setSalesByCategory(data.salesByCategory)
         setMonthlyTrends(data.monthlyTrends)
         setPaymentDistribution(data.paymentDistribution)
-        toast.success("Analytics de ventes mis à jour")
+        toast.success("📊 Analytics de ventes mis à jour en temps réel!")
       } else {
         throw new Error(data.error || "Failed to fetch analytics")
       }
     } catch (error) {
       console.error('Failed to fetch sales analytics:', error)
-      toast.error("Erreur lors du chargement des analytics")
+      toast.error("❌ Erreur lors du chargement des analytics")
     } finally {
       setLoading(false)
     }
@@ -164,41 +159,84 @@ export default function SalesAnalyticsPage() {
       description="Analyse complète des performances de ventes et insights business pour votre plateforme e-commerce dentaire"
     >
       <div className="space-y-8">
-        {/* Controls - Responsive */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full lg:w-auto">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium">Période:</span>
+        {/* Dynamic Controls Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 p-6 border border-blue-100"
+        >
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-200/20 rounded-full -translate-y-16 translate-x-16"></div>
+
+          <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 w-full lg:w-auto">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  >
+                    <Calendar className="h-5 w-5 text-blue-600" />
+                  </motion.div>
+                  <span className="text-sm font-semibold text-gray-700">Période d'analyse:</span>
+                </div>
+                <Select value={timeRange} onValueChange={setTimeRange}>
+                  <SelectTrigger className="w-full sm:w-48 bg-white border-blue-200 focus:border-blue-400">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="7d">📅 7 derniers jours</SelectItem>
+                    <SelectItem value="30d">📊 30 derniers jours</SelectItem>
+                    <SelectItem value="90d">📈 90 derniers jours</SelectItem>
+                    <SelectItem value="1y">🗓️ Dernière année</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <Select value={timeRange} onValueChange={setTimeRange}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="7d">7 derniers jours</SelectItem>
-                  <SelectItem value="30d">30 derniers jours</SelectItem>
-                  <SelectItem value="90d">90 derniers jours</SelectItem>
-                  <SelectItem value="1y">Dernière année</SelectItem>
-                </SelectContent>
-              </Select>
+
+              {/* Real-time indicator */}
+              <div className="flex items-center gap-2 px-3 py-1 bg-green-100 rounded-full">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 1, repeat: Infinity }}
+                  className="w-2 h-2 bg-green-500 rounded-full"
+                ></motion.div>
+                <span className="text-xs font-medium text-green-700">Temps réel</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={fetchSalesAnalytics}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto bg-white border-blue-200 hover:bg-blue-50 hover:border-blue-300 text-blue-700"
+                >
+                  <motion.div
+                    animate={{ rotate: loading ? 360 : 0 }}
+                    transition={{ duration: 1, repeat: loading ? Infinity : 0, ease: "linear" }}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                  </motion.div>
+                  <span className="hidden sm:inline">🔄 Actualiser</span>
+                  <span className="sm:hidden">🔄 Actualiser</span>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  onClick={exportReport}
+                  variant="outline"
+                  size="sm"
+                  className="w-full sm:w-auto bg-white border-green-200 hover:bg-green-50 hover:border-green-300 text-green-700"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  <span className="hidden sm:inline">📥 Exporter</span>
+                  <span className="sm:hidden">📥 Export</span>
+                </Button>
+              </motion.div>
             </div>
           </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
-            <Button onClick={fetchSalesAnalytics} variant="outline" size="sm" className="w-full sm:w-auto">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Actualiser</span>
-              <span className="sm:hidden">Actualiser</span>
-            </Button>
-            <Button onClick={exportReport} variant="outline" size="sm" className="w-full sm:w-auto">
-              <Download className="h-4 w-4 mr-2" />
-              <span className="hidden sm:inline">Exporter</span>
-              <span className="sm:hidden">Export</span>
-            </Button>
-          </div>
-        </div>
+        </motion.div>
 
         {/* Key Metrics */}
         {metrics && (
@@ -207,17 +245,44 @@ export default function SalesAnalyticsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
+              whileHover={{ scale: 1.02, y: -5 }}
+              className="group"
             >
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Chiffre d'Affaires</CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <Card className="relative overflow-hidden border-l-4 border-l-green-500 bg-gradient-to-br from-white to-green-50/30 hover:shadow-lg transition-all duration-300">
+                <div className="absolute top-0 right-0 w-20 h-20 bg-green-100/50 rounded-full -translate-y-10 translate-x-10 group-hover:scale-110 transition-transform duration-300"></div>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+                  <CardTitle className="text-sm font-medium text-gray-700">💰 Chiffre d'Affaires</CardTitle>
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      rotate: [0, 5, -5, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  >
+                    <DollarSign className="h-5 w-5 text-green-600" />
+                  </motion.div>
                 </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">{formatCurrency(metrics.totalRevenue)}</div>
-                  <div className={`flex items-center text-xs ${getGrowthColor(metrics.revenueGrowth)}`}>
-                    {getGrowthIcon(metrics.revenueGrowth)}
-                    <span className="ml-1">{Math.abs(metrics.revenueGrowth).toFixed(1)}% vs période précédente</span>
+                <CardContent className="relative z-10">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.3, type: "spring", stiffness: 100 }}
+                    className="text-3xl font-bold text-green-700"
+                  >
+                    {formatCurrency(metrics.totalRevenue)}
+                  </motion.div>
+                  <div className={`flex items-center text-xs mt-2 ${getGrowthColor(metrics.revenueGrowth)}`}>
+                    <motion.div
+                      animate={{ x: [0, 3, 0] }}
+                      transition={{ duration: 1, repeat: Infinity }}
+                    >
+                      {getGrowthIcon(metrics.revenueGrowth)}
+                    </motion.div>
+                    <span className="ml-1 font-medium">{Math.abs(metrics.revenueGrowth).toFixed(1)}% vs période précédente</span>
                   </div>
                 </CardContent>
               </Card>
@@ -363,52 +428,7 @@ export default function SalesAnalyticsPage() {
           </Card>
         </div>
 
-        {/* Top Products - Responsive */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top Produits</CardTitle>
-            <CardDescription>Produits les plus performants par chiffre d'affaires</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {topProducts.slice(0, 10).map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center space-x-3 sm:space-x-4 mb-2 sm:mb-0">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-semibold text-blue-600">#{index + 1}</span>
-                      </div>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h4 className="font-medium text-gray-900 truncate">{product.name}</h4>
-                      <p className="text-sm text-gray-500">{product.category}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between sm:block sm:text-right ml-11 sm:ml-0">
-                    <div>
-                      <div className="font-semibold text-gray-900">{formatCurrency(product.revenue)}</div>
-                      <div className="text-sm text-gray-500">{product.sales} ventes</div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
 
-              {topProducts.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  <Package className="h-16 w-16 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg font-medium mb-2">Aucune donnée de vente disponible</p>
-                  <p className="text-sm">Les données apparaîtront une fois que vous aurez des ventes</p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Customer Insights */}
         {metrics && (

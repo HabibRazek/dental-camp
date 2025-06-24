@@ -127,19 +127,6 @@ export function EnhancedHeader() {
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-4">
-              {/* Search Button */}
-              <Button variant="ghost" size="sm" className="hidden sm:flex">
-                <Search className="h-4 w-4" />
-              </Button>
-
-              {/* Wishlist */}
-              <Button variant="ghost" size="sm" className="relative">
-                <Heart className="h-4 w-4" />
-                <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-red-500 text-white text-xs">
-                  0
-                </Badge>
-              </Button>
-
               {/* Cart */}
               <Button variant="ghost" size="sm" className="relative">
                 <ShoppingCart className="h-4 w-4" />

@@ -14,16 +14,15 @@ function Checkbox({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        // Tiny checkbox container with normal checkmark
+        // Small checkbox cadre/frame - compact container size
         "peer relative inline-flex items-center justify-center",
-        "h-1.5 w-1.5 shrink-0 rounded-[1px]", // Tiny container: 6x6px
-        "border border-gray-400 bg-white",
-        "transition-all duration-75 ease-out",
-        "hover:border-blue-500 hover:bg-blue-50 hover:scale-110",
-        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400",
-        "data-[state=checked]:bg-gradient-to-br data-[state=checked]:from-blue-500 data-[state=checked]:to-blue-600",
-        "data-[state=checked]:border-blue-500 data-[state=checked]:text-white data-[state=checked]:scale-105",
-        "data-[state=checked]:hover:from-blue-600 data-[state=checked]:hover:to-blue-700 data-[state=checked]:hover:scale-110",
+        "h-3 w-3 shrink-0 rounded-sm", // Smaller cadre: 12x12px
+        "border border-gray-300 bg-white",
+        "transition-all duration-150 ease-in-out",
+        "hover:border-blue-400 hover:bg-blue-50",
+        "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400 focus-visible:ring-offset-1",
+        "data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 data-[state=checked]:text-white",
+        "data-[state=checked]:hover:bg-blue-700 data-[state=checked]:hover:border-blue-700",
         "disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
@@ -33,12 +32,11 @@ function Checkbox({
         data-slot="checkbox-indicator"
         className={cn(
           "flex items-center justify-center text-current",
-          "transition-all duration-75 ease-out",
-          "data-[state=checked]:scale-100 data-[state=unchecked]:scale-0",
-          "data-[state=checked]:rotate-0 data-[state=unchecked]:rotate-45"
+          "transition-all duration-150 ease-in-out",
+          "data-[state=checked]:scale-100 data-[state=unchecked]:scale-0"
         )}
       >
-        <CheckIcon className="h-1.5 w-1.5 stroke-[4]" />
+        <CheckIcon className="h-2 w-2 stroke-[3]" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )

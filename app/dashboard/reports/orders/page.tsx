@@ -68,11 +68,24 @@ export default function OrderReportsPage() {
   const [dateRange, setDateRange] = useState("30d")
   const [statusFilter, setStatusFilter] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [totalCount, setTotalCount] = useState(0)
+
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+      setCurrentPage(1) // Reset to first page when searching
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
   useEffect(() => {
     fetchOrderReports()
-  }, [dateRange, statusFilter, currentPage])
+  }, [dateRange, statusFilter, currentPage, debouncedSearchTerm])
 
   const fetchOrderReports = async () => {
     setLoading(true)
@@ -80,8 +93,9 @@ export default function OrderReportsPage() {
       const params = new URLSearchParams({
         timeRange: dateRange,
         status: statusFilter,
+        search: debouncedSearchTerm,
         page: currentPage.toString(),
-        limit: '20'
+        limit: '8'
       })
 
       const response = await fetch(`/api/admin/reports/orders?${params}`)
@@ -97,6 +111,13 @@ export default function OrderReportsPage() {
         setSummary(data.summary)
         setDailyTrends(data.dailyTrends)
         setStatusDistribution(data.statusDistribution)
+
+        // Update pagination data
+        if (data.pagination) {
+          setTotalPages(data.pagination.totalPages)
+          setTotalCount(data.pagination.totalCount)
+        }
+
         toast.success("Rapports de commandes mis à jour")
       } else {
         throw new Error(data.error || "Failed to fetch reports")
@@ -152,10 +173,8 @@ export default function OrderReportsPage() {
     return <Badge variant={config.variant}>{config.label}</Badge>
   }
 
-  const filteredOrders = orders.filter(order =>
-    order.orderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.customerEmail.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  // Use server-side filtering and pagination instead of client-side
+  const filteredOrders = orders // Orders are already filtered on the server
 
   if (loading && !summary) {
     return (
@@ -382,7 +401,14 @@ export default function OrderReportsPage() {
           <CardHeader>
             <CardTitle>Détail des Commandes</CardTitle>
             <CardDescription>
-              {filteredOrders.length} commande(s) trouvée(s)
+              {totalCount > 0 ? (
+                <>
+                  Affichage de {((currentPage - 1) * 8) + 1} à {Math.min(currentPage * 8, totalCount)} sur {totalCount} commande(s)
+                  {debouncedSearchTerm && ` (filtré par "${debouncedSearchTerm}")`}
+                </>
+              ) : (
+                'Aucune commande trouvée'
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -468,6 +494,92 @@ export default function OrderReportsPage() {
                 <FileText className="h-16 w-16 mx-auto mb-4 opacity-50" />
                 <p className="text-lg font-medium mb-2">Aucune commande trouvée</p>
                 <p className="text-sm">Essayez de modifier vos critères de recherche</p>
+              </div>
+            )}
+
+            {/* Enhanced Pagination */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row justify-between items-center mt-8 gap-4">
+                {/* Page Info */}
+                <div className="text-sm text-gray-600 order-2 sm:order-1">
+                  Page {currentPage} sur {totalPages} • {totalCount} commande(s) au total
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex items-center gap-1 sm:gap-2 justify-center overflow-x-auto pb-2 order-1 sm:order-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="hover:bg-blue-50 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4 disabled:opacity-50"
+                  >
+                    <span className="hidden sm:inline">Previous</span>
+                    <span className="sm:hidden">Prev</span>
+                  </Button>
+
+                  {(() => {
+                    const maxVisiblePages = 5;
+                    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+                    // Adjust startPage if we're near the end
+                    if (endPage - startPage + 1 < maxVisiblePages) {
+                      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                    }
+
+                    const pages = [];
+                    for (let i = startPage; i <= endPage; i++) {
+                      pages.push(
+                        <Button
+                          key={i}
+                          variant={currentPage === i ? "default" : "outline"}
+                          onClick={() => setCurrentPage(i)}
+                          className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 p-0 text-xs sm:text-sm transition-all duration-200 ${
+                            currentPage === i
+                              ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl"
+                              : "hover:bg-blue-50 hover:border-blue-300"
+                          }`}
+                        >
+                          {i}
+                        </Button>
+                      );
+                    }
+                    return pages;
+                  })()}
+
+                  <Button
+                    variant="outline"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="hover:bg-blue-50 hover:border-blue-300 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4 disabled:opacity-50 transition-all duration-200"
+                  >
+                    <span className="hidden sm:inline">Next</span>
+                    <span className="sm:hidden">Next</span>
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Page Jump */}
+            {totalPages > 5 && (
+              <div className="flex justify-center mt-4">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <span>Aller à la page:</span>
+                  <Input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={currentPage}
+                    onChange={(e) => {
+                      const page = parseInt(e.target.value);
+                      if (page >= 1 && page <= totalPages) {
+                        setCurrentPage(page);
+                      }
+                    }}
+                    className="w-16 h-8 text-center"
+                  />
+                  <span>sur {totalPages}</span>
+                </div>
               </div>
             )}
           </CardContent>

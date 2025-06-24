@@ -224,9 +224,9 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="h-full border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+                <Card className="h-full border border-gray-200/60 shadow-sm bg-white hover:shadow-lg hover:border-blue-300/50 hover:bg-gradient-to-br hover:from-white hover:to-blue-50/30 transition-all duration-300 rounded-xl">
                   <CardContent className="p-6 text-center">
-                    <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
                       <div className="text-blue-600">
                         {value.icon}
                       </div>
@@ -366,8 +366,7 @@ export default function AboutPage() {
               </Button>
               <Button
                 size="lg"
-                variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-xl font-semibold"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-8 py-4 rounded-xl font-semibold"
                 asChild
               >
                 <Link href="/#contact">

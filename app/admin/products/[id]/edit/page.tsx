@@ -628,7 +628,7 @@ export default function EditProductPage() {
               </div>
 
               <div className="flex space-x-6">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox
                     id="isActive"
                     checked={formData.isActive}
@@ -640,7 +640,7 @@ export default function EditProductPage() {
                   <p className="text-xs text-gray-500 ml-2">Product is active and available</p>
                 </div>
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                   <Checkbox
                     id="isFeatured"
                     checked={formData.isFeatured}

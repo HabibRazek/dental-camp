@@ -145,30 +145,8 @@ export function PublicHeader() {
             )}
           </nav>
 
-          {/* Search Bar */}
-          <div className="hidden lg:block flex-1 max-w-md mx-8">
-            <form onSubmit={handleSearch} className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-              <Input
-                type="text"
-                placeholder="Search products..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-              />
-            </form>
-          </div>
-
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            {/* Wishlist */}
-            <Button variant="ghost" size="sm" className="relative">
-              <Heart className="h-5 w-5" />
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-red-500">
-                0
-              </Badge>
-            </Button>
-
             {/* Cart */}
             <Button variant="ghost" size="sm" className="relative">
               <ShoppingCart className="h-5 w-5" />

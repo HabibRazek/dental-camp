@@ -89,7 +89,7 @@ function AboutSection() {
                         >
                             <Button
                                 size="lg"
-                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-8 py-3 rounded-lg font-semibold"
                                 asChild
                             >
                                 <Link href="/about">

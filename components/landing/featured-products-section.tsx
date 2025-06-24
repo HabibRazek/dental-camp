@@ -313,31 +313,42 @@ function FeaturedProductsSection() {
                                     viewport={{ once: true }}
                                     className="group"
                                 >
-                                    <Card className="h-full overflow-hidden border-0 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-700 group-hover:scale-[1.02] bg-white/80 backdrop-blur-sm relative rounded-2xl sm:rounded-3xl flex flex-col group-hover:bg-white/90">
+                                    <Card className="h-full overflow-hidden border border-gray-200/50 shadow-md hover:shadow-xl transition-all duration-500 group-hover:scale-[1.03] bg-white backdrop-blur-sm relative rounded-xl flex flex-col group-hover:border-blue-300/50 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-blue-50/30">
 
 
-                                        {/* Compact Small Image Section */}
-                                        <div className="relative h-24 sm:h-28 md:h-32 bg-gradient-to-br from-blue-50 to-blue-100 overflow-hidden">
+                                        {/* Enhanced Image Section with Full Visibility */}
+                                        <div className="relative h-32 sm:h-36 md:h-40 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                                             <Image
                                                 src={getProductImage(product)}
                                                 alt={product.name}
                                                 fill
-                                                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                                className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                                                style={{ objectFit: 'contain' }}
                                             />
 
-                                            {/* Gradient Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                                            {/* Subtle Gradient Overlay */}
+                                            <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent"></div>
 
-                                            {/* Small Badge */}
-                                            <div className="absolute top-1 left-1 z-10">
+                                            {/* Innovative Badges */}
+                                            <div className="absolute top-2 left-2 z-10">
                                                 {index === 0 && (
-                                                    <Badge className="bg-orange-500 text-white px-1 py-0.5 text-xs font-medium rounded-sm">
-                                                        Best
+                                                    <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
+                                                        ⭐ Best
                                                     </Badge>
                                                 )}
                                                 {index === 1 && (
-                                                    <Badge className="bg-blue-500 text-white px-1 py-0.5 text-xs font-medium rounded-sm">
-                                                        New
+                                                    <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
+                                                        🆕 New
+                                                    </Badge>
+                                                )}
+                                                {index === 2 && (
+                                                    <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
+                                                        🔥 Hot
+                                                    </Badge>
+                                                )}
+                                                {index === 3 && (
+                                                    <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
+                                                        💎 Premium
                                                     </Badge>
                                                 )}
                                             </div>
