@@ -108,7 +108,6 @@ export default function SalesAnalyticsPage() {
       period: timeRange,
       generatedAt: new Date().toISOString(),
       metrics,
-      topProducts: topProducts.slice(0, 5),
       salesByCategory: salesByCategory.slice(0, 5)
     }
 
