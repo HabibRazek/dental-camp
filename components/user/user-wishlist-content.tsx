@@ -24,25 +24,8 @@ import { SectionLoader } from "@/components/ui/loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSettings } from "@/contexts/settings-context"
 import { useCart } from "@/contexts/CartContext"
-import { useWishlist } from "@/contexts/WishlistContext"
+import { useWishlist, type WishlistItem } from "@/contexts/WishlistContext"
 import { toast } from "sonner"
-
-interface WishlistItem {
-  id: string
-  name: string
-  price: number
-  originalPrice?: number
-  image: string
-  category: string
-  rating: number
-  reviewCount: number
-  inStock: boolean
-  stockQuantity: number
-  addedDate: string
-  slug: string
-  description: string
-  discount?: number
-}
 
 interface UserWishlistContentProps {
   userId: string
