@@ -412,6 +412,8 @@ export default function AddProductPage() {
                   id="trackQuantity"
                   checked={formData.trackQuantity}
                   onCheckedChange={(checked) => handleInputChange('trackQuantity', checked)}
+                  size="md"
+                  variant="blue"
                 />
                 <Label htmlFor="trackQuantity" className="text-sm font-medium text-gray-700">
                   Track quantity
@@ -522,6 +524,8 @@ export default function AddProductPage() {
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                    size="md"
+                    variant="success"
                   />
                   <Label htmlFor="isActive" className="text-sm font-medium text-gray-700">
                     Active
@@ -534,6 +538,8 @@ export default function AddProductPage() {
                     id="isFeatured"
                     checked={formData.isFeatured}
                     onCheckedChange={(checked) => handleInputChange('isFeatured', checked)}
+                    size="md"
+                    variant="warning"
                   />
                   <Label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
                     Featured

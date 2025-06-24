@@ -24,8 +24,8 @@ import { SectionLoader } from "@/components/ui/loader"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSettings } from "@/contexts/settings-context"
 import { useCart } from "@/contexts/CartContext"
+import { useWishlist } from "@/contexts/WishlistContext"
 import { toast } from "sonner"
-import { ProductRating } from "./product-rating"
 
 interface WishlistItem {
   id: string
@@ -49,86 +49,84 @@ interface UserWishlistContentProps {
 }
 
 export function UserWishlistContent({ userId }: UserWishlistContentProps) {
-  const [wishlistItems, setWishlistItems] = React.useState<WishlistItem[]>([])
-  const [categories, setCategories] = React.useState<{id: string, name: string, slug: string}[]>([])
-  const [loading, setLoading] = React.useState(true)
   const [searchTerm, setSearchTerm] = React.useState('')
   const [selectedCategory, setSelectedCategory] = React.useState('all')
   const [sortBy, setSortBy] = React.useState('newest')
   const [viewMode, setViewMode] = React.useState<'grid' | 'list'>('grid')
   const [currentPage, setCurrentPage] = React.useState(1)
-  const [totalPages, setTotalPages] = React.useState(1)
-  const [totalItems, setTotalItems] = React.useState(0)
   const itemsPerPage = 12 // 4 rows × 3 cards per row
+
   const { formatCurrency } = useSettings()
   const { addItem } = useCart()
+  const { state: wishlistState, removeFromWishlist, updateItemRating } = useWishlist()
+
+  // Get wishlist items from context
+  const wishlistItems = wishlistState.items
+
+  // Filter and sort wishlist items
+  const filteredItems = React.useMemo(() => {
+    let filtered = [...wishlistItems]
+
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+
+    // Apply category filter
+    if (selectedCategory !== 'all') {
+      filtered = filtered.filter(item =>
+        item.category.toLowerCase().includes(selectedCategory.toLowerCase())
+      )
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime())
+        break
+      case 'oldest':
+        filtered.sort((a, b) => new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime())
+        break
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price)
+        break
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price)
+        break
+      case 'name':
+        filtered.sort((a, b) => a.name.localeCompare(b.name))
+        break
+    }
+
+    return filtered
+  }, [wishlistItems, searchTerm, selectedCategory, sortBy])
+
+  // Calculate pagination
+  const totalItems = filteredItems.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const paginatedItems = filteredItems.slice(startIndex, startIndex + itemsPerPage)
+
+  // Get unique categories from wishlist items
+  const categories = React.useMemo(() => {
+    const uniqueCategories = [...new Set(wishlistItems.map(item => item.category))]
+    return uniqueCategories.map((category, index) => ({
+      id: `cat-${index}`,
+      name: category,
+      slug: category.toLowerCase().replace(/\s+/g, '-')
+    }))
+  }, [wishlistItems])
 
   React.useEffect(() => {
-    fetchWishlistItems()
-    fetchCategories()
-  }, [userId, currentPage, searchTerm, selectedCategory, sortBy])
+    // Reset to first page when filters change
+    setCurrentPage(1)
+  }, [searchTerm, selectedCategory, sortBy])
 
-  const fetchWishlistItems = async () => {
-    try {
-      setLoading(true)
-      console.log('🔄 Fetching wishlist items for user:', userId)
-
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: itemsPerPage.toString(),
-        search: searchTerm,
-        category: selectedCategory,
-        sortBy: sortBy
-      })
-
-      const response = await fetch(`/api/user/wishlist?${params}`)
-      if (response.ok) {
-        const data = await response.json()
-        console.log('📦 Received wishlist data:', data)
-        setWishlistItems(data.items || [])
-        setTotalPages(data.pagination?.totalPages || 1)
-        setTotalItems(data.pagination?.totalItems || 0)
-      } else {
-        console.error('Failed to fetch wishlist items')
-        setWishlistItems([])
-      }
-    } catch (error) {
-      console.error('Error fetching wishlist items:', error)
-      setWishlistItems([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/categories?includeProducts=false')
-      if (response.ok) {
-        const data = await response.json()
-        setCategories(data.categories || [])
-      }
-    } catch (error) {
-      console.error('Error fetching categories:', error)
-    }
-  }
-
-  const removeFromWishlist = async (itemId: string) => {
-    try {
-      console.log('💔 Removing item from wishlist:', itemId)
-      const response = await fetch(`/api/user/wishlist?productId=${itemId}`, {
-        method: 'DELETE'
-      })
-
-      if (response.ok) {
-        setWishlistItems(prev => prev.filter(item => item.id !== itemId))
-        toast.success('Item removed from wishlist')
-      } else {
-        toast.error('Failed to remove item from wishlist')
-      }
-    } catch (error) {
-      console.error('Error removing from wishlist:', error)
-      toast.error('Failed to remove item from wishlist')
-    }
+  const handleRemoveFromWishlist = (itemId: string) => {
+    removeFromWishlist(itemId)
   }
 
   const addToCart = (item: WishlistItem) => {
@@ -152,6 +150,33 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
     }
   }
 
+  const rateProduct = async (itemId: string, rating: number) => {
+    try {
+      console.log('⭐ Rating product:', itemId, 'with rating:', rating)
+      const response = await fetch('/api/user/rate-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          productId: itemId,
+          rating: rating
+        })
+      })
+
+      if (response.ok) {
+        // Update the rating in wishlist context
+        updateItemRating(itemId, rating)
+        toast.success(`Merci pour votre évaluation de ${rating} étoile${rating > 1 ? 's' : ''}!`)
+      } else {
+        toast.error('Échec de l\'évaluation du produit')
+      }
+    } catch (error) {
+      console.error('Error rating product:', error)
+      toast.error('Échec de l\'évaluation du produit')
+    }
+  }
+
 
 
 
@@ -160,90 +185,111 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
 
   return (
     <div className="px-4 lg:px-6 space-y-8">
-      {/* Innovative Header */}
+      {/* Innovative Blue Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-pink-500 via-red-500 to-rose-600 p-8 text-white"
+        className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 p-4 sm:p-6 md:p-8 text-white shadow-2xl"
       >
         <div className="absolute inset-0 bg-black/10"></div>
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full translate-y-24 -translate-x-24"></div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 animate-pulse"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-300/20 rounded-full translate-y-24 -translate-x-24 animate-bounce"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-blue-400/10 rounded-full animate-spin" style={{ animationDuration: '20s' }}></div>
 
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-4xl md:text-5xl font-bold tracking-tight flex items-center gap-4"
-            >
-              <motion.div
-                animate={{
-                  scale: [1, 1.1, 1],
-                  rotate: [0, 5, -5, 0]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
+        <div className="relative z-10">
+          {/* Header Section */}
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+            <div>
+              <motion.h1
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight flex items-center gap-3 text-white"
               >
-                <Heart className="h-10 w-10 md:h-12 md:w-12 text-white fill-white" />
-              </motion.div>
-              Ma Liste de Souhaits
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-white/90 mt-3 text-lg"
-            >
-              {totalItems} produit{totalItems !== 1 ? 's' : ''} sauvegardé{totalItems !== 1 ? 's' : ''} • Page {currentPage} sur {totalPages}
-            </motion.p>
+                <motion.div
+                  animate={{
+                    scale: [1, 1.1, 1],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                >
+                  <Heart className="h-8 w-8 sm:h-10 sm:w-10 lg:h-12 lg:w-12 text-blue-200 fill-blue-200" />
+                </motion.div>
+                Ma Liste de Souhaits
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="text-white/90 mt-2 text-base sm:text-lg font-medium"
+              >
+                {totalItems} produit{totalItems !== 1 ? 's' : ''} sauvegardé{totalItems !== 1 ? 's' : ''} • Page {currentPage} sur {totalPages}
+              </motion.p>
+            </div>
           </div>
 
-          {/* Innovative Quick Stats */}
+          {/* Innovative Stats Cards - Redesigned to match your image */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
           >
+            {/* Produits Total */}
             <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/30 min-w-0"
+              whileHover={{ scale: 1.05, y: -3 }}
+              className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-blue-300/30 text-center min-w-0 hover:bg-blue-400/20 hover:border-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              <p className="text-2xl sm:text-3xl font-bold text-white truncate">{totalItems}</p>
-              <p className="text-white/80 text-xs sm:text-sm">Produits Total</p>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 drop-shadow-sm">
+                {totalItems}
+              </div>
+              <div className="text-blue-100/90 text-xs sm:text-sm font-semibold uppercase tracking-wide">
+                Produits Total
+              </div>
             </motion.div>
+
+            {/* En Stock */}
             <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/30 min-w-0"
+              whileHover={{ scale: 1.05, y: -3 }}
+              className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-blue-300/30 text-center min-w-0 hover:bg-blue-400/20 hover:border-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              <p className="text-2xl sm:text-3xl font-bold text-white truncate">
-                {wishlistItems.filter(item => item.inStock).length}
-              </p>
-              <p className="text-white/80 text-xs sm:text-sm">En Stock</p>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 drop-shadow-sm">
+                {filteredItems.filter(item => item.inStock).length}
+              </div>
+              <div className="text-blue-100/90 text-xs sm:text-sm font-semibold uppercase tracking-wide">
+                En Stock
+              </div>
             </motion.div>
+
+            {/* Valeur Total - Enhanced Blue Theme */}
             <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/30 min-w-0"
+              whileHover={{ scale: 1.05, y: -3 }}
+              className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-blue-300/30 text-center min-w-0 hover:bg-blue-400/20 hover:border-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              <p className="text-lg sm:text-2xl md:text-3xl font-bold text-white truncate">
-                {formatCurrency(wishlistItems.reduce((sum, item) => sum + item.price, 0))}
-              </p>
-              <p className="text-white/80 text-xs sm:text-sm">Valeur Total</p>
+              <div className="text-lg sm:text-xl lg:text-2xl font-black text-white mb-1 leading-tight drop-shadow-sm">
+                TND {filteredItems.reduce((sum, item) => sum + Number(item.price), 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}
+              </div>
+              <div className="text-blue-100/90 text-xs sm:text-sm font-semibold uppercase tracking-wide">
+                Valeur Total
+              </div>
             </motion.div>
+
+            {/* Catégories */}
             <motion.div
-              whileHover={{ scale: 1.05, y: -5 }}
-              className="bg-white/20 backdrop-blur-sm rounded-2xl p-3 sm:p-4 border border-white/30 min-w-0"
+              whileHover={{ scale: 1.05, y: -3 }}
+              className="bg-white/15 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-blue-300/30 text-center min-w-0 hover:bg-blue-400/20 hover:border-blue-200/50 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
-              <p className="text-2xl sm:text-3xl font-bold text-white truncate">
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-1 drop-shadow-sm">
                 {categories.length}
-              </p>
-              <p className="text-white/80 text-xs sm:text-sm">Catégories</p>
+              </div>
+              <div className="text-blue-100/90 text-xs sm:text-sm font-semibold uppercase tracking-wide">
+                Catégories
+              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -256,8 +302,8 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
         transition={{ delay: 0.3, duration: 0.6 }}
       >
         <Card className="border border-blue-200/50 shadow-xl bg-gradient-to-r from-white via-blue-50/30 to-purple-50/30 backdrop-blur-sm">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col md:flex-row gap-4">
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row md:flex-row gap-2 sm:gap-3 md:gap-4">
               {/* Innovative Search */}
               <div className="flex-1 relative group">
                 <motion.div
@@ -274,7 +320,7 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
                     setSearchTerm(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="pl-10 border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-white/80 backdrop-blur-sm rounded-xl transition-all duration-300 group-hover:shadow-md"
+                  className="pl-8 sm:pl-10 text-sm border-blue-200 focus:border-blue-400 focus:ring-blue-400/20 bg-white/80 backdrop-blur-sm rounded-lg sm:rounded-xl transition-all duration-300 group-hover:shadow-md"
                 />
               </div>
 
@@ -293,7 +339,7 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
                     setSelectedCategory(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="pl-10 pr-8 py-2 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/80 backdrop-blur-sm min-w-[160px] transition-all duration-300 group-hover:shadow-md"
+                  className="pl-8 sm:pl-10 pr-6 sm:pr-8 py-2 text-sm border border-blue-200 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/80 backdrop-blur-sm min-w-[120px] sm:min-w-[160px] transition-all duration-300 group-hover:shadow-md"
                 >
                   <option value="all">🏷️ Toutes Catégories</option>
                   {categories.map(category => (
@@ -308,7 +354,7 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-3 py-2 border border-blue-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+                className="px-2 sm:px-3 py-2 text-sm border border-blue-200 rounded-lg sm:rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md"
               >
                 <option value="newest">🆕 Plus récent</option>
                 <option value="oldest">📅 Plus ancien</option>
@@ -346,9 +392,7 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
       </motion.div>
 
       {/* Wishlist Items */}
-      {loading ? (
-        <SectionLoader size="lg" />
-      ) : wishlistItems.length === 0 ? (
+      {paginatedItems.length === 0 ? (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -405,12 +449,12 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
         </motion.div>
       ) : (
         <AnimatePresence>
-          <div className={`grid gap-3 sm:gap-4 md:gap-6 ${
+          <div className={`grid gap-2 sm:gap-3 md:gap-4 lg:gap-6 ${
             viewMode === 'grid'
-              ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4'
+              ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
               : 'grid-cols-1'
           }`}>
-            {wishlistItems.map((item, index) => (
+            {paginatedItems.map((item, index) => (
               <motion.div
                 key={item.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -422,15 +466,17 @@ export function UserWishlistContent({ userId }: UserWishlistContentProps) {
                 {viewMode === 'grid' ? (
                   <WishlistItemCard
                     item={item}
-                    onRemove={removeFromWishlist}
+                    onRemove={handleRemoveFromWishlist}
                     onAddToCart={addToCart}
+                    onRate={rateProduct}
                     formatCurrency={formatCurrency}
                   />
                 ) : (
                   <WishlistItemRow
                     item={item}
-                    onRemove={removeFromWishlist}
+                    onRemove={handleRemoveFromWishlist}
                     onAddToCart={addToCart}
+                    onRate={rateProduct}
                     formatCurrency={formatCurrency}
                   />
                 )}
@@ -509,13 +555,17 @@ function WishlistItemCard({
   item,
   onRemove,
   onAddToCart,
+  onRate,
   formatCurrency
 }: {
   item: WishlistItem
   onRemove: (id: string) => void
   onAddToCart: (item: WishlistItem) => void
+  onRate: (itemId: string, rating: number) => void
   formatCurrency: (amount: number) => string
 }) {
+  const [userRating, setUserRating] = React.useState(0)
+  const [isRating, setIsRating] = React.useState(false)
   return (
     <motion.div
       whileHover={{ y: -8, scale: 1.02 }}
@@ -562,7 +612,7 @@ function WishlistItemCard({
             )}
           </div>
 
-          {/* Innovative Remove Button */}
+          {/* Innovative Remove Button - Always visible on mobile */}
           <div className="absolute top-2 right-2 z-10">
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -571,7 +621,7 @@ function WishlistItemCard({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 bg-white/90 hover:bg-red-50 rounded-full shadow-lg backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 border border-white/50 hover:border-red-200"
+                className="h-8 w-8 p-0 bg-white/90 hover:bg-red-50 rounded-full shadow-lg backdrop-blur-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-300 border border-white/50 hover:border-red-200"
                 onClick={() => onRemove(item.id)}
               >
                 <Trash2 className="h-3.5 w-3.5 text-gray-600 hover:text-red-500 transition-colors duration-200" />
@@ -592,29 +642,73 @@ function WishlistItemCard({
               <p className="text-xs text-blue-600/70 mt-1 font-medium">{item.category}</p>
             </div>
 
-            {/* Innovative Rating Display */}
-            <div className="flex items-center gap-2">
-              <div className="flex items-center bg-gradient-to-r from-yellow-50 to-orange-50 px-2 py-1 rounded-full">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <motion.div
-                    key={star}
-                    whileHover={{ scale: 1.2, rotate: 180 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <Star
-                      className={`h-3 w-3 ${
-                        star <= Math.floor(item.rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : star <= item.rating
-                          ? 'fill-yellow-200 text-yellow-400'
-                          : 'fill-gray-200 text-gray-300'
-                      }`}
-                    />
-                  </motion.div>
-                ))}
-                <span className="text-xs font-bold ml-1 text-gray-700">{item.rating.toFixed(1)}</span>
+            {/* Interactive Rating System */}
+            <div className="space-y-2">
+              {/* Current Rating Display */}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center bg-gradient-to-r from-yellow-50 to-orange-50 px-2 py-1 rounded-full">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <motion.div
+                      key={star}
+                      whileHover={{ scale: 1.2, rotate: 180 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Star
+                        className={`h-3 w-3 ${
+                          star <= Math.floor(item.rating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : star <= item.rating
+                            ? 'fill-yellow-200 text-yellow-400'
+                            : 'fill-gray-200 text-gray-300'
+                        }`}
+                      />
+                    </motion.div>
+                  ))}
+                  <span className="text-xs font-bold ml-1 text-gray-700">{item.rating.toFixed(1)}</span>
+                </div>
+                <span className="text-xs text-gray-400">({item.reviewCount})</span>
               </div>
-              <span className="text-xs text-gray-400">({item.reviewCount})</span>
+
+              {/* User Rating Interface */}
+              <div className="bg-blue-50/50 rounded-lg p-2 sm:p-3 border border-blue-100">
+                <div className="text-xs font-semibold text-blue-700 mb-2">Votre évaluation:</div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <motion.button
+                        key={star}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          setUserRating(star)
+                          setIsRating(true)
+                          onRate(item.id, star)
+                        }}
+                        className="focus:outline-none p-1"
+                      >
+                        <Star
+                          className={`h-4 w-4 transition-colors duration-200 ${
+                            star <= userRating
+                              ? 'fill-blue-500 text-blue-500'
+                              : 'fill-gray-200 text-gray-300 hover:fill-blue-300 hover:text-blue-300'
+                          }`}
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                  {userRating > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="bg-blue-100 px-2 py-1 rounded-full text-center mx-auto"
+                    >
+                      <span className="text-xs font-bold text-blue-700">
+                        {userRating}/5
+                      </span>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Innovative Price Display */}
@@ -666,17 +760,20 @@ function WishlistItemCard({
 }
 
 // Wishlist Item Row Component
-function WishlistItemRow({ 
-  item, 
-  onRemove, 
-  onAddToCart, 
-  formatCurrency 
-}: { 
+function WishlistItemRow({
+  item,
+  onRemove,
+  onAddToCart,
+  onRate,
+  formatCurrency
+}: {
   item: WishlistItem
   onRemove: (id: string) => void
   onAddToCart: (item: WishlistItem) => void
+  onRate: (itemId: string, rating: number) => void
   formatCurrency: (amount: number) => string
 }) {
+  const [userRating, setUserRating] = React.useState(0)
   return (
     <Card className="border border-gray-200/50 shadow-lg bg-gradient-to-r from-white to-gray-50/30 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
       <CardContent className="p-6">
@@ -710,6 +807,7 @@ function WishlistItemRow({
             </div>
             
             <div className="flex items-center gap-4">
+              {/* Current Rating Display */}
               <div className="flex items-center">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
@@ -726,7 +824,43 @@ function WishlistItemRow({
                 <span className="text-sm font-medium ml-1">{item.rating.toFixed(1)}</span>
                 <span className="text-sm text-gray-500 ml-1">({item.reviewCount})</span>
               </div>
-              
+
+              {/* User Rating Interface */}
+              <div className="bg-blue-50 rounded-lg p-2 sm:p-3 border border-blue-100">
+                <div className="text-xs font-semibold text-blue-700 mb-2">Votre note:</div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-center gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <motion.button
+                        key={star}
+                        whileHover={{ scale: 1.2 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={() => {
+                          setUserRating(star)
+                          onRate(item.id, star)
+                        }}
+                        className="focus:outline-none p-1"
+                      >
+                        <Star
+                          className={`h-4 w-4 transition-colors duration-200 ${
+                            star <= userRating
+                              ? 'fill-blue-500 text-blue-500'
+                              : 'fill-gray-200 text-gray-300 hover:fill-blue-300 hover:text-blue-300'
+                          }`}
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                  {userRating > 0 && (
+                    <div className="bg-blue-100 px-2 py-1 rounded-full text-center mx-auto">
+                      <span className="text-xs font-bold text-blue-700">
+                        {userRating}/5
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
               <div className="flex items-center gap-2">
                 <span className="text-xl font-bold text-gray-900">
                   {formatCurrency(item.price)}
@@ -766,15 +900,7 @@ function WishlistItemRow({
               </Button>
             </div>
 
-            {/* Product Rating for List View */}
-            <ProductRating
-              productId={item.id}
-              productName={item.name}
-              onRatingSubmitted={(rating) => {
-                console.log('Rating submitted:', rating, 'for product:', item.name)
-                toast.success(`Thank you for rating ${item.name}!`)
-              }}
-            />
+
           </div>
         </div>
       </CardContent>

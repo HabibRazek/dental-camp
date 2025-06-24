@@ -37,6 +37,7 @@ import Footer from "@/components/landing/footer";
 import { formatCurrency } from "@/lib/utils";
 import { SectionLoader } from "@/components/ui/loader";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 // Types
 interface Product {
@@ -71,9 +72,10 @@ interface Category {
 // Enhanced Product Card Component
 const InnovativeProductCard = ({ product }: { product: Product }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { addItem } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
+  const isWishlisted = isInWishlist(product.id);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -163,9 +165,31 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
                 size="sm"
                 variant="secondary"
                 className="rounded-full bg-white/95 backdrop-blur-sm hover:bg-white shadow-lg border-0 h-8 w-8 p-0 flex items-center justify-center"
-                onClick={() => {
-                  setIsWishlisted(!isWishlisted);
-                  toast.success(isWishlisted ? "Removed from wishlist" : "Added to wishlist");
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+
+                  // Create wishlist item from product data
+                  const wishlistItem = {
+                    id: product.id,
+                    name: product.name,
+                    price: product.price,
+                    originalPrice: product.comparePrice || null,
+                    image: product.thumbnail || "/images/dental-equipment.jpg",
+                    category: product.category?.name || "General",
+                    rating: 4.5, // Default rating
+                    reviewCount: 0,
+                    inStock: product.stockQuantity > 0,
+                    stockQuantity: product.stockQuantity,
+                    slug: product.slug,
+                    description: product.description || "",
+                    discount: product.comparePrice && product.price ?
+                      Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) :
+                      null
+                  };
+
+                  // Add to wishlist context
+                  addToWishlist(wishlistItem);
                 }}
               >
                 <Heart className={`w-3 h-3 ${isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"}`} />
@@ -613,6 +637,8 @@ export default function CatalogPage() {
                             setInStockOnly(checked === true);
                             setFilterLoading(true);
                           }}
+                          size="md"
+                          variant="success"
                           className="mr-2 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">
@@ -632,6 +658,8 @@ export default function CatalogPage() {
                             setFeaturedOnly(checked === true);
                             setFilterLoading(true);
                           }}
+                          size="md"
+                          variant="warning"
                           className="mr-2 flex-shrink-0"
                         />
                         <div className="flex items-center gap-1 min-w-0">

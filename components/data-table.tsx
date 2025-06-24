@@ -60,34 +60,54 @@ export function DataTable() {
   const [loading, setLoading] = React.useState(true)
   const [lastUpdated, setLastUpdated] = React.useState<Date>(new Date())
 
-  const fetchOrders = React.useCallback(async () => {
+  // Pagination state
+  const [currentPage, setCurrentPage] = React.useState(1)
+  const [totalPages, setTotalPages] = React.useState(1)
+  const [totalOrders, setTotalOrders] = React.useState(0)
+  const ordersPerPage = 8
+
+  const fetchOrders = React.useCallback(async (page = 1) => {
     try {
       setLoading(true)
-      const response = await fetch('/api/orders?limit=10')
+      const response = await fetch(`/api/orders?page=${page}&limit=${ordersPerPage}`)
       if (response.ok) {
         const data = await response.json()
         setOrders(data.orders || [])
+        setTotalPages(data.pagination?.totalPages || 1)
+        setTotalOrders(data.pagination?.totalCount || 0)
+        setCurrentPage(page)
         setLastUpdated(new Date())
       } else {
         console.warn('Failed to fetch orders, using empty array')
         setOrders([])
+        setTotalPages(1)
+        setTotalOrders(0)
       }
     } catch (error) {
       console.error('Failed to fetch orders:', error)
       // Set empty array on error to prevent crashes
       setOrders([])
+      setTotalPages(1)
+      setTotalOrders(0)
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [ordersPerPage])
 
   React.useEffect(() => {
-    fetchOrders()
+    fetchOrders(1)
 
     // Auto-refresh every 3 minutes
-    const interval = setInterval(fetchOrders, 3 * 60 * 1000)
+    const interval = setInterval(() => fetchOrders(currentPage), 3 * 60 * 1000)
     return () => clearInterval(interval)
-  }, [fetchOrders])
+  }, [fetchOrders, currentPage])
+
+  // Handle page changes
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      fetchOrders(page)
+    }
+  }
 
   const formatCurrency = (amount: number) => {
     return `${amount.toLocaleString()} TND`
@@ -174,7 +194,7 @@ export function DataTable() {
                 <div className="w-2 h-8 bg-gradient-to-b from-blue-600 to-blue-500 rounded-full"></div>
                 Recent Orders
                 <Badge variant="outline" className="ml-2">
-                  {orders.length} orders
+                  {totalOrders} orders
                 </Badge>
               </CardTitle>
               <CardDescription className="text-gray-600 font-medium flex items-center justify-between">
@@ -189,21 +209,21 @@ export function DataTable() {
               {/* Quick stats */}
               <div className="hidden md:flex items-center gap-6">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">{orders.length}</div>
+                  <div className="text-2xl font-bold text-blue-600">{totalOrders}</div>
                   <div className="text-xs text-gray-500 font-medium">Total Orders</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">
                     {orders.filter(o => o.status && o.status.toUpperCase() === 'DELIVERED').length}
                   </div>
-                  <div className="text-xs text-gray-500 font-medium">Delivered</div>
+                  <div className="text-xs text-gray-500 font-medium">Delivered (Page)</div>
                 </div>
               </div>
 
               <Button
                 variant="outline"
                 size="sm"
-                onClick={fetchOrders}
+                onClick={() => fetchOrders(currentPage)}
                 disabled={loading}
               >
                 <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
@@ -252,7 +272,7 @@ export function DataTable() {
                       <div className="flex flex-col items-center gap-4">
                         <div className="text-4xl">📦</div>
                         <div className="text-gray-500">No orders found</div>
-                        <Button variant="outline" onClick={fetchOrders}>
+                        <Button variant="outline" onClick={() => fetchOrders(currentPage)}>
                           <RefreshCw className="h-4 w-4 mr-2" />
                           Refresh Orders
                         </Button>
@@ -341,6 +361,57 @@ export function DataTable() {
               </TableBody>
             </Table>
           </div>
+
+          {/* Pagination Controls */}
+          {totalPages > 1 && (
+            <div className="border-t border-gray-100/50 bg-gradient-to-r from-gray-50/50 to-white p-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="text-sm font-semibold text-blue-800 text-center sm:text-left">
+                  📦 Page {currentPage} of {totalPages} • Showing {((currentPage - 1) * ordersPerPage) + 1}-{Math.min(currentPage * ordersPerPage, totalOrders)} of {totalOrders} orders
+                </div>
+                <div className="flex items-center justify-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1 || loading}
+                    className="h-10 px-4 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-blue-300 text-blue-700 font-medium"
+                  >
+                    ← Previous
+                  </Button>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(page)}
+                        disabled={loading}
+                        className={`h-10 w-10 p-0 transition-all duration-200 font-bold ${
+                          currentPage === page
+                            ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg border-blue-600 scale-110'
+                            : 'hover:bg-blue-100 border-blue-300 text-blue-700 hover:border-blue-400'
+                        }`}
+                      >
+                        {page}
+                      </Button>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages || loading}
+                    className="h-10 px-4 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-blue-300 text-blue-700 font-medium"
+                  >
+                    Next →
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

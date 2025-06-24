@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers/session-provider";
 import { CartProvider } from "@/contexts/CartContext";
+import { WishlistProvider } from "@/contexts/WishlistContext";
 import { SettingsProvider } from "@/contexts/settings-context";
 import { Toaster } from "sonner";
 import "@/lib/logger"; // Import silent logger
@@ -110,8 +111,10 @@ export default function RootLayout({
         <Providers>
           <SettingsProvider>
             <CartProvider>
-              {children}
-              <Toaster position="top-right" richColors />
+              <WishlistProvider>
+                {children}
+                <Toaster position="top-right" richColors />
+              </WishlistProvider>
             </CartProvider>
           </SettingsProvider>
         </Providers>

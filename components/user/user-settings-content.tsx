@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -657,38 +658,56 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
 
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Information Sharing</h3>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Show Email Address</p>
-                        <p className="text-sm text-gray-600">Allow others to see your email address</p>
-                      </div>
-                      <Switch
+
+                    <div className="group flex items-start gap-4 p-4 border border-gray-200/60 rounded-xl hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                      <Checkbox
+                        id="showEmail"
                         checked={settings.privacy.showEmail}
                         onCheckedChange={(checked) => updateSetting('privacy', 'showEmail', checked)}
+                        size="md"
+                        variant="blue"
+                        className="mt-1"
                       />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Show Phone Number</p>
-                        <p className="text-sm text-gray-600">Allow others to see your phone number</p>
+                      <div className="flex-1 min-w-0">
+                        <label htmlFor="showEmail" className="font-medium text-gray-900 cursor-pointer">
+                          Show Email Address
+                        </label>
+                        <p className="text-sm text-gray-600 mt-1">Allow others to see your email address in your public profile</p>
                       </div>
-                      <Switch
+                    </div>
+
+                    <div className="group flex items-start gap-4 p-4 border border-gray-200/60 rounded-xl hover:border-blue-300 hover:bg-blue-50/30 transition-all duration-200">
+                      <Checkbox
+                        id="showPhone"
                         checked={settings.privacy.showPhone}
                         onCheckedChange={(checked) => updateSetting('privacy', 'showPhone', checked)}
+                        size="md"
+                        variant="blue"
+                        className="mt-1"
                       />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-medium">Data Collection</p>
-                        <p className="text-sm text-gray-600">Allow us to collect usage data to improve our service</p>
+                      <div className="flex-1 min-w-0">
+                        <label htmlFor="showPhone" className="font-medium text-gray-900 cursor-pointer">
+                          Show Phone Number
+                        </label>
+                        <p className="text-sm text-gray-600 mt-1">Allow others to see your phone number for contact purposes</p>
                       </div>
-                      <Switch
+                    </div>
+
+                    <div className="group flex items-start gap-4 p-4 border border-gray-200/60 rounded-xl hover:border-green-300 hover:bg-green-50/30 transition-all duration-200">
+                      <Checkbox
+                        id="dataCollection"
                         checked={settings.privacy.dataCollection}
                         onCheckedChange={(checked) => updateSetting('privacy', 'dataCollection', checked)}
+                        size="md"
+                        variant="success"
+                        className="mt-1"
                       />
+                      <div className="flex-1 min-w-0">
+                        <label htmlFor="dataCollection" className="font-medium text-gray-900 cursor-pointer">
+                          Analytics & Data Collection
+                        </label>
+                        <p className="text-sm text-gray-600 mt-1">Help us improve our service by allowing anonymous usage data collection</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -777,18 +796,22 @@ export function UserSettingsContent({ userId, userEmail }: UserSettingsContentPr
                   {/* Security Options */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900">Security Options</h3>
-                    
 
-                    
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0">
-                      <div>
-                        <p className="font-medium">Login Alerts</p>
-                        <p className="text-sm text-gray-600">Get notified when someone logs into your account</p>
-                      </div>
-                      <Switch
+                    <div className="group flex items-start gap-4 p-4 border border-gray-200/60 rounded-xl hover:border-orange-300 hover:bg-orange-50/30 transition-all duration-200">
+                      <Checkbox
+                        id="loginAlerts"
                         checked={settings.security.loginAlerts}
                         onCheckedChange={(checked) => updateSetting('security', 'loginAlerts', checked)}
+                        size="md"
+                        variant="warning"
+                        className="mt-1"
                       />
+                      <div className="flex-1 min-w-0">
+                        <label htmlFor="loginAlerts" className="font-medium text-gray-900 cursor-pointer">
+                          Login Alerts
+                        </label>
+                        <p className="text-sm text-gray-600 mt-1">Get notified via email when someone logs into your account from a new device</p>
+                      </div>
                     </div>
                   </div>
 

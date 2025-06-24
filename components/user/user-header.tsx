@@ -1,11 +1,8 @@
 "use client"
 
-import { Bell, Search, ShoppingCart, Home, User, Settings } from "lucide-react"
+import { Home, User, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { usePathname } from "next/navigation"
-import { useCart } from "@/contexts/CartContext"
 import Link from "next/link"
 import {
   DropdownMenu,
@@ -50,7 +47,6 @@ const getPageInfo = (pathname: string) => {
 
 export function UserHeader() {
   const pathname = usePathname()
-  const { state, openCart } = useCart()
   const pageInfo = getPageInfo(pathname)
 
   return (
@@ -89,98 +85,7 @@ export function UserHeader() {
       </Breadcrumb>
       
       <div className="ml-auto flex items-center space-x-3">
-        {/* Enhanced Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search orders, products..."
-            className="w-[300px] pl-9 bg-white/80 border-gray-200 focus:border-blue-300 focus:ring-blue-200 rounded-xl"
-          />
-        </div>
 
-        {/* Enhanced Cart Button */}
-        <Button
-          variant="ghost"
-          size="sm"
-          className="relative hover:bg-blue-50 rounded-xl transition-all duration-200 min-h-[40px] min-w-[40px] p-2"
-          onClick={openCart}
-          aria-label={`Panier (${state.itemCount} article${state.itemCount !== 1 ? 's' : ''})`}
-        >
-          <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 text-gray-600" />
-          {state.itemCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 h-4 w-4 sm:h-5 sm:w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-lg animate-pulse border-2 border-white">
-              {state.itemCount > 99 ? '99+' : state.itemCount}
-            </Badge>
-          )}
-        </Button>
-
-        {/* Enhanced Notifications */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative hover:bg-orange-50 rounded-xl transition-all duration-200"
-            >
-              <Bell className="h-5 w-5 text-gray-600" />
-              <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-orange-400 to-red-500 text-white shadow-lg">
-                3
-              </Badge>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-80 border-0 shadow-xl rounded-xl">
-            <DropdownMenuLabel className="text-lg font-semibold text-gray-900 p-4 border-b">
-              Notifications
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="p-4 hover:bg-blue-50 transition-colors">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium text-gray-900">Order Shipped</p>
-                  <p className="text-xs text-gray-600">
-                    Your order #ORD-001 has been shipped and is on its way.
-                  </p>
-                  <p className="text-xs text-blue-600">2 hours ago</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="p-4 hover:bg-green-50 transition-colors">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium text-gray-900">New Product Available</p>
-                  <p className="text-xs text-gray-600">
-                    Check out our latest dental care products with special discounts.
-                  </p>
-                  <p className="text-xs text-green-600">1 day ago</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuItem className="p-4 hover:bg-purple-50 transition-colors">
-              <div className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium text-gray-900">Profile Updated</p>
-                  <p className="text-xs text-gray-600">
-                    Your profile information has been successfully updated.
-                  </p>
-                  <p className="text-xs text-purple-600">3 days ago</p>
-                </div>
-              </div>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild className="p-4">
-              <Link
-                href="/user/notifications"
-                className="text-center text-blue-600 hover:text-blue-700 font-medium w-full"
-              >
-                View All Notifications
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
 
         {/* Quick Profile Access */}
         <DropdownMenu>
@@ -206,7 +111,7 @@ export function UserHeader() {
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="p-3 hover:bg-green-50 transition-colors">
               <Link href="/user/orders" className="flex items-center gap-2">
-                <ShoppingCart className="h-4 w-4" />
+                <Home className="h-4 w-4" />
                 My Orders
               </Link>
             </DropdownMenuItem>

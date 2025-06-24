@@ -633,6 +633,8 @@ export default function EditProductPage() {
                     id="isActive"
                     checked={formData.isActive}
                     onCheckedChange={(checked) => handleInputChange('isActive', checked)}
+                    size="md"
+                    variant="success"
                   />
                   <Label htmlFor="isActive" className="text-sm font-medium text-gray-700">
                     Active
@@ -645,6 +647,8 @@ export default function EditProductPage() {
                     id="isFeatured"
                     checked={formData.isFeatured}
                     onCheckedChange={(checked) => handleInputChange('isFeatured', checked)}
+                    size="md"
+                    variant="warning"
                   />
                   <Label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
                     Featured

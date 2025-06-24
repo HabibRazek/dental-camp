@@ -108,6 +108,10 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
   const [loading, setLoading] = React.useState(true)
   const [error, setError] = React.useState<string | null>(null)
 
+  // Pagination state for Recent Orders
+  const [currentOrdersPage, setCurrentOrdersPage] = React.useState(1)
+  const ordersPerPage = 8
+
   // Update time every second
   React.useEffect(() => {
     const timer = setInterval(() => {
@@ -211,6 +215,126 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
               total: 567.200,
               items: 5,
               product: 'Composite Kit'
+            },
+            {
+              id: 'ORD-2024-004',
+              date: '2024-01-08',
+              status: 'Delivered',
+              total: 320.150,
+              items: 2,
+              product: 'Ultrasonic Cleaner'
+            },
+            {
+              id: 'ORD-2024-005',
+              date: '2024-01-05',
+              status: 'Delivered',
+              total: 125.750,
+              items: 1,
+              product: 'Dental Mirror Set'
+            },
+            {
+              id: 'ORD-2024-006',
+              date: '2024-01-03',
+              status: 'Shipped',
+              total: 890.300,
+              items: 4,
+              product: 'X-Ray Equipment'
+            },
+            {
+              id: 'ORD-2024-007',
+              date: '2024-01-01',
+              status: 'Processing',
+              total: 445.600,
+              items: 3,
+              product: 'Sterilization Kit'
+            },
+            {
+              id: 'ORD-2023-098',
+              date: '2023-12-28',
+              status: 'Delivered',
+              total: 678.900,
+              items: 6,
+              product: 'Dental Handpiece'
+            },
+            {
+              id: 'ORD-2023-097',
+              date: '2023-12-25',
+              status: 'Delivered',
+              total: 234.450,
+              items: 2,
+              product: 'Impression Material'
+            },
+            {
+              id: 'ORD-2023-096',
+              date: '2023-12-22',
+              status: 'Delivered',
+              total: 156.800,
+              items: 1,
+              product: 'Dental Burs Set'
+            },
+            {
+              id: 'ORD-2023-095',
+              date: '2023-12-20',
+              status: 'Delivered',
+              total: 789.250,
+              items: 5,
+              product: 'Curing Light Advanced'
+            },
+            {
+              id: 'ORD-2023-094',
+              date: '2023-12-18',
+              status: 'Delivered',
+              total: 345.600,
+              items: 3,
+              product: 'Dental Forceps'
+            },
+            {
+              id: 'ORD-2023-093',
+              date: '2023-12-15',
+              status: 'Delivered',
+              total: 567.890,
+              items: 4,
+              product: 'Amalgam Capsules'
+            },
+            {
+              id: 'ORD-2023-092',
+              date: '2023-12-12',
+              status: 'Delivered',
+              total: 123.450,
+              items: 1,
+              product: 'Dental Probe'
+            },
+            {
+              id: 'ORD-2023-091',
+              date: '2023-12-10',
+              status: 'Delivered',
+              total: 890.750,
+              items: 6,
+              product: 'Complete Dental Kit'
+            },
+            {
+              id: 'ORD-2023-090',
+              date: '2023-12-08',
+              status: 'Delivered',
+              total: 445.320,
+              items: 3,
+              product: 'Dental Cement'
+            },
+            {
+              id: 'ORD-2023-089',
+              date: '2023-12-05',
+              status: 'Delivered',
+              total: 234.670,
+              items: 2,
+              product: 'Orthodontic Brackets'
+            },
+            {
+              id: 'ORD-2023-088',
+              date: '2023-12-03',
+              status: 'Delivered',
+              total: 678.450,
+              items: 5,
+              product: 'Dental Suction Unit'
             }
           ],
           wishlistItems: [
@@ -251,6 +375,17 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
 
     loadDashboardData()
   }, [])
+
+  // Debug logging - Always runs but only logs when data exists
+  React.useEffect(() => {
+    console.log('📊 Dashboard data state:', {
+      hasData: !!dashboardData,
+      totalOrders: dashboardData?.recentOrders?.length || 0,
+      ordersPerPage,
+      totalPages: dashboardData ? Math.ceil(dashboardData.recentOrders.length / ordersPerPage) : 0,
+      currentPage: currentOrdersPage
+    })
+  }, [dashboardData, currentOrdersPage, ordersPerPage])
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -321,6 +456,17 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
 
   // Extract data for easier access
   const { stats, progress, charts, recentOrders, wishlistItems } = dashboardData
+
+  // Pagination logic for Recent Orders
+  const totalOrdersPages = Math.ceil(recentOrders.length / ordersPerPage)
+  const startOrderIndex = (currentOrdersPage - 1) * ordersPerPage
+  const endOrderIndex = startOrderIndex + ordersPerPage
+  const currentOrders = recentOrders.slice(startOrderIndex, endOrderIndex)
+
+  const handleOrdersPageChange = (page: number) => {
+    console.log('📄 Changing orders page to:', page)
+    setCurrentOrdersPage(page)
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -654,7 +800,7 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {recentOrders.map((order, index) => (
+                {currentOrders.map((order, index) => (
                   <motion.div
                     key={order.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -680,6 +826,54 @@ export function UserDashboardContent({ user }: UserDashboardContentProps) {
                     </div>
                   </motion.div>
                 ))}
+              </div>
+
+              {/* Pagination Controls - ALWAYS VISIBLE */}
+              <div className="mt-6 bg-blue-50/30 rounded-xl p-4 border border-blue-200">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="text-sm font-semibold text-blue-800 text-center sm:text-left">
+                    📦 Page {currentOrdersPage} of {totalOrdersPages} • Showing {startOrderIndex + 1}-{Math.min(endOrderIndex, recentOrders.length)} of {recentOrders.length} orders
+                  </div>
+                  <div className="flex items-center justify-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOrdersPageChange(currentOrdersPage - 1)}
+                      disabled={currentOrdersPage === 1}
+                      className="h-10 px-4 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-blue-300 text-blue-700 font-medium"
+                    >
+                      ← Previous
+                    </Button>
+
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: totalOrdersPages }, (_, i) => i + 1).map((page) => (
+                        <Button
+                          key={page}
+                          variant={currentOrdersPage === page ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => handleOrdersPageChange(page)}
+                          className={`h-10 w-10 p-0 transition-all duration-200 font-bold ${
+                            currentOrdersPage === page
+                              ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg border-blue-600 scale-110'
+                              : 'hover:bg-blue-100 border-blue-300 text-blue-700 hover:border-blue-400'
+                          }`}
+                        >
+                          {page}
+                        </Button>
+                      ))}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleOrdersPageChange(currentOrdersPage + 1)}
+                      disabled={currentOrdersPage === totalOrdersPages}
+                      className="h-10 px-4 hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed border-blue-300 text-blue-700 font-medium"
+                    >
+                      Next →
+                    </Button>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

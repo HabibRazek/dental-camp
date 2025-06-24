@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 interface Product {
   id: string;
@@ -46,18 +47,20 @@ interface ProductCardProps {
   className?: string;
 }
 
-export function ProductCard({ 
-  product, 
-  variant = "default", 
+export function ProductCard({
+  product,
+  variant = "default",
   showQuickActions = true,
-  className = "" 
+  className = ""
 }: ProductCardProps) {
-  const discount = product.comparePrice 
-    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) 
+  const { addToWishlist, isInWishlist } = useWishlist();
+  const discount = product.comparePrice
+    ? Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)
     : 0;
   const isInStock = product.stockQuantity > 0;
   const isLowStock = product.stockQuantity <= 10 && product.stockQuantity > 0;
   const rating = 4.5 + Math.random() * 0.5; // Mock rating
+  const isWishlisted = isInWishlist(product.id);
 
   const getCategoryIcon = (slug: string) => {
     switch (slug) {
@@ -72,7 +75,28 @@ export function ProductCard({
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toast.success("Added to wishlist");
+
+    // Create wishlist item from product data
+    const wishlistItem = {
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      originalPrice: product.comparePrice || null,
+      image: product.thumbnail || "/images/dental-equipment.jpg",
+      category: product.category?.name || "General",
+      rating: 4.5, // Default rating
+      reviewCount: 0,
+      inStock: product.stockQuantity > 0,
+      stockQuantity: product.stockQuantity,
+      slug: product.slug,
+      description: product.description || "",
+      discount: product.comparePrice && product.price ?
+        Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100) :
+        null
+    };
+
+    // Add to wishlist context
+    addToWishlist(wishlistItem);
   };
 
   const handleQuickView = (e: React.MouseEvent) => {
@@ -199,7 +223,7 @@ export function ProductCard({
                       className="shadow-lg"
                       onClick={handleAddToWishlist}
                     >
-                      <Heart className="h-4 w-4" />
+                      <Heart className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                     </Button>
                   </div>
                 )}
@@ -294,7 +318,7 @@ export function ProductCard({
                 className="hidden sm:flex rounded-full bg-white/90 backdrop-blur-sm hover:bg-white shadow-md border-0 h-7 w-7 p-0 items-center justify-center"
                 onClick={handleAddToWishlist}
               >
-                <Heart className="h-3 w-3 text-gray-600" />
+                <Heart className={`h-3 w-3 ${isWishlisted ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
               </Button>
               <Button
                 variant="secondary"

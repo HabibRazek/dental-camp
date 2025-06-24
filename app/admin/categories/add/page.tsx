@@ -181,6 +181,8 @@ export default function AddCategoryPage() {
                   onCheckedChange={(checked) =>
                     setFormData(prev => ({ ...prev, isActive: !!checked }))
                   }
+                  size="md"
+                  variant="success"
                 />
                 <Label htmlFor="isActive" className="text-sm font-medium">
                   Active Category
