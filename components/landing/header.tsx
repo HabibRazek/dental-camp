@@ -1,26 +1,22 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogOut, ShoppingCart, MoreVertical } from "lucide-react";
-import { TbDental } from "react-icons/tb";
+import { Menu, X, User, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
+import Image from "next/image";
 import { GoogleSignInClient } from "../auth/google-signin-client";
 import { Cart } from "@/components/cart/Cart";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 const navItems = [
@@ -28,7 +24,7 @@ const navItems = [
     { name: "À propos", href: "/about" },
     { name: "Nos produits", href: "/catalog" },
     { name: "Contact", href: "/#contact", isScroll: true },
-    { name: "FAQ", href: "/faqs" }
+    { name: "FAQ", href: "/faqs" },
 ];
 
 function Header() {
@@ -44,7 +40,7 @@ function Header() {
                     const offsetTop = contactElement.offsetTop - 100; // Add 100px offset for header
                     window.scrollTo({
                         top: offsetTop,
-                        behavior: "smooth"
+                        behavior: "smooth",
                     });
                 }
             } else {
@@ -56,13 +52,21 @@ function Header() {
 
     return (
         <>
-            <header className="fixed top-2 sm:top-3 md:top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white/95 backdrop-blur-md rounded-full shadow-lg px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 flex items-center justify-between w-[96%] sm:w-[94%] md:w-[90%] max-w-5xl transition-all duration-300">
+            <header className="fixed top-2 sm:top-3 md:top-14 left-1/2 transform -translate-x-1/2 z-40 glass-effect rounded-full shadow-professional px-3 sm:px-4 lg:px-6 py-2 sm:py-2.5 md:py-3 flex items-center justify-between w-[96%] sm:w-[94%] md:w-[90%] max-w-5xl transition-all duration-300 border-professional-blue">
                 {/* Logo Section */}
-                <Link href="/" className="flex items-center gap-1 sm:gap-2 md:gap-3 hover:opacity-80 transition-opacity">
-                    <TbDental className="h-4 sm:h-5 md:h-6 w-4 sm:w-5 md:w-6 text-blue-600" />
+                <Link
+                    href="/"
+                    className="flex items-center gap-1 sm:gap-2 md:gap-3 hover:opacity-80 transition-opacity"
+                >
+                    <Image
+                        src="/dental-camp-logo.png"
+                        alt="Dental Camp Logo"
+                        width={100}
+                        height={100}
+                        className=" object-contain"
+                    />
                     <span className="font-bold text-xs sm:text-sm md:text-base lg:text-lg tracking-wide text-gray-800">
                         <span className="hidden xs:inline">Dental Camp</span>
-                        <span className="xs:hidden">DC</span>
                     </span>
                 </Link>
 
@@ -73,7 +77,7 @@ function Header() {
                             {item.isScroll ? (
                                 <Button
                                     variant="ghost"
-                                    className="rounded-full text-xs lg:text-sm px-2 lg:px-3 xl:px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                                    className="rounded-full text-xs lg:text-sm px-2 lg:px-3 xl:px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition duration-300 ease-in-out font-medium"
                                     onClick={() => handleNavClick(item.href, item.isScroll)}
                                 >
                                     {item.name}
@@ -82,7 +86,7 @@ function Header() {
                                 <Link href={item.href}>
                                     <Button
                                         variant="ghost"
-                                        className="rounded-full text-xs lg:text-sm px-2 lg:px-3 xl:px-4 py-2 text-gray-700 hover:bg-blue-100 hover:text-blue-600 transition duration-200 ease-in-out"
+                                        className="rounded-full text-xs lg:text-sm px-2 lg:px-3 xl:px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition duration-300 ease-in-out font-medium"
                                     >
                                         {item.name}
                                     </Button>
@@ -120,7 +124,11 @@ function Header() {
                                             alt={session.user?.name || "User"}
                                         />
                                         <AvatarFallback className="bg-blue-600 text-white text-sm">
-                                            {session.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                                            {session.user?.name
+                                                ?.split(" ")
+                                                .map((n) => n[0])
+                                                .join("")
+                                                .toUpperCase() || "U"}
                                         </AvatarFallback>
                                     </Avatar>
                                 </Button>
@@ -139,7 +147,13 @@ function Header() {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
                                     <DropdownMenuItem asChild>
-                                        <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                                        <Link
+                                            href={
+                                                session.user.role === "ADMIN"
+                                                    ? "/dashboard"
+                                                    : "/user/dashboard"
+                                            }
+                                        >
                                             <User className="mr-2 h-4 w-4" />
                                             <span>Dashboard</span>
                                         </Link>
@@ -262,7 +276,11 @@ function Header() {
                                                     alt={session.user?.name || "User"}
                                                 />
                                                 <AvatarFallback className="bg-blue-600 text-white text-sm">
-                                                    {session.user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                                                    {session.user?.name
+                                                        ?.split(" ")
+                                                        .map((n) => n[0])
+                                                        .join("")
+                                                        .toUpperCase() || "U"}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div className="flex flex-col">
@@ -277,7 +295,13 @@ function Header() {
 
                                         {/* Menu Items */}
                                         <div className="space-y-1">
-                                            <Link href={session.user.role === 'ADMIN' ? '/dashboard' : '/user/dashboard'}>
+                                            <Link
+                                                href={
+                                                    session.user.role === "ADMIN"
+                                                        ? "/dashboard"
+                                                        : "/user/dashboard"
+                                                }
+                                            >
                                                 <Button
                                                     variant="ghost"
                                                     className="w-full justify-start text-gray-800 text-sm hover:bg-blue-100"

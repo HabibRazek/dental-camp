@@ -1,35 +1,23 @@
 "use client";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { 
-    Zap, 
-    Shield, 
-    Award, 
-    Headphones, 
-    Truck, 
+import {
+    Shield,
+    Award,
+    Headphones,
+    Truck,
     Users,
     ArrowRight,
     CheckCircle,
     Sparkles,
-    Clock,
     Globe,
     Heart
 } from "lucide-react";
 import { TbDental } from "react-icons/tb";
-import { useState, useEffect } from "react";
 
 function InnovativeFeaturesSection() {
-    const [activeFeature, setActiveFeature] = useState(0);
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        setMounted(true);
-        const interval = setInterval(() => {
-            setActiveFeature((prev) => (prev + 1) % 6);
-        }, 3000);
-        return () => clearInterval(interval);
-    }, []);
 
     const mainFeatures = [
         {
@@ -90,163 +78,122 @@ function InnovativeFeaturesSection() {
         { icon: <Heart className="h-6 w-6" />, text: "98% Satisfaction" }
     ];
 
-    const getColorClasses = (color: string) => {
-        const colors = {
-            blue: {
-                bg: "bg-blue-500",
-                light: "bg-blue-100",
-                text: "text-blue-600",
-                border: "border-blue-200",
-                gradient: "from-blue-500 to-blue-600"
-            },
-            purple: {
-                bg: "bg-purple-500",
-                light: "bg-purple-100",
-                text: "text-purple-600",
-                border: "border-purple-200",
-                gradient: "from-purple-500 to-purple-600"
-            },
-            indigo: {
-                bg: "bg-indigo-500",
-                light: "bg-indigo-100",
-                text: "text-indigo-600",
-                border: "border-indigo-200",
-                gradient: "from-indigo-500 to-indigo-600"
-            }
-        };
-        return colors[color as keyof typeof colors] || colors.blue;
-    };
+
 
     return (
-        <section className="py-20 bg-gradient-to-br from-white to-blue-50 relative overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-5">
-                <div className="absolute top-20 left-20 w-32 h-32 bg-blue-500 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-400 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-60 h-60 bg-blue-300 rounded-full blur-3xl"></div>
-            </div>
+        <section className="py-20 bg-white relative">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                {/* Professional Header with Doctor Integration */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                    {/* Left Column - Content */}
+                    <motion.div
+                        initial={{ opacity: 0, x: -30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6 }}
+                        viewport={{ once: true }}
+                    >
+                        <Badge className="mb-6 bg-blue-50 text-blue-700 hover:bg-blue-100 px-4 py-2 text-sm font-medium">
+                            <Sparkles className="h-4 w-4 mr-2" />
+                            Pourquoi nous choisir
+                        </Badge>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6 }}
-                    viewport={{ once: true }}
-                    className="text-center mb-16"
-                >
-                    <Badge className="mb-4 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 hover:from-blue-200 hover:to-blue-300">
-                        <Sparkles className="h-4 w-4 mr-2" />
-                        Pourquoi nous choisir
-                    </Badge>
-                    
-                    <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                        L'excellence à votre service
-                    </h2>
-                    
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Découvrez les avantages qui font de nous le partenaire privilégié 
-                        des professionnels de santé en Tunisie et dans la région.
-                    </p>
-                </motion.div>
+                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+                            L&apos;excellence à votre
+                            <span className="text-blue-600 block">service</span>
+                        </h2>
 
-                {/* Trust Badges */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    viewport={{ once: true }}
-                    className="flex flex-wrap justify-center gap-6 mb-16"
-                >
-                    {trustBadges.map((badge, index) => (
+                        <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+                            Découvrez les avantages qui font de nous le partenaire privilégié
+                            des professionnels de santé en Tunisie et dans la région.
+                        </p>
+
+                        {/* Trust Badges */}
+                        <div className="flex flex-wrap gap-4">
+                            {trustBadges.slice(0, 3).map((badge, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                                    viewport={{ once: true }}
+                                    className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-2"
+                                >
+                                    <div className="text-blue-600">
+                                        {badge.icon}
+                                    </div>
+                                    <span className="font-medium text-gray-700 text-sm">{badge.text}</span>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </motion.div>
+
+                    {/* Right Column - Doctor Image */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 30 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.2 }}
+                        viewport={{ once: true }}
+                        className="relative"
+                    >
+                        <div className="relative">
+                            <Image
+                                src="/images/Dr.webp"
+                                alt="Professionnel dentaire expert"
+                                width={500}
+                                height={600}
+                                className="w-full h-auto "
+                            />
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Professional Features Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {mainFeatures.map((feature, index) => (
                         <motion.div
                             key={index}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className="flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 shadow-lg border border-gray-200"
+                            className="group"
                         >
-                            <div className="text-blue-600">
-                                {badge.icon}
-                            </div>
-                            <span className="font-semibold text-gray-700">{badge.text}</span>
-                        </motion.div>
-                    ))}
-                </motion.div>
-
-                {/* Main Features Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {mainFeatures.map((feature, index) => {
-                        const colorClasses = getColorClasses(feature.color);
-                        const isActive = activeFeature === index;
-                        
-                        return (
-                            <motion.div
-                                key={index}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                transition={{ duration: 0.6, delay: index * 0.1 }}
-                                viewport={{ once: true }}
-                                className="group cursor-pointer"
-                                onMouseEnter={() => setActiveFeature(index)}
-                            >
-                                <Card className={`p-8 h-full transition-all duration-500 border-2 ${
-                                    isActive 
-                                        ? `${colorClasses.border} shadow-2xl scale-105 bg-white` 
-                                        : 'border-gray-200 shadow-lg hover:shadow-xl bg-white/80 backdrop-blur-sm'
-                                } group-hover:scale-105`}>
-                                    {/* Icon */}
-                                    <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300 ${
-                                        isActive 
-                                            ? `bg-gradient-to-br ${colorClasses.gradient} text-white shadow-lg` 
-                                            : `${colorClasses.light} ${colorClasses.text} group-hover:bg-gradient-to-br group-hover:${colorClasses.gradient} group-hover:text-white`
-                                    }`}>
+                            <Card className="p-6 h-full bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-blue-300">
+                                {/* Professional Icon */}
+                                <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center mb-4 group-hover:bg-blue-100 transition-colors">
+                                    <div className="text-blue-600">
                                         {feature.icon}
                                     </div>
+                                </div>
 
-                                    {/* Content */}
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <h3 className={`text-xl font-bold transition-colors ${
-                                                isActive ? colorClasses.text : 'text-gray-900 group-hover:' + colorClasses.text
-                                            }`}>
-                                                {feature.title}
-                                            </h3>
-                                            <Badge className={`${colorClasses.light} ${colorClasses.text} text-xs`}>
-                                                {feature.stats}
-                                            </Badge>
-                                        </div>
-                                        
-                                        <p className="text-gray-600 font-medium">
-                                            {feature.description}
-                                        </p>
-                                        
-                                        <p className="text-sm text-gray-500 leading-relaxed">
-                                            {feature.details}
-                                        </p>
-
-                                        {/* Action */}
-                                        <div className={`flex items-center gap-2 text-sm font-semibold transition-colors ${
-                                            isActive ? colorClasses.text : 'text-gray-400 group-hover:' + colorClasses.text
-                                        }`}>
-                                            <span>En savoir plus</span>
-                                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                        </div>
+                                {/* Content */}
+                                <div className="space-y-3">
+                                    <div className="flex items-start justify-between">
+                                        <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                                            {feature.title}
+                                        </h3>
+                                        <Badge className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-md">
+                                            {feature.stats}
+                                        </Badge>
                                     </div>
 
-                                    {/* Active Indicator */}
-                                    {isActive && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className={`absolute top-4 right-4 w-3 h-3 rounded-full ${colorClasses.bg}`}
-                                        />
-                                    )}
-                                </Card>
-                            </motion.div>
-                        );
-                    })}
+                                    <p className="text-sm text-gray-600 leading-relaxed">
+                                        {feature.description}
+                                    </p>
+
+                                    <p className="text-xs text-gray-500 leading-relaxed">
+                                        {feature.details}
+                                    </p>
+
+                                    {/* Simple Action */}
+                                    <div className="flex items-center gap-2 text-sm text-blue-600 group-hover:text-blue-700 transition-colors pt-2">
+                                        <span>En savoir plus</span>
+                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                    </div>
+                                </div>
+                            </Card>
+                        </motion.div>
+                    ))}
                 </div>
 
 

@@ -5,37 +5,38 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* Professional Blue and White Theme */
+  --background: oklch(0.99 0.005 240); /* Very light blue-white */
+  --foreground: oklch(0.15 0.02 240); /* Deep blue-gray */
+  --card: oklch(1 0 0); /* Pure white */
+  --card-foreground: oklch(0.15 0.02 240);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.15 0.02 240);
+  --primary: oklch(0.55 0.15 240); /* Professional blue */
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.01 240); /* Light blue-gray */
+  --secondary-foreground: oklch(0.15 0.02 240);
+  --muted: oklch(0.96 0.01 240);
+  --muted-foreground: oklch(0.45 0.02 240);
+  --accent: oklch(0.94 0.02 240); /* Soft blue accent */
+  --accent-foreground: oklch(0.15 0.02 240);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --border: oklch(0.9 0.01 240); /* Light blue border */
+  --input: oklch(0.95 0.01 240);
+  --ring: oklch(0.55 0.15 240); /* Blue focus ring */
+  --chart-1: oklch(0.55 0.15 240); /* Blue */
+  --chart-2: oklch(0.65 0.12 220); /* Light blue */
+  --chart-3: oklch(0.45 0.18 260); /* Deep blue */
+  --chart-4: oklch(0.75 0.08 200); /* Sky blue */
+  --chart-5: oklch(0.35 0.20 280); /* Navy blue */
+  --sidebar: oklch(0.98 0.005 240);
+  --sidebar-foreground: oklch(0.15 0.02 240);
+  --sidebar-primary: oklch(0.55 0.15 240);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.94 0.02 240);
+  --sidebar-accent-foreground: oklch(0.15 0.02 240);
+  --sidebar-border: oklch(0.9 0.01 240);
+  --sidebar-ring: oklch(0.55 0.15 240);
 }
 
 .dark {
@@ -240,6 +241,47 @@
 
   .flex-responsive-center {
     @apply flex flex-col sm:flex-row sm:items-center;
+  }
+
+  /* Professional Blue and White Theme Utilities */
+  .bg-professional-blue {
+    @apply bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800;
+  }
+
+  .bg-professional-light {
+    @apply bg-gradient-to-br from-blue-50 via-white to-blue-50;
+  }
+
+  .text-professional-blue {
+    @apply text-blue-700;
+  }
+
+  .border-professional-blue {
+    @apply border-blue-200;
+  }
+
+  .shadow-professional {
+    box-shadow: 0 10px 40px rgba(59, 130, 246, 0.1), 0 4px 20px rgba(59, 130, 246, 0.05);
+  }
+
+  .shadow-professional-hover {
+    box-shadow: 0 20px 60px rgba(59, 130, 246, 0.15), 0 8px 30px rgba(59, 130, 246, 0.1);
+  }
+
+  .gradient-text-blue {
+    @apply bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 bg-clip-text text-transparent;
+  }
+
+  .gradient-bg-blue {
+    background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 50%, #1E3A8A 100%);
+  }
+
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-effect-blue {
+    @apply bg-blue-50/80 backdrop-blur-md border border-blue-200/50;
   }
 }
 

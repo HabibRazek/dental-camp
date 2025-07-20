@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { TbDental } from "react-icons/tb";
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 interface Category {
@@ -49,11 +50,9 @@ function Footer() {
     }, []);
 
     return (
-        <div className="bg-white">
-
-
-            {/* Main Footer */}
-            <footer className="bg-white py-8 sm:py-12 lg:py-16 border-t border-gray-100">
+        <div className="bg-professional-light">
+            {/* Enhanced Professional Footer */}
+            <footer className="bg-professional-light py-12 sm:py-16 lg:py-20 border-t border-blue-200">
                 <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8">
                         {/* Brand column */}
@@ -64,30 +63,17 @@ function Footer() {
                                 transition={{ duration: 0.6 }}
                                 viewport={{ once: true }}
                             >
-                                <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
-                                    <div className="p-1.5 sm:p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg">
-                                        <TbDental className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                                    </div>
-                                    <span className="font-bold text-lg sm:text-xl lg:text-2xl text-gray-800">
-                                        Dental Camp
-                                    </span>
+                                <div className="flex items-center mb-6 sm:mb-8">
+                                    <Image
+                                        src="/dental-camp-logo.png"
+                                        alt="Dental Camp Logo"
+                                        width={150}
+                                        height={150}
+                                        className="h-16 sm:h-20 lg:h-24 w-auto object-contain"
+                                    />
                                 </div>
-                                <p className="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base lg:text-lg leading-relaxed">
-                                    Empowering dental professionals with premium equipment and innovative solutions since 2010.
-                                </p>
-
                                 {/* Contact information */}
                                 <div className="space-y-4 mb-8">
-                                    <div className="flex items-start gap-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
-                                            <MapPin className="h-4 w-4 text-gray-600" />
-                                        </div>
-                                        <p className="text-gray-600">
-                                            Rue Korbus 8058<br />
-                                            Mrezga Hammamet Nord<br />
-                                            Nabeul Tunisia
-                                        </p>
-                                    </div>
                                     <div className="flex items-center gap-3">
                                         <div className="p-2 bg-gray-100 rounded-lg">
                                             <Phone className="h-4 w-4 text-gray-600" />
@@ -202,34 +188,7 @@ function Footer() {
                         </div>
                     </div>
 
-                    {/* Trust badges */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        viewport={{ once: true }}
-                        className="mt-16 border-t border-gray-100 pt-8"
-                    >
-                        <p className="text-gray-800 font-semibold mb-6 text-center">Trusted Partners & Certifications</p>
-                        <div className="flex flex-wrap justify-center gap-4 items-center">
-                            {[
-                                { name: "ADA Approved", icon: <Award className="w-4 h-4" /> },
-                                { name: "FDA Registered", icon: <Shield className="w-4 h-4" /> },
-                                { name: "ISO 13485", icon: <Star className="w-4 h-4" /> },
-                                { name: "CE Certified", icon: <Heart className="w-4 h-4" /> },
-                                { name: "HIPAA Compliant", icon: <Shield className="w-4 h-4" /> }
-                            ].map((badge, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    whileHover={{ scale: 1.05 }}
-                                    className="bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-4 py-3 rounded-xl text-sm text-gray-700 hover:text-blue-700 transition-all duration-300 flex items-center gap-2 shadow-sm hover:shadow-md"
-                                >
-                                    {badge.icon}
-                                    {badge.name}
-                                </motion.div>
-                            ))}
-                        </div>
-                    </motion.div>
+
 
                     {/* Bottom bar */}
                     <motion.div

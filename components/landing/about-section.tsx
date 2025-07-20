@@ -2,62 +2,73 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-    Stethoscope, 
-    Award, 
-    Users, 
+import {
+    Award,
+    Users,
     TrendingUp,
-    ArrowRight
+    ArrowRight,
+    Shield
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-// import dentalequipment from "@/public/images/dental-equipment.jpg";
 
 function AboutSection() {
     const stats = [
-        { number: "15+", label: "Années d'expérience", icon: <Award className="h-5 w-5" /> },
-        { number: "500+", label: "Clients satisfaits", icon: <Users className="h-5 w-5" /> },
-        { number: "1000+", label: "Produits disponibles", icon: <TrendingUp className="h-5 w-5" /> }
+        {
+            number: "15+",
+            label: "Années d'expertise",
+            icon: <Award className="h-5 w-5" />
+        },
+        {
+            number: "300+",
+            label: "Dentistes partenaires",
+            icon: <Users className="h-5 w-5" />
+        },
+        {
+            number: "500+",
+            label: "Équipements installés",
+            icon: <TrendingUp className="h-5 w-5" />
+        }
     ];
 
     return (
-        <section className="py-12 sm:py-16 lg:py-20 bg-gradient-to-br from-white to-blue-50">
+        <section className="py-16 sm:py-20 lg:py-24 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-                    {/* Text Content */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                    {/* Professional Content Section */}
                     <motion.div
-                        initial={{ opacity: 0, x: -30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6 }}
                         viewport={{ once: true }}
-                        className="space-y-6 lg:space-y-8"
+                        className="space-y-8"
                     >
+                        {/* Professional Badge */}
+                        <Badge className="bg-blue-600 text-white px-6 py-2 text-sm font-semibold">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Excellence Professionnelle
+                        </Badge>
+
+                        {/* Clean Title */}
                         <div>
-                            <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-200">
-                                <Stethoscope className="h-4 w-4 mr-2" />
-                                À propos de nous
-                            </Badge>
-                            
-                            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 mb-4 lg:mb-6 leading-tight">
-                                Votre partenaire de confiance en équipements médicaux
+                            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                                Équipements dentaires
+                                <span className="text-blue-600 block">de haute précision</span>
                             </h2>
-                            
-                            <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-4 lg:mb-6">
-                                Depuis plus de 15 ans, nous nous engageons à fournir aux professionnels de santé 
-                                les équipements médicaux et dentaires de la plus haute qualité. Notre expertise 
-                                et notre service client exceptionnel font de nous le choix privilégié des 
-                                praticiens en Tunisie et dans la région.
+
+                            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+                                Spécialisés dans les technologies dentaires avancées, nous fournissons aux
+                                professionnels des équipements certifiés pour l&apos;implantologie et la chirurgie dentaire.
                             </p>
-                            
-                            <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
-                                Nous proposons une gamme complète d'instruments, d'équipements de diagnostic, 
-                                de solutions de stérilisation et de consommables médicaux, tous certifiés 
-                                et conformes aux normes internationales les plus strictes.
+
+                            <p className="text-base text-gray-600 leading-relaxed">
+                                Solutions complètes certifiées CE, conformes aux standards européens
+                                les plus exigeants pour votre pratique professionnelle.
                             </p>
                         </div>
 
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
+                        {/* Professional Stats */}
+                        <div className="grid grid-cols-3 gap-6 sm:gap-8">
                             {stats.map((stat, index) => (
                                 <motion.div
                                     key={index}
@@ -65,31 +76,33 @@ function AboutSection() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.5, delay: index * 0.1 }}
                                     viewport={{ once: true }}
-                                    className="text-center"
+                                    className="text-center bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300"
                                 >
-                                    <div className="flex justify-center mb-2 text-blue-600">
-                                        {stat.icon}
+                                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                                        <div className="text-blue-600">
+                                            {stat.icon}
+                                        </div>
                                     </div>
-                                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
+                                    <div className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
                                         {stat.number}
                                     </div>
-                                    <div className="text-xs sm:text-sm text-gray-600">
+                                    <div className="text-sm text-gray-600 font-medium">
                                         {stat.label}
                                     </div>
                                 </motion.div>
                             ))}
                         </div>
 
-                        {/* CTA Button */}
+                        {/* Professional CTA */}
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.4 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
                             viewport={{ once: true }}
                         >
                             <Button
                                 size="lg"
-                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 px-8 py-3 rounded-lg font-semibold"
+                                className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
                                 asChild
                             >
                                 <Link href="/about">
@@ -98,9 +111,11 @@ function AboutSection() {
                                 </Link>
                             </Button>
                         </motion.div>
+
+                        
                     </motion.div>
 
-                    {/* Image */}
+                    {/* Professional Image Section */}
                     <motion.div
                         initial={{ opacity: 0, x: 30 }}
                         whileInView={{ opacity: 1, x: 0 }}
@@ -108,30 +123,33 @@ function AboutSection() {
                         viewport={{ once: true }}
                         className="relative"
                     >
-                        <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                            <div className="w-full h-[300px] sm:h-[400px] bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
-                                <div className="text-center text-white">
-                                    <Stethoscope className="h-16 sm:h-20 w-16 sm:w-20 mx-auto mb-4 opacity-50" />
-                                    <p className="text-base sm:text-lg font-semibold">Équipements Médicaux de Qualité</p>
-                                </div>
-                            </div>
-                            <div className="absolute inset-0 bg-gradient-to-t from-blue-900/20 to-transparent"></div>
+                        {/* Clean Image Container */}
+                        <div className="relative rounded-2xl overflow-hidden shadow-xl">
+                            <Image
+                                src="/implant.gif"
+                                alt="Équipements Dentaires Professionnels"
+                                width={600}
+                                height={450}
+                                className="w-full h-[350px] sm:h-[450px] object-cover"
+                                priority
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                         </div>
-                        
-                        {/* Floating Card */}
+
+                        {/* Professional Certification Badge */}
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            whileInView={{ opacity: 1, scale: 1 }}
-                            transition={{ duration: 0.5, delay: 0.6 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.4 }}
                             viewport={{ once: true }}
-                            className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-white rounded-xl shadow-xl p-4 sm:p-6 border border-gray-100"
+                            className="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-6 border border-gray-100"
                         >
-                            <div className="flex items-center space-x-4">
-                                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                                    <Award className="h-6 w-6 text-blue-600" />
+                            <div className="flex items-center space-x-3">
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                    <Shield className="h-6 w-6 text-blue-600" />
                                 </div>
                                 <div>
-                                    <div className="font-semibold text-gray-900">Certifié CE & ISO</div>
+                                    <div className="font-bold text-gray-900">Certifié CE & ISO</div>
                                     <div className="text-sm text-gray-600">Qualité garantie</div>
                                 </div>
                             </div>

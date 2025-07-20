@@ -619,17 +619,17 @@ export default function CatalogPage() {
                     </div>
                   </div>
 
-                  {/* Quick Filters */}
-                  <div className="space-y-4 pt-6 border-t border-gray-200">
-                    <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-blue-500" />
+                  {/* Ultra Compact Quick Filters */}
+                  <div className="space-y-2 pt-3 border-t border-blue-200">
+                    <h3 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
+                      <Zap className="w-2.5 h-2.5 text-blue-600" />
                       Quick Filters
                     </h3>
                     <div className="space-y-1">
                       <motion.label
-                        className="flex items-center cursor-pointer group py-1 px-1 rounded-md hover:bg-gradient-to-r hover:from-green-50 hover:to-emerald-50 transition-all duration-200"
-                        whileHover={{ scale: 1.01, x: 2 }}
-                        whileTap={{ scale: 0.99 }}
+                        className="flex items-center cursor-pointer group py-1 px-1.5 rounded-md hover:bg-blue-50 transition-all duration-200"
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.995 }}
                       >
                         <Checkbox
                           checked={inStockOnly}
@@ -637,20 +637,18 @@ export default function CatalogPage() {
                             setInStockOnly(checked === true);
                             setFilterLoading(true);
                           }}
-                          size="md"
-                          variant="success"
-                          className="mr-2 flex-shrink-0"
+                          className="mr-1.5 h-1 w-1 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border border-gray-300"
                         />
                         <div className="flex items-center gap-1 min-w-0">
-                          <Package className="w-2 h-2 text-green-600 flex-shrink-0" />
-                          <span className="text-xs font-semibold text-gray-700 group-hover:text-green-700 transition-colors">In Stock Only</span>
+                          <Package className="w-2.5 h-2.5 text-blue-600 flex-shrink-0" />
+                          <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700 transition-colors">In Stock Only</span>
                         </div>
                       </motion.label>
 
                       <motion.label
-                        className="flex items-center cursor-pointer group py-1 px-1 rounded-md hover:bg-gradient-to-r hover:from-yellow-50 hover:to-amber-50 transition-all duration-200"
-                        whileHover={{ scale: 1.01, x: 2 }}
-                        whileTap={{ scale: 0.99 }}
+                        className="flex items-center cursor-pointer group py-1 px-1.5 rounded-md hover:bg-blue-50 transition-all duration-200"
+                        whileHover={{ scale: 1.005 }}
+                        whileTap={{ scale: 0.995 }}
                       >
                         <Checkbox
                           checked={featuredOnly}
@@ -658,13 +656,11 @@ export default function CatalogPage() {
                             setFeaturedOnly(checked === true);
                             setFilterLoading(true);
                           }}
-                          size="md"
-                          variant="warning"
-                          className="mr-2 flex-shrink-0"
+                          className="mr-1.5 h-2.5 w-2.5 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border border-gray-300"
                         />
                         <div className="flex items-center gap-1 min-w-0">
-                          <Award className="w-2 h-2 text-yellow-600 flex-shrink-0" />
-                          <span className="text-xs font-semibold text-gray-700 group-hover:text-yellow-700 transition-colors">Featured Products</span>
+                          <Award className="w-2.5 h-2.5 text-blue-600 flex-shrink-0" />
+                          <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700 transition-colors">Featured Products</span>
                         </div>
                       </motion.label>
                     </div>

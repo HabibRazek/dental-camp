@@ -1,5 +1,6 @@
 'use client'
 import React from 'react'
+import TopBar from './top-bar'
 import Header from './header'
 import ModernHeroSection from './modern-hero-section'
 import AboutSection from './about-section'
@@ -15,11 +16,12 @@ const Landing = () => {
     return (
 
         <>
+            <TopBar />
             <Header />
             <ModernHeroSection />
             <AboutSection />
-            <ProductGridSection />
             <FeaturedProductsSection />
+            <ProductGridSection />
             <InnovativeFeaturesSection />
             <ModernTestimonialsSection />
             <div id="contact">

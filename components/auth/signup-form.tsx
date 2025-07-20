@@ -103,116 +103,129 @@ export function SignUpForm() {
   }
 
   return (
-    <div className="w-full max-w-sm mx-auto">
-      <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-blue-100">
-        {/* Form header removed since it's now in the page layout */}
+    <div className="w-full">
+      {/* Form header removed since it's now in the page layout */}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Nom complet
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              placeholder="Entrez votre nom complet"
-              {...register("name")}
-              className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-                errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
-              }`}
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {errors.name.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Adresse email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Entrez votre adresse email"
-              {...register("email")}
-              className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-                errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
-              }`}
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {errors.email.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Mot de passe
-            </Label>
-            <div className="relative">
+          {/* Two Column Layout */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                Nom complet
+              </Label>
               <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="Créez un mot de passe fort"
-                {...register("password")}
-                className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-                  errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+                id="name"
+                type="text"
+                placeholder="Entrez votre nom complet"
+                {...register("name")}
+                className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                  errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
                 }`}
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                  {errors.name.message}
+                </p>
+              )}
             </div>
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {errors.password.message}
-              </p>
-            )}
+
+            {/* Email Field */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                Adresse email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Entrez votre adresse email"
+                {...register("email")}
+                className={`h-12 px-4 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                  errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+                }`}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                  {errors.email.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Password Fields Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                Mot de passe
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Créez un mot de passe fort"
+                  {...register("password")}
+                  className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                    errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                  {errors.password.message}
+                </p>
+              )}
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                Confirmer le mot de passe
+              </Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirmez votre mot de passe"
+                  {...register("confirmPassword")}
+                  className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
+                    errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50"
+                >
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
+                  <span className="w-1 h-1 bg-red-500 rounded-full"></span>
+                  {errors.confirmPassword.message}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Password Strength - Full Width */}
+          <div className="md:col-span-2">
             <PasswordStrength password={watchedPassword || ""} />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Confirmer le mot de passe
-            </Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirmez votre mot de passe"
-                {...register("confirmPassword")}
-                className={`h-12 px-4 pr-12 rounded-xl border-2 transition-all duration-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-                  errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-100" : "border-gray-200"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-blue-600 transition-colors duration-200 p-1 rounded-lg hover:bg-blue-50"
-              >
-                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1 flex items-center gap-1">
-                <span className="w-1 h-1 bg-red-500 rounded-full"></span>
-                {errors.confirmPassword.message}
-              </p>
-            )}
           </div>
 
           {error && (
@@ -257,7 +270,6 @@ export function SignUpForm() {
             </Link>
           </p>
         </div>
-      </div>
     </div>
   )
 }

@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+
 import {
     ArrowRight,
     Heart,
@@ -13,9 +13,6 @@ import {
     Syringe,
     Package,
     Loader2,
-    Sparkles,
-    TrendingUp,
-    Star,
     Eye
 } from "lucide-react";
 import Image from "next/image";
@@ -23,21 +20,21 @@ import Link from "next/link";
 import dentalequipment from "@/public/images/dental-equipment.jpg";
 import { useState, useEffect } from "react";
 
-// Enhanced icon mapping for categories with more variety
+// Professional icon mapping for dental categories
 const iconMap: { [key: string]: React.ReactNode } = {
-    'heart': <Heart className="h-6 w-6" />,
-    'scissors': <Scissors className="h-6 w-6" />,
-    'zap': <Zap className="h-6 w-6" />,
-    'shield': <Shield className="h-6 w-6" />,
-    'microscope': <Microscope className="h-6 w-6" />,
-    'syringe': <Syringe className="h-6 w-6" />,
-    'package': <Package className="h-6 w-6" />,
-    'tool': <Package className="h-6 w-6" />,
-    'fingerprint': <Package className="h-6 w-6" />,
-    'sparkles': <Sparkles className="h-6 w-6" />,
-    'trending': <TrendingUp className="h-6 w-6" />,
-    'star': <Star className="h-6 w-6" />,
-    'eye': <Eye className="h-6 w-6" />,
+    'heart': <Heart className="h-5 w-5" />,
+    'scissors': <Scissors className="h-5 w-5" />,
+    'zap': <Zap className="h-5 w-5" />,
+    'shield': <Shield className="h-5 w-5" />,
+    'microscope': <Microscope className="h-5 w-5" />,
+    'syringe': <Syringe className="h-5 w-5" />,
+    'package': <Package className="h-5 w-5" />,
+    'composite': <Heart className="h-5 w-5" />,
+    'instruments': <Scissors className="h-5 w-5" />,
+    'equipement': <Zap className="h-5 w-5" />,
+    'sterilisation': <Shield className="h-5 w-5" />,
+    'diagnostic': <Microscope className="h-5 w-5" />,
+    'anesthesie': <Syringe className="h-5 w-5" />,
 };
 
 interface Category {
@@ -161,12 +158,41 @@ function ProductGridSection() {
 
     const getIcon = (iconName: string | null) => {
         if (!iconName) return <Package className="h-8 w-8" />;
-        return iconMap[iconName.toLowerCase()] || <Package className="h-8 w-8" />;
+
+        const normalizedName = iconName.toLowerCase().trim();
+
+        // Try exact match first
+        if (iconMap[normalizedName]) {
+            return iconMap[normalizedName];
+        }
+
+        // Try partial matches for better flexibility
+        const partialMatches: { [key: string]: React.ReactNode } = {
+            'composite': <Heart className="h-8 w-8" />,
+            'adhesif': <Heart className="h-8 w-8" />,
+            'instrument': <Scissors className="h-8 w-8" />,
+            'equipement': <Zap className="h-8 w-8" />,
+            'equipment': <Zap className="h-8 w-8" />,
+            'steril': <Shield className="h-8 w-8" />,
+            'diagnostic': <Microscope className="h-8 w-8" />,
+            'anesthes': <Syringe className="h-8 w-8" />,
+            'tool': <Scissors className="h-8 w-8" />,
+            'medical': <Heart className="h-8 w-8" />,
+            'dental': <Heart className="h-8 w-8" />,
+        };
+
+        // Check for partial matches
+        for (const [key, icon] of Object.entries(partialMatches)) {
+            if (normalizedName.includes(key)) {
+                return icon;
+            }
+        }
+
+        // Default fallback
+        return <Package className="h-8 w-8" />;
     };
 
-    const getImage = (imageUrl: string | null) => {
-        return imageUrl || dentalequipment;
-    };
+
 
     // Loading state
     if (loading) {
@@ -209,93 +235,40 @@ function ProductGridSection() {
     }
 
     return (
-        <section className="relative py-24 overflow-hidden">
-            {/* Enhanced Background with Gradient Mesh */}
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/50" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(59,130,246,0.1),transparent_50%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,rgba(99,102,241,0.08),transparent_50%)]" />
+        <section className="py-16 bg-white relative overflow-hidden">
+            {/* Background with stethoscope image */}
+            <div className="absolute top-0 right-0 w-1/2 h-full opacity-10">
+                <Image
+                    src={dentalequipment}
+                    alt="Medical background"
+                    fill
+                    className="object-cover object-right"
+                />
+            </div>
 
-            {/* Floating Elements */}
-            <div className="absolute top-20 left-10 w-20 h-20 bg-blue-200/20 rounded-full blur-xl animate-pulse" />
-            <div className="absolute bottom-20 right-10 w-32 h-32 bg-indigo-200/20 rounded-full blur-xl animate-pulse delay-1000" />
-
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Enhanced Header */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+                {/* Header Section */}
                 <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    transition={{ duration: 0.8 }}
                     viewport={{ once: true }}
-                    className="text-center mb-20"
+                    className="mb-16"
                 >
-                    {/* Animated Badge */}
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        whileInView={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        viewport={{ once: true }}
-                    >
-                        <Badge className="mb-6 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-700 hover:from-blue-200 hover:to-indigo-200 px-4 py-2 text-sm font-medium border-0 shadow-lg">
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Nos produits
-                        </Badge>
-                    </motion.div>
-
-                    {/* Enhanced Title with Gradient */}
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.3 }}
-                        viewport={{ once: true }}
-                        className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 lg:mb-8 leading-tight"
-                    >
-                        <span className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
-                            Catégories de
-                        </span>
+                    <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+                        Découvrez
                         <br />
-                        <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                            produits
-                        </span>
-                    </motion.h2>
+                        <span className="text-blue-500">Nos Catégories</span>
+                    </h2>
 
-                    {/* Enhanced Description */}
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.4 }}
-                        viewport={{ once: true }}
-                        className="text-base sm:text-lg lg:text-xl xl:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed"
-                    >
-                        Découvrez notre large gamme d'équipements médicaux et dentaires
-                        de haute qualité, adaptés à tous vos besoins professionnels.
-                    </motion.p>
-
-                    {/* Stats Row */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        viewport={{ once: true }}
-                        className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8 mt-8 lg:mt-12"
-                    >
-                        <div className="text-center">
-                            <div className="text-2xl sm:text-3xl font-bold text-blue-600">{categories.length}+</div>
-                            <div className="text-xs sm:text-sm text-gray-500">Catégories</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-indigo-600">
-                                {categories.reduce((sum, cat) => sum + cat._count.products, 0)}+
-                            </div>
-                            <div className="text-sm text-gray-500">Produits</div>
-                        </div>
-                        <div className="text-center">
-                            <div className="text-3xl font-bold text-purple-600">100%</div>
-                            <div className="text-sm text-gray-500">Qualité</div>
-                        </div>
-                    </motion.div>
+                    <p className="text-lg text-gray-700 max-w-2xl leading-relaxed">
+                        Profitez de nos offres exceptionnelles sur une sélection d&apos;équipements médicaux
+                        de qualité. Nous proposons des réductions intéressantes sur des produits
+                        essentiels pour les professionnels de santé.
+                    </p>
                 </motion.div>
 
-                {/* Enhanced Categories Grid */}
+                {/* Professional Categories Grid */}
                 {categories.length === 0 ? (
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -311,156 +284,60 @@ function ProductGridSection() {
                         <p className="text-gray-600 text-xl font-medium">Aucune catégorie disponible pour le moment.</p>
                     </motion.div>
                 ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 xl:gap-8">
-                        {categories.map((category, index) => (
+                    <div className="flex justify-center w-full">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center max-w-5xl w-full px-4">
+                        {/* All cards with same size */}
+                        {categories.slice(0, 5).map((category, index) => (
                             <motion.div
                                 key={category.id}
-                                initial={{ opacity: 0, y: 40, scale: 0.8 }}
-                                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                                transition={{
-                                    duration: 0.8,
-                                    delay: index * 0.15,
-                                    type: "spring",
-                                    stiffness: 80,
-                                    damping: 20
-                                }}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.6, delay: 0.1 + index * 0.1 }}
                                 viewport={{ once: true }}
                                 className="group cursor-pointer"
-                                whileHover={{ y: -8, scale: 1.02 }}
-                                whileTap={{ scale: 0.98 }}
                             >
-                                <Card className="relative bg-white/80 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-700 overflow-hidden border-0 h-full group-hover:bg-white/90">
-                                    {/* Animated Gradient Background */}
-                                    <div
-                                        className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-all duration-700"
-                                        style={{
-                                            background: `conic-gradient(from 0deg at 50% 50%, ${category.color || '#3B82F6'}20, transparent, ${category.color || '#3B82F6'}20)`
-                                        }}
+                                <div className="relative h-80 w-72 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group-hover:scale-110">
+                                    {/* Background Image */}
+                                    <Image
+                                        src={dentalequipment}
+                                        alt={category.name}
+                                        fill
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                                     />
+                                    {/* Blue Gradient Overlay with different intensities */}
+                                    <div className={`absolute inset-0 transition-all duration-500 ${
+                                        index === 0 ? 'bg-gradient-to-br from-blue-400/80 to-blue-500/90 group-hover:from-blue-300/70 group-hover:to-blue-400/80' :
+                                        index === 1 ? 'bg-gradient-to-br from-blue-500/80 to-blue-600/90 group-hover:from-blue-400/70 group-hover:to-blue-500/80' :
+                                        index === 2 ? 'bg-gradient-to-br from-blue-600/80 to-blue-700/90 group-hover:from-blue-500/70 group-hover:to-blue-600/80' :
+                                        index === 3 ? 'bg-gradient-to-br from-blue-700/80 to-blue-800/90 group-hover:from-blue-600/70 group-hover:to-blue-700/80' :
+                                        'bg-gradient-to-br from-blue-800/80 to-blue-900/90 group-hover:from-blue-700/70 group-hover:to-blue-800/80'
+                                    }`} />
 
-                                    {/* Enhanced Image Section */}
-                                    <div className="relative h-32 sm:h-40 md:h-48 overflow-hidden">
-                                        <Image
-                                            src={getImage(category.image)}
-                                            alt={category.name}
-                                            fill
-                                            className="object-cover transition-all duration-1000 group-hover:scale-110 group-hover:rotate-1"
-                                        />
-
-                                        {/* Gradient Overlay */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
-
-                                        {/* Floating Elements */}
-                                        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-black/10" />
-
-                                        {/* Enhanced Icon */}
+                                    <div className="relative h-full flex flex-col justify-center items-center text-white p-8">
                                         <motion.div
-                                            className="absolute top-2 left-2 sm:top-3 sm:left-3 md:top-4 md:left-4 w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 rounded-lg sm:rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg sm:shadow-2xl backdrop-blur-md border border-white/30"
-                                            style={{
-                                                background: `linear-gradient(135deg, ${category.color || '#3B82F6'}20, ${category.color || '#3B82F6'}40)`
-                                            }}
-                                            whileHover={{ scale: 1.1, rotate: 10 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                                            initial={{ scale: 1 }}
+                                            whileHover={{ scale: 1.2 }}
+                                            transition={{ duration: 0.3 }}
+                                            className="mb-6"
                                         >
-                                            <div style={{ color: category.color || '#3B82F6' }} className="drop-shadow-sm">
-                                                {getIcon(category.icon)}
-                                            </div>
+                                            {getIcon(category.icon)}
                                         </motion.div>
-
-                                        {/* Enhanced Product Count Badge */}
-                                        <motion.div
-                                            className="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 px-2 py-1 sm:px-3 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-white shadow-lg sm:shadow-2xl backdrop-blur-md border border-white/30"
-                                            style={{
-                                                background: `linear-gradient(135deg, ${category.color || '#3B82F6'}, ${category.color || '#3B82F6'}DD)`
-                                            }}
-                                            whileHover={{ scale: 1.05 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                                        >
-                                            <div className="flex items-center gap-1">
-                                                <Star className="w-3 h-3" />
-                                                {category._count.products}
-                                            </div>
-                                        </motion.div>
-
-                                        {/* Trending Badge for Popular Categories */}
-                                        {category._count.products > 20 && (
-                                            <motion.div
-                                                className="absolute bottom-4 left-4 px-2 py-1 rounded-lg text-xs font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 shadow-lg"
-                                                initial={{ scale: 0, opacity: 0 }}
-                                                whileInView={{ scale: 1, opacity: 1 }}
-                                                transition={{ delay: 0.5, type: "spring" }}
-                                                viewport={{ once: true }}
-                                            >
-                                                <div className="flex items-center gap-1">
-                                                    <TrendingUp className="w-3 h-3" />
-                                                    Populaire
-                                                </div>
-                                            </motion.div>
-                                        )}
-                                    </div>
-
-                                    {/* Enhanced Content Section */}
-                                    <div className="p-3 sm:p-4 md:p-6 relative z-10 flex flex-col h-[calc(100%-8rem)] sm:h-[calc(100%-10rem)] md:h-[calc(100%-12rem)]">
-                                        {/* Category Name */}
-                                        <motion.h3
-                                            className="text-sm sm:text-base md:text-lg font-bold mb-1 sm:mb-2 md:mb-3 line-clamp-1 sm:line-clamp-2 leading-tight"
-                                            style={{ color: category.color || '#1F2937' }}
-                                            whileHover={{ scale: 1.02 }}
-                                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                                        >
+                                        <p className="text-sm font-medium mb-2 opacity-90">NOS CATÉGORIES</p>
+                                        <h3 className="text-xl font-bold mb-6 text-center leading-tight">
                                             {category.name}
-                                        </motion.h3>
-
-                                        {/* Description */}
-                                        <p className="text-gray-600 text-xs sm:text-sm mb-2 sm:mb-3 md:mb-4 line-clamp-1 sm:line-clamp-2 md:line-clamp-3 leading-relaxed flex-grow">
-                                            {category.description || "Découvrez nos produits de qualité professionnelle"}
-                                        </p>
-
-                                        {/* Enhanced CTA Button */}
-                                        <motion.div
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
+                                        </h3>
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.95 }}
+                                            className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-6 py-2.5 rounded-lg text-base font-semibold hover:bg-white/30 transition-all duration-300"
                                         >
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="w-full justify-between text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl p-2 sm:p-3 h-auto group-hover:shadow-lg transition-all duration-300"
-                                                style={{
-                                                    color: category.color || '#3B82F6',
-                                                    background: `linear-gradient(135deg, ${category.color || '#3B82F6'}10, ${category.color || '#3B82F6'}05)`
-                                                }}
-                                                asChild
-                                            >
-                                                <Link href={`/catalog?category=${category.slug}`}>
-                                                    <div className="flex items-center gap-1 sm:gap-2">
-                                                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                                                        <span className="hidden sm:inline">Voir produits</span>
-                                                        <span className="sm:hidden">Voir</span>
-                                                    </div>
-                                                    <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform duration-300" />
-                                                </Link>
-                                            </Button>
-                                        </motion.div>
+                                            Découvrez
+                                        </motion.button>
                                     </div>
-
-                                    {/* Enhanced Hover Effects */}
-                                    <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
-                                        <div
-                                            className="absolute inset-0 opacity-5"
-                                            style={{
-                                                background: `radial-gradient(circle at 30% 30%, ${category.color || '#3B82F6'}40, transparent 70%)`
-                                            }}
-                                        />
-                                        <div
-                                            className="absolute inset-0 opacity-5"
-                                            style={{
-                                                background: `radial-gradient(circle at 70% 70%, ${category.color || '#3B82F6'}30, transparent 60%)`
-                                            }}
-                                        />
-                                    </div>
-                                </Card>
+                                </div>
                             </motion.div>
                         ))}
+                        </div>
                     </div>
                 )}
 
@@ -495,15 +372,13 @@ function ProductGridSection() {
                             >
                                 <Button
                                     size="lg"
-                                    className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white px-10 py-4 rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-500 text-lg font-semibold border-0"
+                                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-200"
                                     asChild
                                 >
                                     <Link href="/catalog">
-                                        <div className="flex items-center gap-3">
-                                            <Sparkles className="w-5 h-5" />
-                                            Voir tous les produits
-                                            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-                                        </div>
+                                        <Eye className="w-5 h-5 mr-2" />
+                                        Voir tous les produits
+                                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                                     </Link>
                                 </Button>
                             </motion.div>

@@ -4,22 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
-    Star,
     ShoppingCart,
-    Eye,
-    Heart,
     ArrowRight,
-    CheckCircle,
-    Loader2,
     Package,
-    ShieldCheck,
-    Truck
+    Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 // import dentalequipment from "@/public/images/dental-equipment.jpg";
 import { useState, useEffect } from "react";
-import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { useCart } from "@/contexts/CartContext";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
@@ -163,84 +156,31 @@ function FeaturedProductsSection() {
         return formatCurrency(parseFloat(price));
     };
 
-    // Calculate real rating based on product data
-    const getProductRating = (product: Product) => {
-        // Use product ID to generate consistent rating
-        const hash = product.id.split('').reduce((a, b) => {
-            a = ((a << 5) - a) + b.charCodeAt(0)
-            return a & a
-        }, 0)
-        const rating = 4.2 + (Math.abs(hash) % 8) / 10 // Rating between 4.2-4.9
-        return rating.toFixed(1)
-    }
 
-    const getProductReviews = (product: Product) => {
-        // Use product price and stock to estimate reviews
-        const price = parseFloat(product.price)
-        const stock = product.stockQuantity
 
-        // Higher priced items tend to have fewer but more detailed reviews
-        // Lower priced items tend to have more reviews
-        let baseReviews = 0
-        if (price < 100) baseReviews = 80 + (stock * 2)
-        else if (price < 500) baseReviews = 40 + stock
-        else baseReviews = 15 + Math.floor(stock / 2)
 
-        // Add some variation based on product ID
-        const hash = product.id.split('').reduce((a, b) => {
-            a = ((a << 5) - a) + b.charCodeAt(0)
-            return a & a
-        }, 0)
-        const variation = Math.abs(hash) % 30
 
-        return Math.max(5, baseReviews + variation) // Minimum 5 reviews
-    }
 
-    const getBadge = (product: Product, index: number) => {
-        if (product.comparePrice && parseFloat(product.comparePrice) > parseFloat(product.price)) {
-            return "Promo";
-        }
-        if (index === 0) return "Bestseller";
-        if (index === 1) return "Nouveau";
-        return null;
-    };
 
-    const getFeatures = (product: Product) => {
-        // Generate some default features based on product name/description
-        const features = [];
-        const name = product.name.toLowerCase();
-        const desc = product.description?.toLowerCase() || '';
-
-        if (name.includes('composite') || desc.includes('composite')) {
-            features.push("Haute résistance", "Esthétique naturelle", "Facile à polir");
-        } else if (name.includes('instrument') || desc.includes('instrument')) {
-            features.push("Acier inoxydable", "Stérilisable", "Garantie 2 ans");
-        } else if (name.includes('led') || name.includes('lampe')) {
-            features.push("LED haute puissance", "Batterie longue durée", "Léger et ergonomique");
-        } else {
-            features.push("Qualité premium", "Certifié CE", "Livraison rapide");
-        }
-
-        return features.slice(0, 3);
-    };
-
-    // Loading state
+    // Enhanced Professional Loading state
     if (loading) {
         return (
-            <section className="py-20 bg-white">
+            <section className="py-24 bg-professional-light">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <Badge className="mb-4 bg-blue-100 text-blue-700">
+                    <div className="text-center mb-20">
+                        <Badge className="mb-6 glass-effect-blue text-blue-800 px-6 py-3 text-base font-bold">
+                            <Package className="h-5 w-5 mr-3" />
                             Produits vedettes
                         </Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            Nos meilleures ventes
+                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8">
+                            Nos meilleures
+                            <span className="gradient-text-blue block mt-2">ventes</span>
                         </h2>
                     </div>
-                    <div className="flex items-center justify-center min-h-[400px]">
-                        <div className="text-center">
-                            <Loader2 className="h-12 w-12 animate-spin text-green-600 mx-auto mb-4" />
-                            <p className="text-gray-600">Chargement des produits vedettes...</p>
+                    <div className="flex items-center justify-center min-h-[500px]">
+                        <div className="text-center glass-effect rounded-3xl p-12 shadow-professional">
+                            <Loader2 className="h-16 w-16 animate-spin text-blue-600 mx-auto mb-6" />
+                            <p className="text-gray-700 text-xl font-medium">Chargement des produits vedettes...</p>
                         </div>
                     </div>
                 </div>
@@ -248,16 +188,21 @@ function FeaturedProductsSection() {
         );
     }
 
-    // Error state
+    // Enhanced Professional Error state
     if (error) {
         return (
-            <section className="py-20 bg-white">
+            <section className="py-24 bg-professional-light">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center">
-                        <p className="text-red-600 mb-4">Erreur: {error}</p>
-                        <Button onClick={fetchFeaturedProducts} variant="outline">
-                            Réessayer
-                        </Button>
+                        <div className="glass-effect rounded-3xl p-12 shadow-professional max-w-md mx-auto">
+                            <p className="text-red-600 mb-6 text-lg font-medium">Erreur: {error}</p>
+                            <Button
+                                onClick={fetchFeaturedProducts}
+                                className="gradient-bg-blue text-white px-8 py-3 rounded-2xl font-bold"
+                            >
+                                Réessayer
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -265,149 +210,114 @@ function FeaturedProductsSection() {
     }
 
     return (
-        <section className="py-20 bg-gradient-to-br from-white to-blue-50">
+        <section className="py-20 bg-white relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                {/* Header */}
+                {/* Professional Header */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
                     viewport={{ once: true }}
                     className="text-center mb-16"
                 >
-                    <Badge className="mb-4 bg-blue-100 text-blue-700 hover:bg-blue-200">
+                    <Badge className="mb-6 bg-blue-50 text-blue-700 hover:bg-blue-100 px-4 py-2 text-sm font-medium">
+                        <Package className="h-4 w-4 mr-2" />
                         Produits vedettes
                     </Badge>
 
                     <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                        Nos meilleures ventes
+                        Nos meilleures
+                        <span className="text-blue-600 block">ventes</span>
                     </h2>
 
-                    <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                        Découvrez les produits les plus appréciés par nos clients professionnels
+                    <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        Découvrez les produits les plus appréciés par nos clients professionnels.
+                        Qualité garantie et livraison rapide.
                     </p>
-
-
                 </motion.div>
 
-                {/* Products Grid */}
+                {/* Minimalist Products Grid */}
                 {featuredProducts.length === 0 ? (
-                    <div className="text-center py-12">
-                        <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-600 text-lg">Aucun produit vedette disponible pour le moment.</p>
+                    <div className="text-center py-16">
+                        <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                        <p className="text-gray-500 text-lg">Aucun produit vedette disponible pour le moment.</p>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {featuredProducts.slice(0, 4).map((product, index) => {
-                            const badge = getBadge(product, index);
-                            const rating = getProductRating(product);
-                            const reviews = getProductReviews(product);
-                            const features = getFeatures(product);
-
                             return (
                                 <motion.div
                                     key={product.id}
                                     initial={{ opacity: 0, y: 30 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.6, delay: index * 0.1 }}
+                                    transition={{ duration: 0.5, delay: index * 0.1 }}
                                     viewport={{ once: true }}
                                     className="group"
                                 >
-                                    <Card className="h-full overflow-hidden border border-gray-200/50 shadow-md hover:shadow-xl transition-all duration-500 group-hover:scale-[1.03] bg-white backdrop-blur-sm relative rounded-xl flex flex-col group-hover:border-blue-300/50 group-hover:bg-gradient-to-br group-hover:from-white group-hover:to-blue-50/30">
-
-
-                                        {/* Enhanced Image Section with Full Visibility */}
-                                        <div className="relative h-32 sm:h-36 md:h-40 bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+                                    <Card className="h-full bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 group-hover:border-blue-300 flex flex-col overflow-hidden">
+                                        {/* Professional Image Section */}
+                                        <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
                                             <Image
                                                 src={getProductImage(product)}
                                                 alt={product.name}
                                                 fill
-                                                className="object-contain p-2 transition-transform duration-500 group-hover:scale-105"
+                                                className="object-contain p-6 transition-transform duration-300 group-hover:scale-105"
                                                 style={{ objectFit: 'contain' }}
                                             />
 
-                                            {/* Subtle Gradient Overlay */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent"></div>
+                                            {/* Professional badges */}
+                                            {index === 0 && (
+                                                <div className="absolute top-4 left-4">
+                                                    <Badge className="bg-blue-600 text-white px-3 py-1 text-xs font-semibold rounded-full shadow-sm">
+                                                        Bestseller
+                                                    </Badge>
+                                                </div>
+                                            )}
+                                            {index === 1 && (
+                                                <div className="absolute top-4 left-4">
+                                                    <Badge className="bg-emerald-600 text-white px-3 py-1 text-xs font-semibold rounded-full shadow-sm">
+                                                        Nouveau
+                                                    </Badge>
+                                                </div>
+                                            )}
 
-                                            {/* Innovative Badges */}
-                                            <div className="absolute top-2 left-2 z-10">
-                                                {index === 0 && (
-                                                    <Badge className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
-                                                        ⭐ Best
-                                                    </Badge>
-                                                )}
-                                                {index === 1 && (
-                                                    <Badge className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
-                                                        🆕 New
-                                                    </Badge>
-                                                )}
-                                                {index === 2 && (
-                                                    <Badge className="bg-gradient-to-r from-green-500 to-green-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
-                                                        🔥 Hot
-                                                    </Badge>
-                                                )}
-                                                {index === 3 && (
-                                                    <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-2 py-1 text-xs font-medium rounded-full shadow-lg">
-                                                        💎 Premium
-                                                    </Badge>
-                                                )}
-                                            </div>
-
-                                            {/* Small Action Icons */}
-                                            <div className="absolute top-1 right-1 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                <Button size="sm" variant="secondary" className="h-4 w-4 p-0 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center">
-                                                    <Heart className="h-1.5 w-1.5 text-gray-600" />
-                                                </Button>
-                                                <Button size="sm" variant="secondary" className="h-4 w-4 p-0 bg-white/90 hover:bg-white rounded-full shadow-sm flex items-center justify-center">
-                                                    <Eye className="h-1.5 w-1.5 text-gray-600" />
-                                                </Button>
-                                            </div>
-
-                                            {/* Small Price */}
-                                            <div className="absolute bottom-1 left-1 bg-white/95 backdrop-blur-sm rounded-sm px-1 py-0.5 shadow-sm">
-                                                <span className="text-xs font-bold text-gray-900">
-                                                    {formatPrice(product.price)}
-                                                </span>
+                                            {/* Price overlay */}
+                                            <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-2 shadow-sm">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-lg font-bold text-blue-600">
+                                                        {formatPrice(product.price)}
+                                                    </span>
+                                                    {product.comparePrice && parseFloat(product.comparePrice) > parseFloat(product.price) && (
+                                                        <span className="text-sm text-gray-400 line-through">
+                                                            {formatPrice(product.comparePrice)}
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
-                                        {/* Compact Small Content */}
-                                        <div className="p-2 sm:p-3 md:p-3 flex flex-col h-full">
-                                            {/* Small Category & Rating */}
-                                            <div className="flex items-center justify-between mb-1 gap-1">
-                                                <Badge variant="outline" className="text-xs text-blue-600 border-blue-200 px-1 py-0.5 flex-shrink-0">
-                                                    {product.category?.name.split(' ')[0]}
-                                                </Badge>
-                                                <div className="flex items-center gap-0.5 flex-shrink-0">
-                                                    {[...Array(5)].map((_, i) => (
-                                                        <Star
-                                                            key={i}
-                                                            className={`h-2 w-2 ${i < Math.floor(parseFloat(rating)) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
-                                                        />
-                                                    ))}
-                                                    <span className="text-xs text-gray-500 ml-0.5 hidden xl:inline">({reviews})</span>
-                                                </div>
+                                        {/* Professional Content */}
+                                        <div className="p-5 flex flex-col flex-grow">
+                                            {/* Category tag */}
+                                            <div className="mb-3">
+                                                <span className="inline-block bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-xs font-medium">
+                                                    {product.category?.name || 'Équipement dentaire'}
+                                                </span>
                                             </div>
 
-                                            {/* Compact Small Title */}
-                                            <h3 className="text-xs sm:text-sm md:text-sm font-semibold mb-1 line-clamp-2 leading-tight text-blue-600 group-hover:text-blue-700 transition-colors">
+                                            {/* Title */}
+                                            <h3 className="text-lg font-semibold mb-3 line-clamp-2 text-gray-900 group-hover:text-blue-600 transition-colors leading-tight">
                                                 {product.name}
                                             </h3>
 
-                                            {/* Minimal Description */}
-                                            <p className="text-gray-600 text-xs mb-1 sm:mb-2 line-clamp-1 leading-relaxed flex-grow hidden sm:block">
-                                                {product.description ? product.description.split(' ').slice(0, 3).join(' ') + '...' : 'Équipement professionnel'}
+                                            {/* Description */}
+                                            <p className="text-sm text-gray-600 mb-4 line-clamp-3 leading-relaxed flex-grow">
+                                                {product.description || 'Équipement dentaire professionnel de haute qualité, conçu pour répondre aux besoins des praticiens exigeants. Garantie de performance et de durabilité.'}
                                             </p>
 
-
-
-                                            {/* Spacer to push button down */}
-                                            <div className="flex-grow"></div>
-
-                                            {/* Action Button - Full Width */}
+                                            {/* Professional Action Button */}
                                             <Button
                                                 onClick={(e) => {
-                                                    e.preventDefault();
                                                     e.stopPropagation();
 
                                                     const cartItem = {
@@ -422,18 +332,13 @@ function FeaturedProductsSection() {
                                                     addItem(cartItem);
                                                     toast.success(`${product.name} ajouté au panier!`);
                                                 }}
-                                                className="w-full justify-center text-xs font-medium rounded-md p-1.5 sm:p-2 h-auto group-hover:shadow-md transition-all duration-300 bg-gradient-to-r from-blue-500/10 to-blue-600/10 text-blue-600 hover:from-blue-500/20 hover:to-blue-600/20 border-0"
+                                                className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-xl py-3 text-sm font-semibold transition-all duration-300 hover:shadow-md transform hover:scale-[1.02] active:scale-[0.98]"
                                             >
-                                                <div className="flex items-center gap-1">
-                                                    <ShoppingCart className="w-3 h-3" />
-                                                    <span className="hidden sm:inline">Ajouter</span>
-                                                    <span className="sm:hidden">+</span>
-                                                </div>
+                                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                                Ajouter au panier
                                             </Button>
                                         </div>
 
-                                        {/* Hover Effect Border */}
-                                        <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-200 rounded-lg transition-colors duration-300 pointer-events-none"></div>
                                     </Card>
                                 </motion.div>
                             );
@@ -441,23 +346,22 @@ function FeaturedProductsSection() {
                     </div>
                 )}
 
-                {/* CTA Section */}
+                {/* Enhanced Professional CTA Section */}
                 <motion.div
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
                     viewport={{ once: true }}
-                    className="text-center mt-16"
+                    className="text-center mt-20"
                 >
                     <Button
                         size="lg"
-                        variant="outline"
-                        className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-lg transition-all duration-300"
+                        className="gradient-bg-blue hover:shadow-professional-hover text-white px-12 py-5 rounded-2xl transition-all duration-500 font-bold text-lg group"
                         asChild
                     >
                         <Link href="/catalog">
                             Voir tous les produits
-                            <ArrowRight className="ml-2 h-5 w-5" />
+                            <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-2 transition-transform duration-300" />
                         </Link>
                     </Button>
                 </motion.div>
