@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "framer-motion";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -12,7 +11,6 @@ import {
     Microscope,
     Syringe,
     Package,
-    Loader2,
     Eye
 } from "lucide-react";
 import Image from "next/image";
@@ -53,7 +51,6 @@ interface Category {
 
 function ProductGridSection() {
     const [categories, setCategories] = useState<Category[]>([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -62,7 +59,6 @@ function ProductGridSection() {
 
     const fetchCategories = async () => {
         try {
-            setLoading(true);
             setError(null);
 
             const response = await fetch('/api/categories/public');
@@ -151,8 +147,6 @@ function ProductGridSection() {
                     _count: { products: 15 }
                 }
             ]);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -194,29 +188,7 @@ function ProductGridSection() {
 
 
 
-    // Loading state
-    if (loading) {
-        return (
-            <section className="py-20 bg-gray-50">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-16">
-                        <Badge className="mb-4 bg-blue-100 text-blue-700">
-                            Nos produits
-                        </Badge>
-                        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-                            Catégories de produits
-                        </h2>
-                    </div>
-                    <div className="flex items-center justify-center min-h-[400px]">
-                        <div className="text-center">
-                            <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
-                            <p className="text-gray-600">Chargement des catégories...</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        );
-    }
+
 
     // Error state
     if (error) {

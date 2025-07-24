@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Loader } from "@/components/ui/loader"
 import Header from "@/components/landing/header"
-import TopBar from "@/components/landing/top-bar"
 import { TbDental } from "react-icons/tb"
 import Image from "next/image"
 
@@ -26,7 +25,7 @@ export default function AuthSuccessPage() {
       if (session.user.role === "ADMIN") {
         window.location.href = "/dashboard"
       } else {
-        window.location.href = "/user/dashboard"
+        window.location.href = "/"
       }
     }, 1500)
 
@@ -35,7 +34,6 @@ export default function AuthSuccessPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50">
-      <TopBar />
       <Header />
 
       {/* Professional Background Pattern */}
@@ -65,7 +63,7 @@ export default function AuthSuccessPage() {
                 Welcome Back!
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                Redirecting to your dashboard...
+                Redirecting you to the main page...
               </p>
             </div>
           </div>

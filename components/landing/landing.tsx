@@ -1,31 +1,29 @@
-'use client'
 import React from 'react'
-import TopBar from './top-bar'
 import Header from './header'
-import ModernHeroSection from './modern-hero-section'
-import AboutSection from './about-section'
-import ProductGridSection from './product-grid-section'
-import FeaturedProductsSection from './featured-products-section'
-import InnovativeFeaturesSection from './innovative-features-section'
-import ModernTestimonialsSection from './modern-testimonials-section'
-import InnovativeContactSection from './innovative-contact-section'
+import HeroWrapper from './hero-wrapper'
+import AboutWrapper from './about-wrapper'
+import ProductGridWrapper from './product-grid-wrapper'
+import FeaturedProductsWrapper from './featured-products-wrapper'
+import FeaturesWrapper from './features-wrapper'
+import PartnerWrapper from './partner-wrapper'
+import TestimonialsWrapper from './testimonials-wrapper'
+import ContactWrapper from './contact-wrapper'
 import Footer from './footer';
 
 const Landing = () => {
 
     return (
-
         <>
-            <TopBar />
             <Header />
-            <ModernHeroSection />
-            <AboutSection />
-            <FeaturedProductsSection />
-            <ProductGridSection />
-            <InnovativeFeaturesSection />
-            <ModernTestimonialsSection />
+            <HeroWrapper />
+            <AboutWrapper />
+            <FeaturedProductsWrapper />
+            <ProductGridWrapper />
+            <FeaturesWrapper />
+            <PartnerWrapper />
+            <TestimonialsWrapper />
             <div id="contact">
-                <InnovativeContactSection />
+                <ContactWrapper />
             </div>
             <Footer />
         </>

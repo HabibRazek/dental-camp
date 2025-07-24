@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import { SignInForm } from "@/components/auth/signin-form"
 import Header from "@/components/landing/header"
-import TopBar from "@/components/landing/top-bar"
 import { Metadata } from "next"
 import Footer from "@/components/landing/footer"
 import Image from "next/image"
@@ -15,7 +14,6 @@ export const metadata: Metadata = {
 export default function SignInPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-gray-50">
-      <TopBar />
       <Header />
 
       {/* Professional Background Pattern */}

@@ -45,11 +45,11 @@ export async function middleware(request: NextRequest) {
   const isAuthenticated = !!token
   const userRole = token?.role || 'USER'
 
-  // Handle auth routes - redirect authenticated users to appropriate dashboard
+  // Handle auth routes - redirect authenticated users to appropriate page
   if (pathname.startsWith('/auth/')) {
     if (isAuthenticated) {
-      const dashboardUrl = userRole === 'ADMIN' ? '/dashboard' : '/user/dashboard'
-      return NextResponse.redirect(new URL(dashboardUrl, request.url))
+      const redirectUrl = userRole === 'ADMIN' ? '/dashboard' : '/'
+      return NextResponse.redirect(new URL(redirectUrl, request.url))
     }
     return NextResponse.next()
   }
@@ -75,7 +75,7 @@ export async function middleware(request: NextRequest) {
 
   // Check role-based access
   if (isAdminRoute && userRole !== 'ADMIN') {
-    return NextResponse.redirect(new URL('/user/dashboard', request.url))
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   return NextResponse.next()

@@ -131,10 +131,7 @@ function ModernTestimonialsSection() {
                                     {testimonial.testimonial}
                                 </p>
 
-                                {/* Read more link */}
-                                <button className="text-blue-500 text-sm font-medium mt-3 hover:underline hover:text-blue-600 transition-colors">
-                                    Lire la suite
-                                </button>
+                            
                             </Card>
                         </motion.div>
                     ))}

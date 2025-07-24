@@ -5,6 +5,7 @@ import { Providers } from "@/components/providers/session-provider";
 import { CartProvider } from "@/contexts/CartContext";
 import { WishlistProvider } from "@/contexts/WishlistContext";
 import { SettingsProvider } from "@/contexts/settings-context";
+import { ConditionalTopBar } from "@/components/layout/conditional-topbar";
 import { Toaster } from "sonner";
 import "@/lib/logger"; // Import silent logger
 
@@ -112,6 +113,7 @@ export default function RootLayout({
           <SettingsProvider>
             <CartProvider>
               <WishlistProvider>
+                <ConditionalTopBar />
                 {children}
                 <Toaster position="top-right" richColors />
               </WishlistProvider>

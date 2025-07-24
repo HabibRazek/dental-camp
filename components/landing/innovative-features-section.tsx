@@ -9,7 +9,6 @@ import {
     Headphones,
     Truck,
     Users,
-    ArrowRight,
     CheckCircle,
     Sparkles,
     Globe,
@@ -184,12 +183,6 @@ function InnovativeFeaturesSection() {
                                     <p className="text-xs text-gray-500 leading-relaxed">
                                         {feature.details}
                                     </p>
-
-                                    {/* Simple Action */}
-                                    <div className="flex items-center gap-2 text-sm text-blue-600 group-hover:text-blue-700 transition-colors pt-2">
-                                        <span>En savoir plus</span>
-                                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                    </div>
                                 </div>
                             </Card>
                         </motion.div>

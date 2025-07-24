@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation"
 
 function GoogleSignInContent() {
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const callbackUrl = searchParams.get('callbackUrl') || '/auth/success'
 
   const handleGoogleSignIn = async () => {
     await signInWithGoogle(callbackUrl)

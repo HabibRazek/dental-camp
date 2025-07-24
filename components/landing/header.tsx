@@ -151,11 +151,11 @@ function Header() {
                                             href={
                                                 session.user.role === "ADMIN"
                                                     ? "/dashboard"
-                                                    : "/user/dashboard"
+                                                    : "/user/profile"
                                             }
                                         >
                                             <User className="mr-2 h-4 w-4" />
-                                            <span>Dashboard</span>
+                                            <span>{session.user.role === "ADMIN" ? "Dashboard" : "Profile"}</span>
                                         </Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
@@ -299,7 +299,7 @@ function Header() {
                                                 href={
                                                     session.user.role === "ADMIN"
                                                         ? "/dashboard"
-                                                        : "/user/dashboard"
+                                                        : "/user/profile"
                                                 }
                                             >
                                                 <Button
@@ -308,7 +308,7 @@ function Header() {
                                                     onClick={() => setMenuOpen(false)}
                                                 >
                                                     <User className="h-4 w-4 mr-2" />
-                                                    Tableau de bord
+                                                    {session.user.role === "ADMIN" ? "Tableau de bord" : "Profil"}
                                                 </Button>
                                             </Link>
                                             <Button

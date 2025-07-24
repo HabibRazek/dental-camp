@@ -7,7 +7,6 @@ import {
     ShoppingCart,
     ArrowRight,
     Package,
-    Loader2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,7 +37,6 @@ interface Product {
 
 function FeaturedProductsSection() {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { addItem } = useCart();
 
@@ -48,7 +46,6 @@ function FeaturedProductsSection() {
 
     const fetchFeaturedProducts = async () => {
         try {
-            setLoading(true);
             setError(null);
 
             const response = await fetch('/api/products/public?featured=true&limit=4');
@@ -143,8 +140,6 @@ function FeaturedProductsSection() {
                     }
                 }
             ]);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -162,31 +157,7 @@ function FeaturedProductsSection() {
 
 
 
-    // Enhanced Professional Loading state
-    if (loading) {
-        return (
-            <section className="py-24 bg-professional-light">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center mb-20">
-                        <Badge className="mb-6 glass-effect-blue text-blue-800 px-6 py-3 text-base font-bold">
-                            <Package className="h-5 w-5 mr-3" />
-                            Produits vedettes
-                        </Badge>
-                        <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8">
-                            Nos meilleures
-                            <span className="gradient-text-blue block mt-2">ventes</span>
-                        </h2>
-                    </div>
-                    <div className="flex items-center justify-center min-h-[500px]">
-                        <div className="text-center glass-effect rounded-3xl p-12 shadow-professional">
-                            <Loader2 className="h-16 w-16 animate-spin text-blue-600 mx-auto mb-6" />
-                            <p className="text-gray-700 text-xl font-medium">Chargement des produits vedettes...</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        );
-    }
+
 
     // Enhanced Professional Error state
     if (error) {

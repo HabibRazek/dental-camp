@@ -10,7 +10,6 @@ import {
     Youtube,
     Mail,
     Phone,
-    MapPin,
     Clock,
     Heart,
     Star,
@@ -50,9 +49,16 @@ function Footer() {
     }, []);
 
     return (
-        <div className="bg-professional-light">
+        <div className="bg-professional-light relative overflow-hidden">
+            {/* Subtle Background Pattern */}
+            <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-10 left-10 w-20 h-20 bg-blue-100 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-20 right-20 w-32 h-32 bg-blue-50 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/3 w-16 h-16 bg-blue-100 rounded-full blur-2xl"></div>
+            </div>
+
             {/* Enhanced Professional Footer */}
-            <footer className="bg-professional-light py-12 sm:py-16 lg:py-20 border-t border-blue-200">
+            <footer className="relative bg-gradient-to-br from-gray-50 via-white to-blue-50/30 py-12 sm:py-16 lg:py-20 border-t border-blue-200">
                 <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-8">
                         {/* Brand column */}
@@ -63,6 +69,7 @@ function Footer() {
                                 transition={{ duration: 0.6 }}
                                 viewport={{ once: true }}
                             >
+                                {/* Main Logo */}
                                 <div className="flex items-center mb-6 sm:mb-8">
                                     <Image
                                         src="/dental-camp-logo.png"
@@ -72,31 +79,38 @@ function Footer() {
                                         className="h-16 sm:h-20 lg:h-24 w-auto object-contain"
                                     />
                                 </div>
+
+
                                 {/* Contact information */}
                                 <div className="space-y-4 mb-8">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
-                                            <Phone className="h-4 w-4 text-gray-600" />
+                                    <div className="flex items-start gap-3 group">
+                                        <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
+                                            <Phone className="h-4 w-4 text-blue-600" />
                                         </div>
                                         <div className="text-gray-600">
-                                            <p>+216 51 407 444</p>
-                                            <p>+216 53 761 761</p>
+                                            <p className="font-medium text-gray-700 mb-1">Phone</p>
+                                            <p className="hover:text-blue-600 transition-colors cursor-pointer">+216 51 407 444</p>
+                                            <p className="hover:text-blue-600 transition-colors cursor-pointer">+216 53 761 761</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
-                                            <Mail className="h-4 w-4 text-gray-600" />
+                                    <div className="flex items-start gap-3 group">
+                                        <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
+                                            <Mail className="h-4 w-4 text-blue-600" />
                                         </div>
                                         <div className="text-gray-600">
-                                            <p>Contact@medicalponos.com</p>
-                                            <p>Commande@medicalponos.com</p>
+                                            <p className="font-medium text-gray-700 mb-1">Email</p>
+                                            <p className="hover:text-blue-600 transition-colors cursor-pointer">Contact@medicalponos.com</p>
+                                            <p className="hover:text-blue-600 transition-colors cursor-pointer">Commande@medicalponos.com</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-gray-100 rounded-lg">
-                                            <Clock className="h-4 w-4 text-gray-600" />
+                                    <div className="flex items-start gap-3 group">
+                                        <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
+                                            <Clock className="h-4 w-4 text-blue-600" />
                                         </div>
-                                        <p className="text-gray-600">Mon-Fri: 8am-6pm ET</p>
+                                        <div className="text-gray-600">
+                                            <p className="font-medium text-gray-700 mb-1">Business Hours</p>
+                                            <p>Mon-Fri: 8am-6pm ET</p>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -188,35 +202,90 @@ function Footer() {
                         </div>
                     </div>
 
+                    {/* Professional Trust Indicators */}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        viewport={{ once: true }}
+                        className="border-t border-gray-100 mt-8 sm:mt-10 lg:mt-12 pt-6 sm:pt-8 mb-6 sm:mb-8"
+                    >
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                            {[
+                                {
+                                    icon: <Shield className="h-5 w-5 text-blue-600" />,
+                                    title: "Certified Quality",
+                                    subtitle: "CE Marked Products"
+                                },
+                                {
+                                    icon: <Award className="h-5 w-5 text-blue-600" />,
+                                    title: "15+ Years",
+                                    subtitle: "Industry Experience"
+                                },
+                                {
+                                    icon: <Heart className="h-5 w-5 text-blue-600" />,
+                                    title: "500+ Clients",
+                                    subtitle: "Satisfied Customers"
+                                },
+                                {
+                                    icon: <Star className="h-5 w-5 text-blue-600" />,
+                                    title: "98% Rating",
+                                    subtitle: "Customer Satisfaction"
+                                }
+                            ].map((item, index) => (
+                                <div key={index} className="text-center group">
+                                    <div className="bg-blue-50 rounded-lg p-3 mb-2 mx-auto w-fit group-hover:bg-blue-100 transition-colors duration-300">
+                                        {item.icon}
+                                    </div>
+                                    <p className="font-semibold text-gray-800 text-sm">{item.title}</p>
+                                    <p className="text-xs text-gray-600">{item.subtitle}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
 
-
-                    {/* Bottom bar */}
+                    {/* Enhanced Bottom bar */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         whileInView={{ opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.6 }}
                         viewport={{ once: true }}
-                        className="border-t border-gray-100 mt-8 sm:mt-10 lg:mt-12 pt-6 sm:pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0"
+                        className="border-t border-gray-200 pt-6 sm:pt-8"
                     >
-                        <p className="text-gray-500 text-xs sm:text-sm text-center sm:text-left">
-                            © {new Date().getFullYear()} Dental Camp Inc. All rights reserved.
-                        </p>
-                        <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2">
-                            {[
-                                { name: "Terms of Service", href: "/terms" },
-                                { name: "Privacy Policy", href: "/privacy" },
-                                { name: "Cookie Policy", href: "/cookies" },
-                                { name: "Accessibility", href: "/accessibility" },
-                                { name: "Sitemap", href: "/sitemap" }
-                            ].map((link, idx) => (
-                                <Link
-                                    key={idx}
-                                    href={link.href}
-                                    className="text-gray-500 hover:text-blue-600 text-sm transition-colors"
-                                >
-                                    {link.name}
-                                </Link>
-                            ))}
+                        <div className="flex flex-col lg:flex-row justify-between items-center gap-4 lg:gap-0">
+                            {/* Copyright and Company Info */}
+                            <div className="text-center lg:text-left">
+                                <p className="text-gray-600 text-sm font-medium mb-1">
+                                    © {new Date().getFullYear()} Dental Camp Inc. All rights reserved.
+                                </p>
+                                <p className="text-gray-500 text-xs">
+                                    Professional dental equipment supplier since 2008
+                                </p>
+                            </div>
+
+                            {/* Legal Links */}
+                            <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2">
+                                {[
+                                    { name: "Terms of Service", href: "/terms" },
+                                    { name: "Privacy Policy", href: "/privacy" },
+                                    { name: "Cookie Policy", href: "/cookies" },
+                                    { name: "Accessibility", href: "/accessibility" }
+                                ].map((link, idx) => (
+                                    <Link
+                                        key={idx}
+                                        href={link.href}
+                                        className="text-gray-500 hover:text-blue-600 text-sm transition-colors duration-300 hover:underline"
+                                    >
+                                        {link.name}
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* Professional Badge */}
+                            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 px-4 py-2 rounded-full">
+                                <TbDental className="h-4 w-4 text-blue-600" />
+                                <span className="text-blue-700 text-sm font-medium">Trusted by Professionals</span>
+                            </div>
                         </div>
                     </motion.div>
                 </div>

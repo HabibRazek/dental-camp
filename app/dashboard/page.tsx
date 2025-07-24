@@ -19,7 +19,7 @@ export default async function DashboardPage() {
 
   // Ensure only admins can access this dashboard
   if (session.user.role !== "ADMIN") {
-    redirect("/user/dashboard")
+    redirect("/")
   }
 
   return (

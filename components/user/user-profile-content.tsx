@@ -39,12 +39,10 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
   const loadProfileData = async () => {
     try {
       setLoading(true)
-      console.log('🔄 Loading profile data from API')
 
       const response = await fetch('/api/user/profile')
       if (response.ok) {
         const data = await response.json()
-        console.log('📋 Loaded profile data:', data.profile)
 
         setProfileData({
           firstName: data.profile.firstName || '',
@@ -55,8 +53,7 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
         })
         setCurrentImage(data.profile.image)
       } else {
-        console.error('Failed to load profile data from API, using session data')
-        // Fallback to session data
+        // API response not ok, fallback to session data
         const nameParts = session.user.name?.split(' ') || []
         setProfileData({
           firstName: nameParts[0] || '',
@@ -68,10 +65,7 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
         setCurrentImage(session.user.image)
       }
     } catch (error) {
-      console.error('Error loading profile data:', error)
-      console.log('🔄 Using session data as fallback')
-
-      // Fallback to session data
+      // API failed, fallback to session data silently
       const nameParts = session.user.name?.split(' ') || []
       setProfileData({
         firstName: nameParts[0] || '',
@@ -81,9 +75,6 @@ export function UserProfileContent({ session }: UserProfileContentProps) {
         bio: ''
       })
       setCurrentImage(session.user.image)
-
-      // Don't show error toast for fallback, just log it
-      console.log('📝 Profile loaded from session data')
     } finally {
       setLoading(false)
     }

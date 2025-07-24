@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, memo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
@@ -70,8 +70,7 @@ interface Category {
 }
 
 // Enhanced Product Card Component
-const InnovativeProductCard = ({ product }: { product: Product }) => {
-  const [isHovered, setIsHovered] = useState(false);
+const InnovativeProductCard = memo(({ product }: { product: Product }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { addItem } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
@@ -144,8 +143,7 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
               src={product.thumbnail || "/images/dental-equipment.jpg"}
               alt={product.name}
               fill
-              className={`object-contain transition-all duration-700 ${isHovered ? "scale-105" : "scale-100"
-                } ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+              className={`object-contain transition-all duration-700 group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
               onLoad={() => setImageLoaded(true)}
             />
 
@@ -273,19 +271,16 @@ const InnovativeProductCard = ({ product }: { product: Product }) => {
       </Card>
     </motion.div>
   );
-};
+});
+
+InnovativeProductCard.displayName = 'InnovativeProductCard';
 
 export default function CatalogPage() {
-  // Cart functionality
-  const { addItem } = useCart();
-
   // State management
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filterLoading, setFilterLoading] = useState(false);
-  const [paginationLoading, setPaginationLoading] = useState(false);
-  const [pageLoading, setPageLoading] = useState(false);
+  const [loadingType, setLoadingType] = useState<'initial' | 'filter' | 'pagination' | null>('initial');
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("createdAt");
@@ -300,14 +295,9 @@ export default function CatalogPage() {
   const [featuredOnly, setFeaturedOnly] = useState(false);
 
   // Fetch products function
-  const fetchProducts = useCallback(async (isFilterChange = false, isPaginationChange = false) => {
-    if (isPaginationChange) {
-      setPaginationLoading(true);
-    } else if (isFilterChange) {
-      setFilterLoading(true);
-    } else {
-      setLoading(true);
-    }
+  const fetchProducts = useCallback(async (type: 'initial' | 'filter' | 'pagination' = 'initial') => {
+    setLoading(true);
+    setLoadingType(type);
 
     try {
       const params = new URLSearchParams({
@@ -334,38 +324,31 @@ export default function CatalogPage() {
       toast.error("Échec du chargement des produits");
     } finally {
       setLoading(false);
-      setFilterLoading(false);
-      setPaginationLoading(false);
+      setLoadingType(null);
     }
   }, [currentPage, searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
 
   // Immediate filter loading + debounced fetch
   useEffect(() => {
-    // Show loading immediately
-    setFilterLoading(true);
-
     const timeoutId = setTimeout(() => {
-      fetchProducts(true); // Mark as filter change
+      fetchProducts('filter'); // Mark as filter change
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly]);
+  }, [searchQuery, selectedCategory, sortBy, sortOrder, priceRange, inStockOnly, featuredOnly, fetchProducts]);
 
   // Initial data fetch
   useEffect(() => {
-    setPageLoading(true);
-    fetchProducts();
+    fetchProducts('initial');
     fetchCategories();
-    // Simulate minimum loading time for better UX
-    setTimeout(() => setPageLoading(false), 800);
-  }, []); // Initial load only
+  }, [fetchProducts]); // Initial load only
 
   // Page change effect
   useEffect(() => {
     if (currentPage > 1) { // Don't trigger on initial load
-      fetchProducts(false, true); // Mark as pagination change
+      fetchProducts('pagination'); // Mark as pagination change
     }
-  }, [currentPage]);
+  }, [currentPage, fetchProducts]);
 
   const fetchCategories = async () => {
     try {
@@ -393,8 +376,8 @@ export default function CatalogPage() {
 
   return (
     <>
-      {/* Page Loading Overlay */}
-      {pageLoading && (
+      {/* Single Loading Overlay */}
+      {loading && loadingType === 'initial' && (
         <div className="fixed inset-0 bg-white/95 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="text-center">
             <SectionLoader size="lg" />
@@ -452,7 +435,7 @@ export default function CatalogPage() {
                 Équipements Dentaires Professionnels
               </h1>
               <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Découvrez notre collection complète d'équipements et fournitures dentaires de haute qualité
+                Découvrez notre collection complète d&apos;équipements et fournitures dentaires de haute qualité
               </p>
             </motion.div>
 
@@ -474,6 +457,8 @@ export default function CatalogPage() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="border-0 bg-transparent text-lg placeholder:text-gray-400 focus-visible:ring-0 focus-visible:ring-offset-0"
+                        aria-label="Search products"
+                        type="search"
                       />
                     </div>
                     <motion.div
@@ -588,7 +573,6 @@ export default function CatalogPage() {
                         value={priceRange}
                         onValueChange={(value) => {
                           setPriceRange(value as [number, number]);
-                          setFilterLoading(true);
                         }}
                         max={50000}
                         min={0}
@@ -635,7 +619,6 @@ export default function CatalogPage() {
                           checked={inStockOnly}
                           onCheckedChange={(checked) => {
                             setInStockOnly(checked === true);
-                            setFilterLoading(true);
                           }}
                           className="mr-1.5 h-1 w-1 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border border-gray-300"
                         />
@@ -654,7 +637,6 @@ export default function CatalogPage() {
                           checked={featuredOnly}
                           onCheckedChange={(checked) => {
                             setFeaturedOnly(checked === true);
-                            setFilterLoading(true);
                           }}
                           className="mr-1.5 h-2.5 w-2.5 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600 border border-gray-300"
                         />
@@ -770,8 +752,8 @@ export default function CatalogPage() {
 
               {/* Products Grid */}
               <div className="relative">
-                {/* Filter Loading Overlay */}
-                {filterLoading && (
+                {/* Single Loading Overlay */}
+                {loading && loadingType !== 'initial' && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -782,24 +764,10 @@ export default function CatalogPage() {
                   >
                     <div className="text-center">
                       <SectionLoader size="lg" />
-                      <p className="mt-4 text-sm font-medium text-gray-700">Updating filters...</p>
-                    </div>
-                  </motion.div>
-                )}
-
-                {/* Pagination Loading Overlay */}
-                {paginationLoading && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.1 }}
-                    className="absolute inset-0 bg-white/95 backdrop-blur-md z-50 flex items-center justify-center rounded-2xl border border-gray-200"
-                    style={{ minHeight: '400px' }}
-                  >
-                    <div className="text-center">
-                      <SectionLoader size="lg" />
-                      <p className="mt-4 text-sm font-medium text-gray-700">Loading page...</p>
+                      <p className="mt-4 text-sm font-medium text-gray-700">
+                        {loadingType === 'filter' ? 'Updating filters...' :
+                         loadingType === 'pagination' ? 'Loading page...' : 'Loading...'}
+                      </p>
                     </div>
                   </motion.div>
                 )}
@@ -907,10 +875,9 @@ export default function CatalogPage() {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setPaginationLoading(true);
                         setCurrentPage(currentPage - 1);
                       }}
-                      disabled={currentPage === 1 || paginationLoading}
+                      disabled={currentPage === 1 || loading}
                       className="hover:bg-blue-50 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4"
                     >
                       <span className="hidden sm:inline">Previous</span>
@@ -920,7 +887,7 @@ export default function CatalogPage() {
                     {(() => {
                       const maxVisiblePages = 5;
                       let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-                      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                      const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
 
                       // Adjust startPage if we're near the end
                       if (endPage - startPage + 1 < maxVisiblePages) {
@@ -935,11 +902,10 @@ export default function CatalogPage() {
                             variant={currentPage === i ? "default" : "outline"}
                             onClick={() => {
                               if (i !== currentPage) {
-                                setPaginationLoading(true);
                                 setCurrentPage(i);
                               }
                             }}
-                            disabled={paginationLoading}
+                            disabled={loading}
                             className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 p-0 text-xs sm:text-sm ${
                               currentPage === i ? "bg-gradient-to-r from-blue-500 to-blue-600" : "hover:bg-blue-50"
                             }`}
@@ -954,10 +920,9 @@ export default function CatalogPage() {
                     <Button
                       variant="outline"
                       onClick={() => {
-                        setPaginationLoading(true);
                         setCurrentPage(currentPage + 1);
                       }}
-                      disabled={currentPage === totalPages || paginationLoading}
+                      disabled={currentPage === totalPages || loading}
                       className="hover:bg-blue-50 flex-shrink-0 text-xs sm:text-sm px-2 sm:px-4"
                     >
                       <span className="hidden sm:inline">Next</span>

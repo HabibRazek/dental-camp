@@ -28,10 +28,10 @@ export async function handlePostAuthRedirect() {
     if (session.user.role === "ADMIN") {
       redirect("/dashboard")
     } else {
-      redirect("/user/dashboard")
+      redirect("/")
     }
   } catch (error) {
     console.error("Post-auth redirect error:", error)
-    redirect("/user/dashboard")
+    redirect("/")
   }
 }
