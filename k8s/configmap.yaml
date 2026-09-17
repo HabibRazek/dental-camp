@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dental-camp-config
+  namespace: dental-camp
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
+  NEXTAUTH_URL: "https://www.dental-camp.com"
+  SMTP_HOST: "smtp.gmail.com"
+  SMTP_PORT: "587"

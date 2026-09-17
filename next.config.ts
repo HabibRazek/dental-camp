@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   serverExternalPackages: ['@prisma/client'],
+  // Enable standalone output for Docker
+  output: 'standalone',
   logging: {
     fetches: {
       fullUrl: false,

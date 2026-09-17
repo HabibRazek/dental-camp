@@ -1,0 +1,133 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dental-camp-app
+  namespace: dental-camp
+  labels:
+    app: dental-camp
+    tier: frontend
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: dental-camp
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: dental-camp
+        tier: frontend
+    spec:
+      containers:
+      - name: dental-camp
+        image: ghcr.io/your-org/dental-camp:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        
+        # Environment variables from ConfigMap
+        envFrom:
+        - configMapRef:
+            name: dental-camp-config
+        
+        # Secrets as environment variables
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: DATABASE_URL
+        - name: AUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: AUTH_SECRET
+        - name: AUTH_GOOGLE_ID
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: AUTH_GOOGLE_ID
+        - name: AUTH_GOOGLE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: AUTH_GOOGLE_SECRET
+        - name: UPLOADTHING_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: UPLOADTHING_TOKEN
+        - name: SMTP_USER
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: SMTP_USER
+        - name: SMTP_PASS
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: SMTP_PASS
+        - name: SMTP_FROM
+          valueFrom:
+            secretKeyRef:
+              name: dental-camp-secrets
+              key: SMTP_FROM
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Liveness probe
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        
+        # Readiness probe
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 20
+          periodSeconds: 5
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+        
+        # Startup probe
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 30
+      
+      # Security context
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      
+      # Image pull secrets (if using private registry)
+      imagePullSecrets:
+      - name: ghcr-secret

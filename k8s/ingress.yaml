@@ -1,0 +1,51 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dental-camp-ingress
+  namespace: dental-camp
+  annotations:
+    # Cert Manager for SSL
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    
+    # Nginx Ingress specific
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    
+    # Rate limiting
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    
+    # CORS
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.dental-camp.com"
+    
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - www.dental-camp.com
+    - dental-camp.com
+    secretName: dental-camp-tls
+  rules:
+  - host: www.dental-camp.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dental-camp-service
+            port:
+              number: 80
+  - host: dental-camp.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dental-camp-service
+            port:
+              number: 80
